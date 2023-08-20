@@ -2,10 +2,10 @@
 using namespace std;
 
 vector<int> timeArr;
-int maxCostTillGoal = 50;
+int maxCostTillGoal = 0;
 int nodesVis = 0;
-int maxDepth = 6;
-int maxAllowedNodes = 500;
+int maxDepth ;
+int maxAllowedNodes = 5000000;
 
 class state{
 public:
@@ -66,7 +66,7 @@ public:
 
 void branchAndBound(Node *curr){
     if(curr->depth > maxDepth or nodesVis > maxAllowedNodes or curr->g >= maxCostTillGoal) {
-//        cout<<"finished\n"<<curr->depth<<"\n"<<nodesVis<<"\n"<<curr->g<<"\n";
+    //    cout<<"finished\n"<<curr->depth<<"\n"<<nodesVis<<"\n"<<curr->g<<"\n";
         return;
     }
     if (curr->isGoal()){
@@ -118,8 +118,10 @@ int main(){
     for (int i = 0; i < t; ++i) {
         int x;
         cin>>x;
+        maxCostTillGoal += 2*x;
         timeArr.push_back(x);
     }
+    maxDepth = 10*t;
     Node *x = new Node(t);
     branchAndBound(x);
 }
