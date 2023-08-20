@@ -43,7 +43,7 @@ public:
     void printPath(){
         cout << "printing a new valid path" << endl;
         for (auto &step: pathTillNow) {
-            if (step[0]) cout << step[1] << " came from right to left with cost " << timeArr[step[1]] << endl;
+            if (step[0]) cout << step[1] << " gone to left from right with cost " << timeArr[step[1]] << endl;
             else cout << step[1] << " and " << step[2] << " gone to right from left with cost " << max(timeArr[step[1]], timeArr[step[2]]) << endl; 
         }
         cout << "\n\n\n\n";
@@ -117,7 +117,7 @@ void recurse(Node node){
             int p = it;
             node.currState.right.erase(p);
             vector<int> edge;
-            edge.push_back(0);
+            edge.push_back(1);
             edge.push_back(p);
             node.addEdgeToPath(edge);
             int cost = timeArr[p];
