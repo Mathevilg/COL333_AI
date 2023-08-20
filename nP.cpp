@@ -1,102 +1,128 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 
 vector<int> timeArr;
 int maxCostTillGoal = 0;
 int nodesVis = 0;
-int maxDepth ;
-int maxAllowedNodes = 5000000;
+int maxDepth;
+int maxAllowedNodes = 50000;
 
-class state{
+class state
+{
 public:
     vector<bool> stat;
-    state(int p){
-        for (int i = 0; i < p + 1; ++i) {
+    state(int p)
+    {
+        for (int i = 0; i < p + 1; ++i)
+        {
             stat.push_back(false);
         }
     }
 
-    bool isGoal(){;
+    bool isGoal()
+    {
+        ;
         bool ans = true;
-        for (int i = 0; i < stat.size(); ++i) {
+        for (int i = 0; i < stat.size(); ++i)
+        {
             ans = ans and stat[i];
         }
         return ans;
     }
-
 };
-
 
 class Node
 {
 private:
     /* data */
-    vector<vector<int>> pathTillNow;
+    vector<vector<int> > pathTillNow;
+
 public:
     state *currState;
     int g;
     int depth = 0;
-    Node(int p){
+    Node(int p)
+    {
         g = 0;
         currState = new state(p);
     }
-    void printPath(){
+    void printPath()
+    {
         cout << "printing a new valid path" << endl;
-        for (auto &step: pathTillNow) {
-//            if (step[0]) cout<< step[1] << " and " << step[2] <<  " gone to left from right with cost "<< max(timeArr[step[1]], timeArr[step[2]]) << endl;
-//            else
-                cout << step[0] << " and " << step[1] << " moved with cost " << step[2] << endl;
+        for (auto &step : pathTillNow)
+        {
+            //            if (step[0]) cout<< step[1] << " and " << step[2] <<  " gone to left from right with cost "<< max(timeArr[step[1]], timeArr[step[2]]) << endl;
+            //            else
+            cout << step[0] << " and " << step[1] << " moved with cost " << step[2] << endl;
         }
         cout << "\n\n\n\n";
     }
-    bool isGoal(){
+    bool isGoal()
+    {
         return currState->isGoal();
     }
 
-    void addEdgeToPath(vector<int> &edge){
+    void addEdgeToPath(vector<int> &edge)
+    {
         pathTillNow.push_back(edge);
     }
 
-    void removeLastEdge(){
-        if (pathTillNow.size()){
+    void removeLastEdge()
+    {
+        if (pathTillNow.size())
+        {
             pathTillNow.pop_back();
         }
     }
 };
 
-void branchAndBound(Node *curr){
-    if(curr->depth > maxDepth or nodesVis > maxAllowedNodes or curr->g >= maxCostTillGoal) {
-    //    cout<<"finished\n"<<curr->depth<<"\n"<<nodesVis<<"\n"<<curr->g<<"\n";
+void branchAndBound(Node *curr)
+{
+    if (curr->depth > maxDepth or nodesVis > maxAllowedNodes or curr->g >= maxCostTillGoal)
+    {
+        //    cout<<"finished\n"<<curr->depth<<"\n"<<nodesVis<<"\n"<<curr->g<<"\n";
         return;
     }
-    if (curr->isGoal()){
+    if (curr->isGoal())
+    {
         curr->printPath();
         maxCostTillGoal = min(curr->g, maxCostTillGoal);
         return;
     }
     nodesVis++;
     curr->depth++;
-//    cout<<not
+    //    cout<<not
     curr->currState->stat[0] = not curr->currState->stat[0];
     int length = curr->currState->stat.size();
     vector<bool> &v = curr->currState->stat;
-    for (int i = 1; i < length; ++i) {
-        if (not v[0] == v[i]){
+    for (int i = 1; i < length; ++i)
+    {
+        if (not v[0] == v[i])
+        {
             v[i] = not v[i];
             curr->g += timeArr[i - 1];
-            vector<int> edge = {i - 1, -1, timeArr[i - 1]};
+            vector<int> edge; //  = {i - 1, -1, timeArr[i - 1]}
+            edge.push_back(i-1);
+            edge.push_back(-1);
+            edge.push_back(timeArr[i-1]);
             curr->addEdgeToPath(edge);
             branchAndBound(curr);
-//            cout<<"hello\n";
+            //            cout<<"hello\n";
             curr->removeLastEdge();
             curr->g -= timeArr[i - 1];
-            for (int j = i + 1; j < length; ++j) {
-//                cout<<"hi "<<not v[0]<<" "<<v[j]<<"\n";
-                if ((not v[0]) == v[j]){
-//                    cout<<"op\n";
+            for (int j = i + 1; j < length; ++j)
+            {
+                //                cout<<"hi "<<not v[0]<<" "<<v[j]<<"\n";
+                if ((not v[0]) == v[j])
+                {
+                    //                    cout<<"op\n";
                     v[j] = not v[j];
                     curr->g += max(timeArr[i - 1], timeArr[j - 1]);
-                    edge = {i - 1, j - 1, max(timeArr[i - 1], timeArr[j - 1])};
+                    vector<int> tmp; //  = {i - 1, -1, timeArr[i - 1]}
+                    tmp.push_back(i-1);
+                    tmp.push_back(j-1);
+                    tmp.push_back(max(timeArr[i - 1], timeArr[j - 1]));
+                    edge = tmp;
                     curr->addEdgeToPath(edge);
                     branchAndBound(curr);
                     curr->removeLastEdge();
@@ -112,16 +138,18 @@ void branchAndBound(Node *curr){
     return;
 }
 
-int main(){
+int main()
+{
     int t;
-    cin>>t;
-    for (int i = 0; i < t; ++i) {
+    cin >> t;
+    for (int i = 0; i < t; ++i)
+    {
         int x;
-        cin>>x;
-        maxCostTillGoal += 2*x;
+        cin >> x;
+        maxCostTillGoal += 2 * x;
         timeArr.push_back(x);
     }
-    maxDepth = 10*t;
+    maxDepth = 10 * t;
     Node *x = new Node(t);
     branchAndBound(x);
 }
