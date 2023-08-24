@@ -132,7 +132,7 @@ std::pair<int, int> generateDistinctRandomNumbers(int n) {
     ofstream outputFile(outputfilename);
 
     // Check if the file is opened successfully
-    if (!outputFile.is_open()) {
+    if (!outputFile.is_open() || !check_output_format()) {
         cerr << "Failed to open the file for writing." << std::endl;
         exit(0);
     }
@@ -238,8 +238,8 @@ std::pair<int, int> generateDistinctRandomNumbers(int n) {
     void localSearch::compute_allocation()
     {
         mapping = randomPermutation();
-        // cout << "Printing the initial randomstate to begin with search\n" ;
-        // printVector(mapping);
+        cout << "Printing the initial randomstate to begin with search\n" ;
+        printVector(mapping);
         // reach greedily until local minima 
         while (true){
             long long mini = cost_fn();
