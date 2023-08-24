@@ -35,7 +35,8 @@ std::vector<int> generateRandomPermutation(int n) {
 void printVector(vector<int> &arr)
 {
     // cout << arr.size() << " ";
-    for (int it: arr) cout << it << " ";
+    int i=0;
+    for ( ; i<arr.size(); i++) cout << arr[i] << " ";
     cout << endl;
 }
 
@@ -95,7 +96,7 @@ std::pair<int, int> generateDistinctRandomNumbers(int n) {
                     return false;
                 }
             }
-            else 
+            else if (mapping[i])
             {
                 cout << "Invalid location, check format\n";
                 return false;
@@ -264,7 +265,7 @@ std::pair<int, int> generateDistinctRandomNumbers(int n) {
             long long currCost = cost_fn(); // cost of this state;
             if (mini < currCost) 
             {
-                // printVector(mapping);
+                printVector(mapping);
                 mapping = bestNeighbour;
                 
             }

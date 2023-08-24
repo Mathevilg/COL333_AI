@@ -1,0 +1,13 @@
+Heuristic search
+-- state space && transition function && Heuristic function 
+- if heuristic admissible then optimal but slower
+1. A* and variants (try different heuristics)
+
+
+Branch and Bound
+-- state space && transition function ||  Heuristic function  || ranking function to choose between nodes
+- use variants
+
+
+Local search and variants
+-- neighbour function
