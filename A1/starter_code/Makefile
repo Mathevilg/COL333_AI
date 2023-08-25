@@ -9,8 +9,9 @@ Output:
 
 
 test:
-	python3 generateTestcases.py
-	g++ -o main main.cpp ./models/localSearch.cpp
+#	python3 generateTestcases.py
+#	g++ -o main main.cpp ./models/localSearch.cpp
+	g++ -o main main.cpp ./models/DFSbb.cpp
 	python3 generateOutput.py
 # generateTest
 #  all: main.cpp SportsLayout.cpp

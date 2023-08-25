@@ -67,10 +67,10 @@ std::pair<int, int> generateDistinctRandomNumbers(int n) {
     branchAndBound::branchAndBound(string inputfilename)
     {
         readInInputFile(inputfilename);
-        mapping = randomPermutation();
+        // mapping = randomPermutation();
         // printVector(mapping);
-        bestMapping = mapping;
-        best = cost_fn();
+        // bestMapping = mapping;
+        best = LLONG_MAX;
     }
 
     bool branchAndBound::check_output_format()
@@ -272,5 +272,10 @@ std::pair<int, int> generateDistinctRandomNumbers(int n) {
     void branchAndBound::compute_allocation()
     {
         mapping = randomPermutation();
-        dfs();
+        if (cost_fn() < best)
+        {
+            best = cost_fn();
+            bestMapping = mapping;
+            dfs();
+        }
     }
