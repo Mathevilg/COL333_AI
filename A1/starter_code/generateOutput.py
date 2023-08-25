@@ -30,8 +30,8 @@
 import os
 import subprocess
 
-input_directory = "./../test_cases/"  # Replace with your input directory path
-output_directory = "./../test_cases/"  # Replace with your output directory path
+input_directory = "./random_testcases/"  # Replace with your input directory path
+output_directory = "./random_testcases_output/"  # Replace with your output directory path
 cpp_program = "./main"        # Replace with your C++ program's executable path
 input_files = [filename for filename in os.listdir(input_directory) if filename.startswith("input")]
 

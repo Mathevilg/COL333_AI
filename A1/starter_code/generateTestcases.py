@@ -3,7 +3,8 @@ import subprocess
 import random
 
 # Replace with your C++ program's executable path
-cpp_program = "./a.out"
+subprocess.run(["g++ -o genTestcase generateRandomTest.cpp"], shell=True)
+cpp_program = "./genTestcase"
 
 # Generate 10 sets of 3-sized tuples (2, x, y) where x <= y
 input_data = []
@@ -13,7 +14,7 @@ for _ in range(10):
     input_data.append((2, x, y))
 
 # Create an output directory if it doesn't exist
-output_directory = "random_testcses"
+output_directory = "random_testcases"
 os.makedirs(output_directory, exist_ok=True)
 
 # Create input files and run the C++ program
