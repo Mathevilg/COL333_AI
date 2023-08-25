@@ -1,2 +1,2 @@
-./random_testcases/*
-./random_testcases_output/*
+/random_testcases/
+/random_testcases_output/
