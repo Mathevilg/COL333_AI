@@ -1,15 +1,16 @@
  all: main.cpp ./models/localSearch.cpp
 	  g++ -o main main.cpp ./models/localSearch.cpp
 
-generateTest:
+Test:
 	python3 generateTestcases.py
 
-generateOutput: 
+Output: 
 	 python3 generateOutput.py
 
 
 test:
 	python3 generateTestcases.py
+	g++ -o main main.cpp ./models/localSearch.cpp
 	python3 generateOutput.py
 # generateTest
 #  all: main.cpp SportsLayout.cpp
