@@ -4,6 +4,7 @@
 #include "./models/SportsLayout.h"
 #include "./models/localSearch.h"
 #include "./models/DFSbb.h"
+#include "./models/simulatedAnnealing.h"
 
 using namespace std;
 
@@ -33,7 +34,8 @@ int main(int argc, char** argv )
 
 
 
-    localSearch *l = new localSearch(inputfilename);
+    simulatedAnnealing *l = new simulatedAnnealing(inputfilename);
+    // localSearch *l = new localSearch(inputfilename);
     // branchAndBound *l = new branchAndBound(inputfilename);
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
     std::chrono::high_resolution_clock::time_point curr = std::chrono::high_resolution_clock::now();
