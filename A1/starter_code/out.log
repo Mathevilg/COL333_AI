@@ -1,40 +1,40 @@
 Allocation written to the file successfully.
 ./random_testcases/input1.txt
 cost:85504
-iterations:4350
+iterations:4336
 Allocation written to the file successfully.
 ./random_testcases/input2.txt
 cost:176625
-iterations:6060
+iterations:6083
 Allocation written to the file successfully.
 ./random_testcases/input3.txt
 cost:53151
-iterations:3826
+iterations:3403
 Allocation written to the file successfully.
 ./random_testcases/input7.txt
 cost:135347
-iterations:1805
+iterations:1807
 Allocation written to the file successfully.
 ./random_testcases/input6.txt
 cost:160
-iterations:68352
+iterations:68413
 Allocation written to the file successfully.
 ./random_testcases/input4.txt
-cost:484834
-iterations:558
+cost:484855
+iterations:556
 Allocation written to the file successfully.
 ./random_testcases/input5.txt
-cost:503221
-iterations:399
+cost:507127
+iterations:401
 Allocation written to the file successfully.
 ./random_testcases/input8.txt
-cost:409980
-iterations:423
+cost:410004
+iterations:431
 Allocation written to the file successfully.
 ./random_testcases/input10.txt
 cost:22322
-iterations:5406
+iterations:5597
 Allocation written to the file successfully.
 ./random_testcases/input9.txt
 cost:91255
-iterations:25432
+iterations:25551
