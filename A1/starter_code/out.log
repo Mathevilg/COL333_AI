@@ -1,3 +1,28 @@
 Allocation written to the file successfully.
+./../test_cases/input1.txt
+cost:19
+iterations:94696
+Allocation written to the file successfully.
+./../test_cases/input0.txt
+cost:28
+iterations:126719
+Allocation written to the file successfully.
+./../test_cases/input2.txt
+cost:4
+iterations:103440
+Allocation written to the file successfully.
+./../test_cases/input3.txt
 cost:69016
-iterations:8713
+iterations:10083
+Allocation written to the file successfully.
+./../test_cases/input6.txt
+cost:259077
+iterations:16766
+Allocation written to the file successfully.
+./../test_cases/input4.txt
+cost:29718
+iterations:8768
+Allocation written to the file successfully.
+./../test_cases/input5.txt
+cost:266142
+iterations:16930

@@ -2,7 +2,7 @@
 #include <bits/stdc++.h>
 #include <fstream>
 #include "SportsLayout.h"
-#include "localSearch.h"
+#include "./models/localSearch.h"
 
 
 using namespace std;
@@ -46,6 +46,7 @@ int main(int argc, char** argv )
     }
     l->write_to_file(outputfilename);
     long long cost = l->bestTime();
+    cout << inputfilename << endl;
     cout << "cost:" << cost << endl;
     cout << "iterations:" << iteration << endl;
     return 0;
