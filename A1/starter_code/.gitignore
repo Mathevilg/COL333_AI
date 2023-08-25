@@ -1,2 +1,8 @@
+genTestcase
+main
+a.out
+out.log
+
 /random_testcases/
 /random_testcases_output/
+
