@@ -259,20 +259,42 @@ std::pair<int, int> generateDistinctRandomNumbers(int n) {
         long long mini = cost_fn();
         vector<int> bestNeighbour = mapping;
         // curr state
-        for (int i=1; i<=l; i++)
+        // for (int i=1; i<=l; i++)
+        // {
+        //     for (int j=i+1; j<=l; j++)
+        //     {   
+                // if(! mapping[i] && !mapping[j]) continue;
+                // swap(mapping[i], mapping[j]);
+                // long long tmpCost = cost_fn();
+                // if (tmpCost < mini)
+                // {
+                //     mini = tmpCost;
+                //     bestNeighbour = mapping;
+                // } 
+                // swap(mapping[i], mapping[j]);
+        //     }
+        // }
+        int cnt = 0;
+        bool b = false;
+        while (cnt < min(150, l*l))
         {
-            for (int j=i+1; j<=l; j++)
-            {   
-                if(! mapping[i] && !mapping[j]) continue;
-                swap(mapping[i], mapping[j]);
-                long long tmpCost = cost_fn();
-                if (tmpCost < mini)
-                {
-                    mini = tmpCost;
-                    bestNeighbour = mapping;
-                } 
-                swap(mapping[i], mapping[j]);
+            pair<int, int> p = generateDistinctRandomNumbers(l);
+            int i = p.first, j = p.second;
+            swap(mapping[i], mapping[j]);
+            long long tmpCost = cost_fn();
+            if (tmpCost < mini)
+            {
+                mini = tmpCost;
+                bestNeighbour = mapping;
+                b = true;
+
+            } 
+            swap(mapping[i], mapping[j]);
+            if (b)
+            {
+                return bestNeighbour;
             }
+            cnt++;
         }
 
         return bestNeighbour;

@@ -33,8 +33,8 @@ int main(int argc, char** argv )
 
 
 
-    // localSearch *l = new localSearch(inputfilename);
-    branchAndBound *l = new branchAndBound(inputfilename);
+    localSearch *l = new localSearch(inputfilename);
+    // branchAndBound *l = new branchAndBound(inputfilename);
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
     std::chrono::high_resolution_clock::time_point curr = std::chrono::high_resolution_clock::now();
     int maxTime = l->getTime()*1000;
