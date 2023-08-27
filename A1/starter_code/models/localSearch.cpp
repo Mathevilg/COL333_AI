@@ -148,6 +148,21 @@ std::pair<int, int> generateDistinctRandomNumbers(int n) {
     }
 
 
+    long long localSearch::gain(int i, int j)
+    {
+        long long ans = 0;
+        for (int k=1; k<=l; k++)
+        {
+            if (k == i || k == j) continue;
+            // in case of bound error just return 0;
+            // works in case of mapping from z to l !!
+            ans += (T[k-1][j-1] - T[k-1][i-1])*((N[i-1][k-1] + N[k-1][i-1]) - (N[j-1][k-1] + N[k-1][j-1]));
+
+        }
+        return ans;
+    }
+
+
     void localSearch::write_to_file(string outputfilename){
 
          // Open the file for writing
@@ -259,43 +274,43 @@ std::pair<int, int> generateDistinctRandomNumbers(int n) {
         long long mini = cost_fn();
         vector<int> bestNeighbour = mapping;
         // curr state
-        // for (int i=1; i<=l; i++)
-        // {
-        //     for (int j=i+1; j<=l; j++)
-        //     {   
-                // if(! mapping[i] && !mapping[j]) continue;
-                // swap(mapping[i], mapping[j]);
-                // long long tmpCost = cost_fn();
-                // if (tmpCost < mini)
-                // {
-                //     mini = tmpCost;
-                //     bestNeighbour = mapping;
-                // } 
-                // swap(mapping[i], mapping[j]);
-        //     }
-        // }
-        int cnt = 0;
-        bool b = false;
-        while (cnt < min(150, l*l))
+        for (int i=1; i<=l; i++)
         {
-            pair<int, int> p = generateDistinctRandomNumbers(l);
-            int i = p.first, j = p.second;
-            swap(mapping[i], mapping[j]);
-            long long tmpCost = cost_fn();
-            if (tmpCost < mini)
-            {
-                mini = tmpCost;
-                bestNeighbour = mapping;
-                b = true;
-
-            } 
-            swap(mapping[i], mapping[j]);
-            if (b)
-            {
-                return bestNeighbour;
+            for (int j=i+1; j<=l; j++)
+            {   
+                if(! mapping[i] && !mapping[j]) continue;
+                swap(mapping[i], mapping[j]);
+                long long tmpCost = cost_fn();
+                if (tmpCost < mini)
+                {
+                    mini = tmpCost;
+                    bestNeighbour = mapping;
+                } 
+                swap(mapping[i], mapping[j]);
             }
-            cnt++;
         }
+        // int cnt = 0;
+        // bool b = false;
+        // while (cnt < min(150, l*l))
+        // {
+        //     pair<int, int> p = generateDistinctRandomNumbers(l);
+        //     int i = p.first, j = p.second;
+        //     swap(mapping[i], mapping[j]);
+        //     long long tmpCost = cost_fn();
+        //     if (tmpCost < mini)
+        //     {
+        //         mini = tmpCost;
+        //         bestNeighbour = mapping;
+        //         b = true;
+
+        //     } 
+        //     swap(mapping[i], mapping[j]);
+        //     if (b)
+        //     {
+        //         return bestNeighbour;
+        //     }
+        //     cnt++;
+        // }
 
         return bestNeighbour;
     }

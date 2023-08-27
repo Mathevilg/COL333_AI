@@ -2,6 +2,7 @@ genTestcase
 main
 a.out
 out.log
+*.log
 
 /random_testcases/
 /random_testcases_output/

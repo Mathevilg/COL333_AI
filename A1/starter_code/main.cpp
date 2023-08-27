@@ -34,12 +34,12 @@ int main(int argc, char** argv )
 
 
 
-    simulatedAnnealing *l = new simulatedAnnealing(inputfilename);
-    // localSearch *l = new localSearch(inputfilename);
+    // simulatedAnnealing *l = new simulatedAnnealing(inputfilename);
+    localSearch *l = new localSearch(inputfilename);
     // branchAndBound *l = new branchAndBound(inputfilename);
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
     std::chrono::high_resolution_clock::time_point curr = std::chrono::high_resolution_clock::now();
-    int maxTime = l->getTime()*1000;
+    int maxTime = l->getTime()*1000*60;
     int iteration = 0;
     while (std::chrono::duration_cast<std::chrono::milliseconds>(curr - start).count() < maxTime)
     {

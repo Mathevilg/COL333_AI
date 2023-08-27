@@ -18,6 +18,7 @@ private:
     int **N;
     int time;
     vector<int> mapping;
+    long long curr;
     long long best;
     vector<int> bestMapping;
 
@@ -29,6 +30,7 @@ public:
 
     long long cost_fn();
     long long cost_fn(vector<int> &arr);
+    long long gain(int i, int j);
 
     void write_to_file(string outputfilename);
 
