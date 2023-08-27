@@ -3,7 +3,11 @@ main
 a.out
 out.log
 *.log
+generateOutput.py
+generateRandomTest.cpp
+generateTestcases.py
 
+/helper/
 /random_testcases/
 /random_testcases_output/
 
