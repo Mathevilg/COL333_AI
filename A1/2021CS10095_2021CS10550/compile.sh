@@ -1,0 +1,1 @@
+g++ main.cpp localSearch.cpp -o run.sh

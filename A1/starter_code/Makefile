@@ -14,6 +14,7 @@ test:
 #	g++ -o main main.cpp ./models/DFSbb.cpp
 #	g++ -o main main.cpp ./models/simulatedAnnealing.cpp
 	python3 generateOutput.py
+#	python3 parsingLog.py
 # generateTest
 #  all: main.cpp SportsLayout.cpp
 # 	  g++ -o main main.cpp SportsLayout.cpp

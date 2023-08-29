@@ -6,6 +6,7 @@ out.log
 generateOutput.py
 generateRandomTest.cpp
 generateTestcases.py
+parsingLog.py
 
 /helper/
 /random_testcases/
