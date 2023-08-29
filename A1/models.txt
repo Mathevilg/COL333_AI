@@ -11,3 +11,6 @@ Branch and Bound
 
 Local search and variants
 -- neighbour function
+
+
+create zip using `zip -rj 2021CS10095_2021CS10550.zip 2021CS10095_2021CS10550`
