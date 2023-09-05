@@ -23,7 +23,7 @@ int main(int argc, char** argv )
     localSearch *l = new localSearch(inputfilename);
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
     std::chrono::high_resolution_clock::time_point curr = std::chrono::high_resolution_clock::now();
-    int maxTime = l->getTime()*100;
+    int maxTime = l->getTime()*1000*60;
     int iteration = 0;
     while (std::chrono::duration_cast<std::chrono::milliseconds>(curr - start).count() < maxTime)
     {
@@ -32,10 +32,10 @@ int main(int argc, char** argv )
         ++iteration;
     }
     l->write_to_file(outputfilename);
-    long long cost = l->bestTime();
-    cout << inputfilename << endl;
-    cout << "cost:" << cost << endl;
-    cout << "iterations:" << iteration << endl;
+    // long long cost = l->bestTime();
+    // cout << inputfilename << endl;
+    // cout << "cost:" << cost << endl;
+    // cout << "iterations:" << iteration << endl;
     return 0;
 
 }

@@ -7,7 +7,6 @@
 
 using namespace std;
 
-
 std::vector<int> generateRandomPermutation(int n) {
     std::vector<int> permutation(n);
     for (int i = 0; i < n; ++i) {
@@ -18,15 +17,7 @@ std::vector<int> generateRandomPermutation(int n) {
     std::random_device rd;
     std::mt19937 gen(rd());
 
-    // Perform the Fisher-Yates shuffle
-    for (int i = n - 1; i > 0; --i) {
-        // Generate a random index between 0 and i (inclusive)
-        std::uniform_int_distribution<int> dist(0, i);
-        int randomIndex = dist(gen);
-
-        // Swap the elements at randomIndex and i
-        std::swap(permutation[i], permutation[randomIndex]);
-    }
+    shuffle(permutation.begin(), permutation.end(), gen);
 
     return permutation;
 }
