@@ -1,13 +1,17 @@
+#include <iostream>
+#include <random>
+#include <chrono>
+#include <fstream>
 #include <bits/stdc++.h>
-#include "./localSearch.h"
+
+#include "SportsLayout.h"
 
 using namespace std;
-
 
 int main(int argc, char** argv )
 {
 
-
+     // Parse the input.
     if ( argc < 3 )
     {   
         cout<<"Missing arguments\n";
@@ -18,24 +22,25 @@ int main(int argc, char** argv )
     string inputfilename ( argv[1] );
     string outputfilename ( argv[2] );
     
+    SportsLayout *s  = new SportsLayout( inputfilename );
 
-
-    localSearch *l = new localSearch(inputfilename);
-    std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-    std::chrono::high_resolution_clock::time_point curr = std::chrono::high_resolution_clock::now();
-    float maxTime = l->getTime()*985;
-    int iteration = 0;
-    while (std::chrono::duration_cast<std::chrono::milliseconds>(curr - start).count() < maxTime)
+    s->start_time = std::chrono::high_resolution_clock::now();
+    // s->tempmapping = s->generateRandomPermutation(s->l);
+    if (s->getTime() <= 0.2) {s->maxTime = (s->getTime()-0.045)*(float)60000;}
+    else {s->maxTime = (s->getTime()-0.07)*(float)60000;}
+    // s->bestMapping = s->generateRandomPermutation(s->l);
+    // s->iterations = 0;
+    s->write_to_file(outputfilename);
+    while (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - s->start_time).count() < s->maxTime)
     {
-        l->compute_allocation(curr);
-        curr = std::chrono::high_resolution_clock::now();
-        ++iteration;
+        s->compute_allocation();
+        // s->iterations++;
     }
-    l->write_to_file(outputfilename);
-    long long cost = l->bestTime();
-    cout << inputfilename << endl;
-    cout << "cost:" << cost << endl;
-    cout << "iterations:" << iteration << endl;
-    return 0;
+    s->write_to_file(outputfilename);
 
+    // long long cost = s->cost_fn_best ();
+    // cout<< "cost:"<<cost<<endl;
+    // cout << "iterations:" << s->iterations << endl;
+
+    return 0;
 }
