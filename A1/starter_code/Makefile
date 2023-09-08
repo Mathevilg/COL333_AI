@@ -10,7 +10,7 @@ Output:
 
 test:
 #	python3 generateTestcases.py
-	g++ -o main main.cpp ./models/localSearch.cpp
+	g++ -o main main.cpp ./models/SportsLayout.cpp
 #	g++ -o main main.cpp ./models/DFSbb.cpp
 #	g++ -o main main.cpp ./models/simulatedAnnealing.cpp
 	python3 generateOutput.py

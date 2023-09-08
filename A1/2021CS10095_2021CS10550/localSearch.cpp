@@ -247,7 +247,7 @@ std::pair<int, int> generateDistinctRandomNumbers(int n) {
 
 
 
-    int localSearch::getTime()
+    float localSearch::getTime()
     {
         return time;
     }
@@ -265,21 +265,21 @@ std::pair<int, int> generateDistinctRandomNumbers(int n) {
         long long mini = cost_fn();
         vector<int> bestNeighbour = mapping;
         // curr state
-        for (int i=1; i<=l; i++)
-        {
-            for (int j=i+1; j<=l; j++)
-            {   
-                if(! mapping[i] && !mapping[j]) continue;
-                swap(mapping[i], mapping[j]);
-                long long tmpCost = cost_fn();
-                if (tmpCost < mini)
-                {
-                    mini = tmpCost;
-                    bestNeighbour = mapping;
-                } 
-                swap(mapping[i], mapping[j]);
-            }
-        }
+        // for (int i=1; i<=l; i++)
+        // {
+        //     for (int j=i+1; j<=l; j++)
+        //     {   
+        //         if(! mapping[i] && !mapping[j]) continue;
+        //         swap(mapping[i], mapping[j]);
+        //         long long tmpCost = cost_fn();
+        //         if (tmpCost < mini)
+        //         {
+        //             mini = tmpCost;
+        //             bestNeighbour = mapping;
+        //         } 
+        //         swap(mapping[i], mapping[j]);
+        //     }
+        // }
         // int cnt = 0;
         // bool b = false;
         // while (cnt < min(150, l*l))
@@ -307,7 +307,7 @@ std::pair<int, int> generateDistinctRandomNumbers(int n) {
     }
 
 
-    void localSearch::compute_allocation()
+    void localSearch::compute_allocation(std::chrono::high_resolution_clock::time_point curr)
     {
         mapping = randomPermutation();
         // cout << "Printing the initial randomstate to begin with search\n" ;
@@ -319,6 +319,9 @@ std::pair<int, int> generateDistinctRandomNumbers(int n) {
             long long currCost = cost_fn(); // cost of this state;
             vector<int> nextNeigbour = findNextNeighbour();
             long long costNextNeigbour = cost_fn(nextNeigbour);
+            cout << "helmo \n";
+            std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(curr - start).count() < time*985) break;
             if (costNextNeigbour < currCost) 
             {
                 // printVector(mapping);
@@ -326,7 +329,7 @@ std::pair<int, int> generateDistinctRandomNumbers(int n) {
                 // in greedy hill climb next neigbour is best too !
 
             }
-
+            
             else 
             {
                 break;

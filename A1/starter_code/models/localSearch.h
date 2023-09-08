@@ -17,6 +17,7 @@ private:
     int **T;
     int **N;
     int time;
+    vector<int> seed;
     vector<int> mapping;
     long long curr;
     long long best;

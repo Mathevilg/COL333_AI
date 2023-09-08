@@ -1,7 +1,8 @@
 #include <fstream>
 #include <iostream>
+#include <random>
+#include <chrono>
 #include <bits/stdc++.h>
-
 using namespace std;
 
 #include "SportsLayout.h"
@@ -10,8 +11,26 @@ using namespace std;
     {
           
         readInInputFile(inputfilename);
-        mapping= new int[z];
+        mapping = generateRandomPermutation(l);
+        // printVector(mapping);
+        bestMapping = mapping;
+        best = cost_fn();
 
+    }
+
+    vector<int> SportsLayout::generateRandomPermutation(int n) {
+        std::vector<int> permutation(n);
+        for (int i = 0; i < n; ++i) {
+            permutation[i] = i + 1; // Initialize with consecutive integers
+        }
+
+        // Use random_device to seed the random number generator
+        std::random_device rd;
+        std::mt19937 gen(rd());
+
+        shuffle(permutation.begin(), permutation.end(), gen);
+
+        return permutation;
     }
 
     bool SportsLayout::check_output_format()
@@ -39,61 +58,6 @@ using namespace std;
 
         return true;
 
-    }
-
-    // void SportsLayout::readOutputFile(string output_filename)
-    // {
-    //         fstream ipfile;
-	//         ipfile.open(output_filename, ios::in);
-    //         if (!ipfile) {
-    //             cout << "No such file\n";
-    //             exit( 0 );
-    //         }
-    //         else {
-                
-    //             vector<int> ip;
-
-    //             while (1) {
-    //                 int t;
-    //                 ipfile >> t;
-    //                 ip.push_back(t);
-    //                 if (ipfile.eof())
-    //                     break;
-                    
-    //             }
-            
-    //         if(ip.size()!=z)
-    //         {
-    //             cout<<"number of values not equal to number of zones, check output format\n";
-    //             exit(0);
-    //         }
-    //         for(int i=0;i<z;i++)
-    //         mapping[i]=ip[i];
-    //     ipfile.close();
-
-    //     if(!check_output_format())
-    //         exit(0);
-    //     cout<<"Read output file, format OK"<<endl;
-
-    //         }
-        
-    // }
-
-
-    long long SportsLayout::cost_fn(){
-
-
-        long long cost=0;
-
-        for(int i=0;i<z;i++)
-        {
-           for(int j=0;j<z;j++) 
-           {
-                cost+=(long long)N[i][j]*(long long)T[mapping[i]-1][mapping[j]-1];
-           }
-        }
-
-        return cost;
     }
 
     void SportsLayout::readInInputFile(string inputfilename)
@@ -172,12 +136,192 @@ using namespace std;
 
     }
 
+    int SportsLayout::getTime()
+    {
+        return time;
+    }
+
+    long long SportsLayout::cost_fn(){
+
+
+        long long cost=0;
+
+        for(int i=0;i<z;i++)
+        {
+           for(int j=0;j<z;j++) 
+           {
+                cost+=(long long)N[i][j]*(long long)T[mapping[i]-1][mapping[j]-1];
+           }
+        }
+
+        return cost;
+    }
+
+    long long SportsLayout::cost_fn_best(){
+
+
+        long long cost=0;
+
+        for(int i=0;i<z;i++)
+        {
+           for(int j=0;j<z;j++) 
+           {
+                cost+=(long long)N[i][j]*(long long)T[bestMapping[i]-1][bestMapping[j]-1];
+           }
+        }
+
+        return cost;
+    }
+
+    long long SportsLayout::gain(int i0, int j0){
+        long long gained = 0;
+        if (j0 < z) {
+            for (int i=0; i<z; i++){
+                if(i==i0) continue;
+                gained -= N[i][j0]*T[mapping[i]-1][mapping[j0]-1];
+                gained -= N[j0][i]*T[mapping[j0]-1][mapping[i]-1];
+            }
+            for (int j=0; j<z; j++){
+                gained -= N[j][i0]*T[mapping[j]-1][mapping[i0]-1];
+                gained -= N[i0][j]*T[mapping[i0]-1][mapping[j]-1];
+            }
+            swap(mapping[i0],mapping[j0]);
+            for (int i=0; i<z; i++){
+                if(i==i0) continue;
+                gained += N[i][j0]*T[mapping[i]-1][mapping[j0]-1];
+                gained += N[j0][i]*T[mapping[j0]-1][mapping[i]-1];
+            }
+            for (int j=0; j<z; j++){
+                gained += N[j][i0]*T[mapping[j]-1][mapping[i0]-1];
+                gained += N[i0][j]*T[mapping[i0]-1][mapping[j]-1];
+            }
+            swap(mapping[i0],mapping[j0]);
+        }
+        // if (j0 < z) {
+        //     for (int i=0; i<z; i++) {
+        //         if(i!=i0){
+        //                 gained -= N[i][j0]*T[mapping[i]-1][mapping[j0]-1];
+        //                 gained += N[i][j0]*T[mapping[i]-1][mapping[i0]-1];
+        //             }
+        //         }
+        //     for (int j=0; j<z; j++) {
+        //         if(j!=j0){
+        //                 gained -= N[i0][j]*T[mapping[i0]-1][mapping[j]-1];
+        //                 gained += N[i0][j]*T[mapping[j0]-1][mapping[j]-1];
+        //         }
+        //     }
+        //     gained -= N[i0][j0]*T[mapping[i0]-1][mapping[j0]-1];
+        //     gained += N[i0][j0]*T[mapping[j0]-1][mapping[i0]-1];
+        // }
+        else {
+            for (int i=0; i<z; i++){
+                if(i==i0) continue;
+                gained -= N[i][i0]*T[mapping[i]-1][mapping[i0]-1];
+                gained -= N[i0][i]*T[mapping[i0]-1][mapping[i]-1];
+            }
+            swap(mapping[i0],mapping[j0]);
+            for (int j=0; j<z; j++){
+                if(j==i0)continue;
+                gained += N[i0][j]*T[mapping[i0]-1][mapping[j]-1];
+                gained += N[j][i0]*T[mapping[j]-1][mapping[i0]-1];
+            }
+            swap(mapping[i0],mapping[j0]);
+        }
+    
+        return gained;
+    }
+
+    long long SportsLayout::findNextNeighbor()
+    {
+        long long mini = 0;
+        // vector<int> bestNeighbour = mapping;
+
+        // for (int x=0; x<l; x++){cout << bestNeighbour[x] << " ";}
+        // cout << endl;
+
+        int best_i = 0;
+        int best_j = 0;
+        for (int i=0; i<z; i++)
+        {
+            for (int j=i+1; j<l; j++)
+            {   
+                // cout << "here" << i << " " << j << "\n";
+                long long gained = gain(i,j);
+                // cout << "gained " << gained << "\n"; 
+                if (gained < mini)
+                {
+                    mini = gained;
+                    best_i = i;
+                    best_j = j;
+                } 
+                // cout << "done!\n";
+            }
+        }
+        // cout << "best i and j" << best_i << " " << best_j << "\n";
+        
+        if (mini < 0){swap(mapping[best_i], mapping[best_j]);}
+        // cout << "mapping after swapping is :  ";
+        // for (int x=0; x<l; x++){cout << mapping[x] << " ";}
+        // cout << endl;
+
+        return mini;
+        
+    }
+
     void SportsLayout::compute_allocation()
     {
-        //you can write your code here 
-        //comment out following dummy code
-        for(int i=0;i<z;i++)
-        mapping[i]=i+1;
+        mapping = generateRandomPermutation(l);
+        long long currCost = cost_fn();
+        // cout << "Printing the initial randomstate to begin with search\n" ;
+        // for (int x=0; x<l; x++){cout << mapping[x] << " ";}
+        // cout << endl;
+        // reach greedily until local minima 
+        // while (true){            
+        //     // cost of this state;
+        //     // cout << currCost << "\n";
+        //     long long gained = findNextNeighbor();
+
+        //     // for (int x=0; x<l; x++){cout << nextNeighbour[x] << " ";}
+        //     // cout << endl;
+
+        //     vector<int> tempMapping = mapping;
+        //     mapping = nextNeighbour;
+        //     long long bestNeighbourCost = cost_fn();
+        //     if (bestNeighbourCost >= currCost) 
+        //     {
+        //         mapping = tempMapping;
+        //         break;
+        //     }
+
+        // }
+        int count = 0;
+        // int bestt_i = 0;
+        // int bestt_j = 0;
+        while (true){            
+             // cost of this state;
+            // cout << currCost << "\n";
+            long long gained = findNextNeighbor();
+            // cout << "gained " << gained << "\n\n";
+            if (gained == 0) break ; // reached local max !
+            currCost += gained;
+            count++;
+        }
+        if (currCost < best) 
+        {
+            bestMapping = mapping;
+            best = currCost;
+        } 
+
+        // cout << "best mapping in this iteration has cost \n";
+        //  for (int x=0; x<l; x++){cout << mapping[x] << " ";}
+        //     cout << endl;
+        // long long localOptimum = cost_fn();
+        // // cout << localOptimum << "\n";
+        // if (localOptimum < best) 
+        // {
+        //     bestMapping = mapping;
+        //     best = localOptimum;
+        // } 
   
     }
 

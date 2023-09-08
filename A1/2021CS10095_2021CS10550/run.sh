@@ -1,3 +1,4 @@
+./compile.sh
 # Store the input filenames in variables
 input_file1="$1"
 input_file2="$2"

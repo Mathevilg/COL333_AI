@@ -151,15 +151,27 @@ std::pair<int, int> generateDistinctRandomNumbers(int n) {
     long long localSearch::gain(int i, int j)
     {
         long long ans = 0;
-        for (int k=1; k<=l; k++)
-        {
-            if (k == i || k == j) continue;
-            // in case of bound error just return 0;
-            // works in case of mapping from z to l !!
-            ans += (T[k-1][j-1] - T[k-1][i-1])*((N[i-1][k-1] + N[k-1][i-1]) - (N[j-1][k-1] + N[k-1][j-1]));
-
+        int newmap_i = mapping[j];
+        int newmap_j = mapping[i];
+        for (int k=1; k<=l; k++) {
+            if (mapping[i]!=0 && mapping[k]!=0) {
+                ans -= T[i-1][k-1]*N[mapping[i]-1][mapping[k]-1];
+            }
+            if (newmap_i!=0 && mapping[k]!=0){
+                ans += T[i-1][k-1]*N[newmap_i-1][mapping[k]-1];
+            }
+            
+        }
+        for (int k=1; k<=l; k++) {
+            if (mapping[j]!=0 && mapping[k]!=0) {
+            ans -= T[k-1][j-1]*N[mapping[k]-1][mapping[j]-1];
+            }
+            if (newmap_j!=0 && mapping[k]!=0){
+            ans += T[k-1][j-1]*N[mapping[k]-1][newmap_j-1];
+            }
         }
         return ans;
+
     }
 
 
@@ -271,47 +283,31 @@ std::pair<int, int> generateDistinctRandomNumbers(int n) {
 
     vector<int> localSearch::findNextNeighbour()
     {
-        long long mini = cost_fn();
+        long long mini = 0;
         vector<int> bestNeighbour = mapping;
         // curr state
+        int best_i = 1;
+        int best_j = 1;
         for (int i=1; i<=l; i++)
         {
             for (int j=i+1; j<=l; j++)
             {   
                 if(! mapping[i] && !mapping[j]) continue;
-                swap(mapping[i], mapping[j]);
-                long long tmpCost = cost_fn();
-                if (tmpCost < mini)
+                // swap(T[i],T[j]);
+                long long gained = gain(i,j);
+                // swap(mapping[i], mapping[j]);
+                // long long tmpCost = cost_fn();
+                if (gained < mini)
                 {
-                    mini = tmpCost;
-                    bestNeighbour = mapping;
+                    mini = gained;
+                    best_i = i;
+                    best_j = j;
                 } 
-                swap(mapping[i], mapping[j]);
+                // swap(mapping[i], mapping[j]);
             }
         }
-        // int cnt = 0;
-        // bool b = false;
-        // while (cnt < min(150, l*l))
-        // {
-        //     pair<int, int> p = generateDistinctRandomNumbers(l);
-        //     int i = p.first, j = p.second;
-        //     swap(mapping[i], mapping[j]);
-        //     long long tmpCost = cost_fn();
-        //     if (tmpCost < mini)
-        //     {
-        //         mini = tmpCost;
-        //         bestNeighbour = mapping;
-        //         b = true;
-
-        //     } 
-        //     swap(mapping[i], mapping[j]);
-        //     if (b)
-        //     {
-        //         return bestNeighbour;
-        //     }
-        //     cnt++;
-        // }
-
+        
+        swap(bestNeighbour[best_i], bestNeighbour[best_j]);
         return bestNeighbour;
     }
 

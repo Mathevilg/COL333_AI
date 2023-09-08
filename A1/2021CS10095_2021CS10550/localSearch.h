@@ -16,7 +16,7 @@ private:
     int z, l;
     int **T;
     int **N;
-    int time;
+    float time;
     vector<int> mapping;
     long long curr;
     long long best;
@@ -36,14 +36,14 @@ public:
 
     void readInInputFile(string inputfilename);
 
-    void compute_allocation();
+    void compute_allocation(std::chrono::high_resolution_clock::time_point curr);
 
 
     // 0 means no allocation of zone to that location !
     // 0 base indexing followed !
     vector<int> randomPermutation();
 
-    int getTime();
+    float getTime();
 
     long long bestTime();
 
