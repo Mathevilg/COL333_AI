@@ -1,15 +1,203 @@
 #include <algorithm>
 #include <random>
 #include <iostream>
+#include <map>
 
 #include "board.hpp"
 #include "engine.hpp"
 
 int move_number = 0;
+
 using namespace std;
 
 # define MAX_DEPTH 3
 // actual depth is this value + 1. So if MAX_DEPTH = 3, then depth = 4
+
+/*
+constexpr U8 cw_90[64] = {
+        48, 40, 32, 24, 16, 8,  0,  7,
+        49, 41, 33, 25, 17, 9,  1,  15,
+        50, 42, 18, 19, 20, 10, 2,  23,
+        51, 43, 26, 27, 28, 11, 3,  31,
+        52, 44, 34, 35, 36, 12, 4,  39,
+        53, 45, 37, 29, 21, 13, 5,  47,
+        54, 46, 38, 30, 22, 14, 6,  55,
+        56, 57, 58, 59, 60, 61, 62, 63
+};
+
+constexpr U8 acw_90[64] = {
+        6, 14, 22, 30, 38, 46, 54, 7,
+        5, 13, 21, 29, 37, 45, 53, 15,
+        4, 12, 18, 19, 20, 44, 52, 23,
+        3, 11, 26, 27, 28, 43, 51, 31,
+        2, 10, 34, 35, 36, 42, 50, 39,
+        1,  9, 17, 25, 33, 41, 49, 47,
+        0,  8, 16, 24, 32, 40, 48, 55,
+        56, 57, 58, 59, 60, 61, 62, 63
+};
+
+constexpr U8 cw_180[64] = {
+        54, 53, 52, 51, 50, 49, 48, 7,
+        46, 45, 44, 43, 42, 41, 40, 15,
+        38, 37, 18, 19, 20, 33, 32, 23,
+        30, 29, 26, 27, 28, 25, 24, 31,
+        22, 21, 34, 35, 36, 17, 16, 39,
+        14, 13, 12, 11, 10,  9,  8, 47,
+        6,  5,  4,  3,  2,  1,  0, 55,
+        56, 57, 58, 59, 60, 61, 62, 63
+};
+
+constexpr U8 id[64] = {
+        0,  1,  2,  3,  4,  5,  6,  7,
+        8,  9, 10, 11, 12, 13, 14, 15,
+        16, 17, 18, 19, 20, 21, 22, 23,
+        24, 25, 26, 27, 28, 29, 30, 31,
+        32, 33, 34, 35, 36, 37, 38, 39,
+        40, 41, 42, 43, 44, 45, 46, 47,
+        48, 49, 50, 51, 52, 53, 54, 55,
+        56, 57, 58, 59, 60, 61, 62, 63
+};
+
+#define cw_90_pos(p) cw_90[p]
+#define cw_180_pos(p) cw_180[p]
+#define acw_90_pos(p) acw_90[p]
+#define id_pos(p) id[p]
+
+int get_pawn_score(U8 P)
+{
+    map<U8, int> pawn_scores;
+    pawn_scores[pos(2, 0)] = 0;
+    pawn_scores[pos(2, 1)] = 0;
+    for (int i = 0; i < 6; i++)
+    {
+        pawn_scores[pos(0, i)] = i+1;
+        pawn_scores[pos(1, i)] = i+1;
+    }
+    pawn_scores[pos(0, 6)] = 6;
+    pawn_scores[pos(1, 6)] = 6;
+
+    for (int i = 2; i <= 4; i++)
+    {
+        pawn_scores[pos(i, 5)] = 5+i;
+        pawn_scores[pos(i, 6)] = 5+i;
+    }
+
+    return pawn_scores[P];
+}
+
+int get_bishop_score(U8 P)
+{
+    map<U8, int> bishop_scores;
+    bishop_scores[pos(1, 0)] = 3;
+    bishop_scores[pos(2, 1)] = 8;
+    bishop_scores[pos(3, 0)] = 7;
+    bishop_scores[pos(4, 1)] = 6;
+    bishop_scores[pos(5, 0)] = 3;
+    bishop_scores[pos(6, 1)] = 3;
+
+    if (gety(P) <= 1 && getx(P) >= 1 && getx(P) <= 5)
+    {
+        return bishop_scores[P];
+    }
+
+    U8 P1 = cw_90_pos(P);
+    U8 P2 = cw_180_pos(P);
+    U8 P3 = acw_90_pos(P);
+    if (gety(P1) <= 1 && getx(P1) >= 1 && getx(P1) <= 5)
+    {
+        return bishop_scores[P1];
+    }
+    if (gety(P2) <= 1 && getx(P2) >= 1 && getx(P2) <= 5)
+    {
+        return bishop_scores[P2];
+    }
+    if (gety(P3) <= 1 && getx(P3) >= 1 && getx(P3) <= 5)
+    {
+        return bishop_scores[P3];
+    }
+
+    cout<<"no matching position for bishop";
+    return -1;
+}
+
+// old bishop stupid no rotation code comented below
+/*
+
+ //    bishop_scores[pos(0, 1)] = 3;
+//    bishop_scores[pos(1, 0)] = 3;
+//    bishop_scores[pos(2, 1)] = 8;
+//    bishop_scores[pos(3, 0)] = 7;
+//    bishop_scores[pos(4, 1)] = 6;
+//    bishop_scores[pos(5, 0)] = 3;
+//    bishop_scores[pos(6, 1)] = 3;
+//
+//    bishop_scores[pos(1, 2)] = 6;
+//    bishop_scores[pos(0, 3)] = 7;
+//    bishop_scores[pos(1, 4)] = 8;
+//
+//    bishop_scores[pos(5, 2)] = 8;
+//    bishop_scores[pos(6, 3)] = 7;
+//    bishop_scores[pos(5, 4)] = 6;
+//    if (gety(P) >= 5)
+//    {
+//        int x1 = getx(P);
+//        int y1 = gety(P);
+//        return bishop_scores[pos(6-x1, 6-y1)];
+//    }
+//    else
+//    {
+//        return bishop_scores[P];
+//    }
+
+
+int get_rook_score(U8 P)
+{
+    map<U8, int> rook_scores;
+    rook_scores[pos(1, 0)] = 20;
+    for (int i = 2; i <= 5; i++)
+    {
+        rook_scores[pos(i, 0)] = 8+ i;
+    }
+    rook_scores[pos(6, 0)] = 13;
+
+    for (int i = 2; i <= 4; i++)
+    {
+        rook_scores[pos(i, 1)] = i+ 2;
+    }
+
+    rook_scores[pos(5, 1)] = 8;
+
+    if ((gety(P) == 0 && getx(P) >= 1) || (gety(P) == 1 && getx(P) <= 5 && getx(P) >= 2))
+    {
+        return rook_scores[P];
+    }
+
+    U8 P1 = cw_90_pos(P);
+    U8 P2 = cw_180_pos(P);
+    U8 P3 = acw_90_pos(P);
+    if ((gety(P1) == 0 && getx(P1) >= 1) || (gety(P1) == 1 && getx(P1) <= 5 && getx(P1) >= 2))
+    {
+        return rook_scores[P1];
+    }
+    if ((gety(P2) == 0 && getx(P2) >= 1) || (gety(P2) == 1 && getx(P2) <= 5 && getx(P2) >= 2))
+    {
+        return rook_scores[P2];
+    }
+    if ((gety(P3) == 0 && getx(P3) >= 1) || (gety(P3) == 1 && getx(P3) <= 5 && getx(P3) >= 2))
+    {
+        return rook_scores[P3];
+    }
+
+    cout<<"no matching position for bishop";
+    return -1;
+}
+
+int get_king_score(U8 P)
+{
+    return 1;
+}
+
+*/
 
 int calculate_material(const Board& b)
 {
@@ -33,6 +221,10 @@ int calculate_material(const Board& b)
         {
             material -= 3;
         }
+        else if (c == 'k')
+        {
+            material -= 10;
+        }
         else if (c == 'P')
         {
             material += 1;
@@ -44,6 +236,10 @@ int calculate_material(const Board& b)
         else if (c == 'R')
         {
             material += 3;
+        }
+        else if (c == 'K')
+        {
+            material += 10;
         }
     }
     return material;
@@ -109,7 +305,6 @@ int count_pawn_score(Board b)
     return pawn_score;
 }
 
-
 int calc_check_score(Board b)
 {
 
@@ -124,15 +319,25 @@ int calc_check_score(Board b)
         return 0;
 }
 
-
 int evaluate_function(Board b)
 {
+    if (b.get_legal_moves().empty())
+    {
+        if (b.in_check()) {
+            if (b.data.player_to_play == WHITE)
+                return -100000;
+            else
+                return 100000;
+        }
+        else
+            return 0;
+    }
     int material = calculate_material(b);
-    int w1 = 10;
+    int w1 = 13;
     int pawn_score = count_pawn_score(b);
     int w2 = 5;
     int check_score = calc_check_score(b);
-    int w3 = 5;
+    int w3 = 2;
     return (w1*material + w2*pawn_score + w3*check_score);
 }
 
@@ -186,7 +391,8 @@ pair<int, U16> Min_value(Board b, int depth, int alpha, int beta, Engine* e)
         auto moveset = b.get_legal_moves();
         if (moveset.size() == 0) {
             return make_pair(0, best_move);
-        } else {
+        }
+        else {
 
             int min_value = 100000;
             for (auto m: moveset) {
@@ -240,6 +446,7 @@ void Engine::find_best_move(const Board& b) {
         this->best_move = MiniMax(b, colour, this);
         return;
     }
+}
 
     // pick a random move
 //    std::cout<<move_number++<<'\n';
@@ -264,4 +471,4 @@ void Engine::find_best_move(const Board& b) {
 //        );
 //        this->best_move = moves[0];
 //    }
-}
+
