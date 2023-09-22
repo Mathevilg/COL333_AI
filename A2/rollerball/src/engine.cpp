@@ -139,6 +139,8 @@ int how_many_protected_score(Board& b)
     return 0;
 }
 
+// similarly how many attacked
+
 int get_pawn_score(U8 P)
 {
     map<U8, int> pawn_scores;
@@ -493,13 +495,13 @@ int evaluate_function(Board b)
             return 0;
     }
     int material = calculate_material(b);  // range -5 to +5
-    int w1 = 80;
+    int w1 = 85;
     int pawn_score = count_pawn_score(b); // range -20 to +20
     int w2 = 6;
     int check_score = calc_check_score(b); // -10 or 10
-    int w3 = 4;
+    int w3 = 7;
     int protected_score = 0;  // how_many_protected_score(b);
-    int w4 = 5;
+    int w4 = 8;
     int positional_score = calculate_positional_score(b); // range -20 to +20
     int w5 = 5;
 
