@@ -255,7 +255,7 @@ int get_bishop_score(U8 P)
 int get_rook_score(U8 P)
 {
     map<U8, int> rook_scores;
-    rook_scores[pos(1, 0)] = 20;
+    rook_scores[pos(1, 0)] = 15;
     for (int i = 2; i <= 5; i++)
     {
         rook_scores[pos(i, 0)] = 8+ i;
@@ -395,11 +395,11 @@ int calculate_positional_score(const Board& b)
             // PAWN score belongs to (-9 to 9)
             if (b.data.board_0[i] == (WHITE | PAWN))
             {
-                positional_score += get_pawn_score_white(i);
+                positional_score += get_pawn_score_white(i) * 2;
             }
             else if (b.data.board_0[i] == (BLACK | PAWN))
             {
-                 positional_score -= get_pawn_score_black(i);
+                 positional_score -= get_pawn_score_black(i) * 2;
             }
 
             // BISHOP score belongs to (-8 to 8)
@@ -527,7 +527,7 @@ int evaluate_function(Board b)
     }
 
     int material = calculate_material(b);  // range -5 to +5
-    int w1 = 85;
+    int w1 = 100;
 
     int pawn_score = 0; // count_pawn_score(b); // range -20 to +20
     int w2 = 6;
@@ -540,7 +540,7 @@ int evaluate_function(Board b)
 
     int positional_score = calculate_positional_score(b); // range -20/-13 to +20/+13 (for rook)
                                                             // -9 to 9 for pawn, -8 to 8 for bishop
-    int w5 = 6;
+    int w5 = 2;
 
     int final_score = (w1*material) + (w2*pawn_score) + (w3*check_score) + (w4*protected_score) + (w5*positional_score);
     return final_score;
