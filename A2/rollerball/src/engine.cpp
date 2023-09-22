@@ -281,6 +281,43 @@ int calculate_material(const Board& b)
 //    cout<<board_str;
 //    cout<<"\n";
 
+    for (unsigned char i : b.data.board_0)
+    {
+        if (i == (WHITE | PAWN))
+        {
+            material += 1;
+        }
+        else if (i == (BLACK | PAWN))
+        {
+            material -= 1;
+        }
+        else if (i == (WHITE | BISHOP))
+        {
+            material += 5;
+        }
+        else if (i == (BLACK | BISHOP))
+        {
+            material -= 5;
+        }
+        else if (i == (WHITE | ROOK))
+        {
+            material += 3;
+        }
+        else if (i == (BLACK | ROOK))
+        {
+            material -= 3;
+        }
+        else if (i == (WHITE | KING))
+        {
+            material += 10;
+        }
+        else if (i == (BLACK | KING))
+        {
+            material -= 10;
+        }
+    }
+
+    /*
     for (auto c : board_str)
     {
         if (c == 'p')
@@ -316,6 +353,7 @@ int calculate_material(const Board& b)
             material += 10;
         }
     }
+     */
     return material;
 }
 
@@ -454,16 +492,16 @@ int evaluate_function(Board b)
         else
             return 0;
     }
-    int material = calculate_material(b);
-    int w1 = 10;
-    int pawn_score = 0;  // count_pawn_score(b);
-    int w2 = 5;
-    int check_score = calc_check_score(b);
-    int w3 = 2;
+    int material = calculate_material(b);  // range -5 to +5
+    int w1 = 80;
+    int pawn_score = count_pawn_score(b); // range -20 to +20
+    int w2 = 6;
+    int check_score = calc_check_score(b); // -10 or 10
+    int w3 = 4;
     int protected_score = 0;  // how_many_protected_score(b);
     int w4 = 5;
-    int positional_score = calculate_positional_score(b);
-    int w5 = 1;
+    int positional_score = calculate_positional_score(b); // range -20 to +20
+    int w5 = 5;
 
     int final_score = (w1*material) + (w2*pawn_score) + (w3*check_score) + (w4*protected_score) + (w5*positional_score);
     return final_score;
