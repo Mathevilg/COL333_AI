@@ -165,7 +165,8 @@ int get_pawn_score_white(U8 P)
         pawn_scores[pos(i, 6)] = 5+i;
     }
 
-    pawn_scores[3, 6] = 11;
+    pawn_scores[pos(3, 6)] = 10;
+    pawn_scores[pos(3, 5)] = 10;
     return pawn_scores[P];
 }
 
@@ -244,7 +245,7 @@ int get_bishop_score(U8 P)
 int get_rook_score_white(U8 P)
 {
     map<U8, int> rook_scores;
-    rook_scores[pos(1, 0)] = 15;
+    rook_scores[pos(1, 0)] = 13;
     for (int i = 2; i <= 5; i++)
     {
         rook_scores[pos(i, 0)] = 8+ i;
@@ -262,13 +263,18 @@ int get_rook_score_white(U8 P)
         rook_scores[pos(6, 0)] = 3;
         rook_scores[pos(5, 0)] = 3;
         rook_scores[pos(4, 0)] = 5;
-        rook_scores[pos(3, 0)] = 6;
-        rook_scores[pos(2, 0)] = 7;
-        rook_scores[pos(6, 1)] = 3;
-        rook_scores[pos(5, 1)] = 3;
-        rook_scores[pos(4, 1)] = 5;
-        rook_scores[pos(4, 1)] = 6;
-        rook_scores[pos(4, 1)] = 7;
+        rook_scores[pos(3, 0)] = 7;
+        rook_scores[pos(2, 0)] = 8;
+        rook_scores[pos(1, 0)] = 15;
+        rook_scores[pos(1, 0)] = 15;
+
+        rook_scores[pos(6, 1)] = 2;
+        rook_scores[pos(5, 1)] = 2;
+        rook_scores[pos(4, 1)] = 4;
+        rook_scores[pos(3, 1)] = 6;
+        rook_scores[pos(2, 1)] = 7;
+        rook_scores[pos(1, 1)] = 15;
+        rook_scores[pos(1, 1)] = 15;
 
         return rook_scores[P];
     }
@@ -282,11 +288,11 @@ int get_rook_score_white(U8 P)
     }
     if ((gety(P2) == 0 && getx(P2) >= 1) || (gety(P2) == 1 && getx(P2) <= 5 && getx(P2) >= 2))
     {
-        return rook_scores[P2]+2;
+        return rook_scores[P2]+4;
     }
     if ((gety(P3) == 0 && getx(P3) >= 1) || (gety(P3) == 1 && getx(P3) <= 5 && getx(P3) >= 2))
     {
-        return rook_scores[P3]+2;
+        return rook_scores[P3]+4;
     }
 
     cout<<"no matching position for bishop";
@@ -300,12 +306,27 @@ int get_rook_score_black(U8 P)
 }
 
 
-int get_king_score(U8 P)
+int get_king_score_white(U8 P)
 {
-    map<U8, int> king_scores;
+//    map<U8, int> king_scores;
+//
+//    king_scores[pos(3, 1)] = 0;
+//    king_scores[pos(3, 0)] = 0;
+//
+//    if ((getx(P) == 3) || getx)
+//    {
+//        return king_scores[P] = 0;
+//    }
 
-    return 100;
+    return 10;
 }
+
+int get_king_score_black(U8 P)
+{
+    U8 P1 = cw_180_pos(P);
+    return get_king_score_white(P1);
+}
+
 
 int calculate_material(const Board& b)
 {
@@ -437,11 +458,11 @@ int calculate_positional_score(const Board& b)
             // below is useless (for now) +100 - 100 = 0 always
             else if (b.data.board_0[i] == (WHITE | KING))
             {
-                positional_score += get_king_score(i);
+                positional_score += get_king_score_white(i);
             }
             else if (b.data.board_0[i] == (BLACK | KING))
             {
-                positional_score -= get_king_score(i);
+                positional_score -= get_king_score_black(i);
             }
         }
     }
@@ -679,20 +700,23 @@ pair<int, U16> Min_value(Board b, int depth, int alpha, int beta, Engine* e)
 }
 
 
-U16 MiniMax(Board b, PlayerColor colour, Engine* e)
+pair<int, U16> MiniMax(Board b, PlayerColor colour, Engine* e)
 {
     auto moveset = b.get_legal_moves();
 
     if (moveset.empty()) {
-        return 0;
+        return make_pair(0, 0);
     }
     else {
         auto ans = make_pair(0, 0);
         if (colour == BLACK)
         {
             ans = Min_value(b, 0, -100000, 100000, e);
+            cout<<"\n\n\n";
             cout<< "final evaluation is, "<<ans.first<< " at MAX_DEPTH: "<<MAX_DEPTH<<'\n';
-            return ans.second;
+            cout<<"best move at this depth is: "<<move_to_str(ans.second)<<"\n";
+            cout<<"\n\n\n";
+            return ans;
         }
         else
         {
@@ -701,7 +725,7 @@ U16 MiniMax(Board b, PlayerColor colour, Engine* e)
             cout<< "final evaluation is, "<<ans.first<< " at MAX_DEPTH: "<<MAX_DEPTH<<'\n';
             cout<<"best move at this depth is: "<<move_to_str(ans.second)<<"\n";
             cout<<"\n\n\n";
-            return ans.second;
+            return ans;
         }
     }
 }
@@ -714,7 +738,18 @@ void Engine::find_best_move(const Board& b) {
     if (this->search) {
         while (this->search)
         {
-            this->best_move = MiniMax(b, colour, this);
+            if ((b.data.player_to_play == WHITE) && ( b.data.board_0[pos(2, 1)] == (WHITE|PAWN)) && (b.data.board_0[pos(1, 2)] == EMPTY) ) {
+
+                this->best_move = (pos(2, 1) << 8) | (pos(1, 2));
+                cout << move_to_str(this->best_move) << endl;
+                return ;
+            }
+
+            auto p = MiniMax(b, colour, this);
+            this->best_move = p.second;
+            if (p.first == 100000)
+                break;
+
             if (MAX_DEPTH == 0)
                 MAX_DEPTH++;
             else
