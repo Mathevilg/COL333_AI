@@ -188,7 +188,7 @@ int get_pawn_score_black(U8 P1)
         pawn_scores[pos(i, 6)] = 5+i;
     }
 
-    return pawn_scores[P];
+    return pawn_scores[P]+1;
 }
 
 int get_bishop_score(U8 P)
@@ -256,7 +256,7 @@ int get_bishop_score(U8 P)
 //    }
 */
 
-int get_rook_score(U8 P)
+int get_rook_score_white(U8 P)
 {
     map<U8, int> rook_scores;
     rook_scores[pos(1, 0)] = 15;
@@ -274,6 +274,12 @@ int get_rook_score(U8 P)
 
     if ((gety(P) == 0 && getx(P) >= 1) || (gety(P) == 1 && getx(P) <= 5 && getx(P) >= 2))
     {
+        rook_scores[pos(6, 0)] = 3;
+        rook_scores[pos(5, 0)] = 3;
+        rook_scores[pos(4, 0)] = 4;
+        rook_scores[pos(6, 1)] = 3;
+        rook_scores[pos(5, 1)] = 3;
+        rook_scores[pos(4, 1)] = 4;
         return rook_scores[P];
     }
 
@@ -296,6 +302,13 @@ int get_rook_score(U8 P)
     cout<<"no matching position for bishop";
     return -1;
 }
+
+int get_rook_score_black(U8 P)
+{
+    U8 P1 = cw_180_pos(P);
+    return get_rook_score_white(P1);
+}
+
 
 int get_king_score(U8 P)
 {
@@ -384,6 +397,8 @@ int calculate_material(const Board& b)
         }
     }
      */
+
+
     return material;
 }
 
@@ -420,11 +435,11 @@ int calculate_positional_score(const Board& b)
             // ROOK score belongs to (
             else if (b.data.board_0[i] == (WHITE | ROOK))
             {
-                positional_score += get_rook_score(i);
+                positional_score += get_rook_score_white(i);
             }
             else if (b.data.board_0[i] == (BLACK | ROOK))
             {
-                positional_score -= get_rook_score(i);
+                positional_score -= get_rook_score_black(i);
             }
 
             // below is useless (for now) +100 - 100 = 0 always
