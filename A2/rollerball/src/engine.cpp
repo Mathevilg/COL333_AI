@@ -10,7 +10,11 @@ int move_number = 0;
 
 using namespace std;
 
-# define MAX_DEPTH 3
+//# define MAX_DEPTH 3
+
+
+
+int MAX_DEPTH = 0;
 // actual depth is this value + 1. So if MAX_DEPTH = 3, then depth = 4
 
 constexpr U8 cw_90[64] = {
@@ -306,6 +310,7 @@ int calculate_material(const Board& b)
 //    cout<<board_str;
 //    cout<<"\n";
 
+
     for (unsigned char i : b.data.board_0)
     {
         if (i == (WHITE | PAWN))
@@ -553,7 +558,7 @@ pair<int, U16> Max_value(Board b, int depth, int alpha, int beta, Engine* e)
 {
     if (!(e->search))
     {
-        return make_pair(0, U16(e->best_move));
+        return make_pair(-789, U16(e->best_move));
     }
 
     if (depth > MAX_DEPTH)
@@ -586,16 +591,22 @@ pair<int, U16> Max_value(Board b, int depth, int alpha, int beta, Engine* e)
                 Board b_copy = *b.copy();
                 b_copy.do_move(m);
                 auto min_ans = Min_value(b_copy, depth + 1, alpha, beta, e);
+                if (!(e->search))
+                {
+                    return make_pair(6789, U16(e->best_move));
+                }
+
                 alpha = max(alpha, min_ans.first);
                 if (alpha>=beta)
                     return make_pair(min_ans.first, m);
+
 
                 if (min_ans.first > max_value)
                 {
                     max_value = min_ans.first;
                     best_move = m;
-                    if (depth == 0)
-                        e->best_move = m;
+//                    if (depth == 0)
+//                        e->best_move = m;
                 }
             }
 
@@ -608,7 +619,7 @@ pair<int, U16> Min_value(Board b, int depth, int alpha, int beta, Engine* e)
 {
     if (!(e->search))
     {
-        return make_pair(0, U16(e->best_move));
+        return make_pair(6789, U16(e->best_move));
     }
 
     if (depth > MAX_DEPTH) {
@@ -618,7 +629,7 @@ pair<int, U16> Min_value(Board b, int depth, int alpha, int beta, Engine* e)
     else {
         U16 best_move = 0;
         auto moveset = b.get_legal_moves();
-        if (moveset.size() == 0) {
+        if (moveset.empty()) {
             if (b.in_check()) {
                 if (b.data.player_to_play == WHITE)
                     return make_pair(-100000, best_move);
@@ -633,20 +644,25 @@ pair<int, U16> Min_value(Board b, int depth, int alpha, int beta, Engine* e)
             for (auto m: moveset) {
                 if (!(e->search))
                 {
-                    return make_pair(0, U16(e->best_move));
+                    return make_pair(6789, U16(e->best_move));
                 }
 
                 Board b_copy = *b.copy();
                 b_copy.do_move(m);
                 auto max_ans = Max_value(b_copy, depth + 1, alpha, beta, e);
+                if (!(e->search))
+                {
+                    return make_pair(6789, U16(e->best_move));
+                }
+
                 beta = min(beta, max_ans.first);
                 if (alpha>=beta)
                     return make_pair(max_ans.first, m);
                 if (max_ans.first < min_value) {
                     min_value = max_ans.first;
                     best_move = m;
-                    if (depth == 0)
-                        e->best_move = m;
+//                    if (depth == 0)
+//                        e->best_move = m;
                 }
             }
 
@@ -668,11 +684,16 @@ U16 MiniMax(Board b, PlayerColor colour, Engine* e)
         if (colour == BLACK)
         {
             ans = Min_value(b, 0, -100000, 100000, e);
+            cout<< "final evaluation is, "<<ans.first<< " at MAX_DEPTH: "<<MAX_DEPTH<<'\n';
             return ans.second;
         }
         else
         {
             ans = Max_value(b, 0, -100000, 100000, e);
+            cout<<"\n\n\n";
+            cout<< "final evaluation is, "<<ans.first<< " at MAX_DEPTH: "<<MAX_DEPTH<<'\n';
+            cout<<"best move at this depth is: "<<move_to_str(ans.second)<<"\n";
+            cout<<"\n\n\n";
             return ans.second;
         }
     }
@@ -682,9 +703,17 @@ U16 MiniMax(Board b, PlayerColor colour, Engine* e)
 void Engine::find_best_move(const Board& b) {
 
     auto colour = b.data.player_to_play;
-
+    MAX_DEPTH = 0;
     if (this->search) {
-        this->best_move = MiniMax(b, colour, this);
+        while (this->search)
+        {
+            this->best_move = MiniMax(b, colour, this);
+//            if (MAX_DEPTH == 0)
+//                MAX_DEPTH++;
+//            else
+//                MAX_DEPTH += 2;
+            MAX_DEPTH++;
+        }
         return;
     }
 }
