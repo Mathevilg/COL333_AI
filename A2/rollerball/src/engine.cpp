@@ -151,22 +151,30 @@ int get_pawn_score_white(U8 P)
     map<U8, int> pawn_scores;
     pawn_scores[pos(2, 0)] = 0;
     pawn_scores[pos(2, 1)] = 0;
-    for (int i = 0; i < 6; i++)
+
+    pawn_scores[pos(0, 0)] = 1;
+    pawn_scores[pos(1, 0)] = 1;
+
+    pawn_scores[pos(0, 1)] = 2;
+    pawn_scores[pos(1, 1)] = 2;
+
+
+    for (int i = 2; i < 6; i++)
     {
-        pawn_scores[pos(0, i)] = i+1;
-        pawn_scores[pos(1, i)] = i+1;
+        pawn_scores[pos(0, i)] = i+3;
+        pawn_scores[pos(1, i)] = i+3;
     }
-    pawn_scores[pos(0, 6)] = 6;
-    pawn_scores[pos(1, 6)] = 6;
+    pawn_scores[pos(0, 6)] = 8;
+    pawn_scores[pos(1, 6)] = 8;
 
     for (int i = 2; i <= 4; i++)
     {
-        pawn_scores[pos(i, 5)] = 5+i;
-        pawn_scores[pos(i, 6)] = 5+i;
+        pawn_scores[pos(i, 5)] = 7+i;
+        pawn_scores[pos(i, 6)] = 7+i;
     }
 
-    pawn_scores[pos(3, 6)] = 10;
-    pawn_scores[pos(3, 5)] = 10;
+    pawn_scores[pos(3, 6)] = 12;
+    pawn_scores[pos(3, 5)] = 12;
     return pawn_scores[P];
 }
 
@@ -245,12 +253,12 @@ int get_bishop_score(U8 P)
 int get_rook_score_white(U8 P)
 {
     map<U8, int> rook_scores;
-    rook_scores[pos(1, 0)] = 13;
+    rook_scores[pos(1, 0)] = 16;
     for (int i = 2; i <= 5; i++)
     {
-        rook_scores[pos(i, 0)] = 8+ i;
+        rook_scores[pos(i, 0)] = 10+ i;
     }
-    rook_scores[pos(6, 0)] = 13;
+    rook_scores[pos(6, 0)] = 16;
 
     for (int i = 2; i <= 4; i++)
     {
@@ -260,13 +268,13 @@ int get_rook_score_white(U8 P)
 
     if ((gety(P) == 0 && getx(P) >= 1) || (gety(P) == 1 && getx(P) <= 5 && getx(P) >= 2))
     {
-        rook_scores[pos(6, 0)] = 3;
-        rook_scores[pos(5, 0)] = 3;
-        rook_scores[pos(4, 0)] = 5;
-        rook_scores[pos(3, 0)] = 7;
-        rook_scores[pos(2, 0)] = 8;
-        rook_scores[pos(1, 0)] = 15;
-        rook_scores[pos(1, 0)] = 15;
+        rook_scores[pos(6, 0)] = 5;
+        rook_scores[pos(5, 0)] = 5;
+        rook_scores[pos(4, 0)] = 7;
+        rook_scores[pos(3, 0)] = 10;
+        rook_scores[pos(2, 0)] = 11;
+        rook_scores[pos(1, 0)] = 16;
+        rook_scores[pos(0, 0)] = 16;
 
         rook_scores[pos(6, 1)] = 2;
         rook_scores[pos(5, 1)] = 2;
@@ -274,7 +282,7 @@ int get_rook_score_white(U8 P)
         rook_scores[pos(3, 1)] = 6;
         rook_scores[pos(2, 1)] = 7;
         rook_scores[pos(1, 1)] = 15;
-        rook_scores[pos(1, 1)] = 15;
+        rook_scores[pos(0, 1)] = 15;
 
         return rook_scores[P];
     }
