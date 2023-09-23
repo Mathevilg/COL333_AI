@@ -141,32 +141,8 @@ int how_many_protected_score(Board& b)
 
 // similarly how many attacked
 
-// wrong code below of count_pawn_score, uses b.data.w_pawn_ws and b.data.w_pawn_bs
-int get_pawn_score_white(U8 P)
+int get_pawn_score(U8 P)
 {
-    map<U8, int> pawn_scores;
-    pawn_scores[pos(2, 0)] = 0;
-    pawn_scores[pos(2, 1)] = 0;
-    for (int i = 0; i < 6; i++)
-    {
-        pawn_scores[pos(0, i)] = i+1;
-        pawn_scores[pos(1, i)] = i+1;
-    }
-    pawn_scores[pos(0, 6)] = 6;
-    pawn_scores[pos(1, 6)] = 6;
-
-    for (int i = 2; i <= 4; i++)
-    {
-        pawn_scores[pos(i, 5)] = 5+i;
-        pawn_scores[pos(i, 6)] = 5+i;
-    }
-
-    return pawn_scores[P];
-}
-
-int get_pawn_score_black(U8 P1)
-{
-    U8 P = cw_180_pos(P1);
     map<U8, int> pawn_scores;
     pawn_scores[pos(2, 0)] = 0;
     pawn_scores[pos(2, 1)] = 0;
@@ -195,7 +171,7 @@ int get_bishop_score(U8 P)
     bishop_scores[pos(3, 0)] = 7;
     bishop_scores[pos(4, 1)] = 6;
     bishop_scores[pos(5, 0)] = 3;
-//    bishop_scores[pos(6, 1)] = 3;
+    bishop_scores[pos(6, 1)] = 3;
 
     if (gety(P) <= 1 && getx(P) >= 1 && getx(P) <= 5)
     {
@@ -255,7 +231,7 @@ int get_bishop_score(U8 P)
 int get_rook_score(U8 P)
 {
     map<U8, int> rook_scores;
-    rook_scores[pos(1, 0)] = 15;
+    rook_scores[pos(1, 0)] = 20;
     for (int i = 2; i <= 5; i++)
     {
         rook_scores[pos(i, 0)] = 8+ i;
@@ -266,6 +242,7 @@ int get_rook_score(U8 P)
     {
         rook_scores[pos(i, 1)] = i+ 2;
     }
+
     rook_scores[pos(5, 1)] = 8;
 
     if ((gety(P) == 0 && getx(P) >= 1) || (gety(P) == 1 && getx(P) <= 5 && getx(P) >= 2))
@@ -301,7 +278,7 @@ int get_king_score(U8 P)
 int calculate_material(const Board& b)
 {
     int material = 0;
-//    string board_str = board_to_str(b.data.board_0);
+    string board_str = board_to_str(b.data.board_0);
 //    cout<<"\n";
 //    cout<<board_str;
 //    cout<<"\n";
@@ -392,17 +369,14 @@ int calculate_positional_score(const Board& b)
             continue;
         else
         {
-            // PAWN score belongs to (-9 to 9)
             if (b.data.board_0[i] == (WHITE | PAWN))
             {
-                positional_score += get_pawn_score_white(i) * 2;
+                positional_score += get_pawn_score(i);
             }
             else if (b.data.board_0[i] == (BLACK | PAWN))
             {
-                 positional_score -= get_pawn_score_black(i) * 2;
+                positional_score -= get_pawn_score(i);
             }
-
-            // BISHOP score belongs to (-8 to 8)
             else if (b.data.board_0[i] == (WHITE | BISHOP))
             {
                 positional_score += get_bishop_score(i);
@@ -411,8 +385,6 @@ int calculate_positional_score(const Board& b)
             {
                 positional_score -= get_bishop_score(i);
             }
-
-            // ROOK score belongs to (
             else if (b.data.board_0[i] == (WHITE | ROOK))
             {
                 positional_score += get_rook_score(i);
@@ -421,8 +393,6 @@ int calculate_positional_score(const Board& b)
             {
                 positional_score -= get_rook_score(i);
             }
-
-            // below is useless (for now) +100 - 100 = 0 always
             else if (b.data.board_0[i] == (WHITE | KING))
             {
                 positional_score += get_king_score(i);
@@ -443,7 +413,6 @@ int count_pawn_score(Board b)
 
     pair<int, int> wp1 = make_pair(getx(b.data.w_pawn_ws), gety(b.data.w_pawn_ws));
     pair<int, int> wp2 = make_pair(getx(b.data.w_pawn_bs), gety(b.data.w_pawn_bs));
-
     pair<int, int> bp1 = make_pair(getx(b.data.b_pawn_ws), gety(b.data.b_pawn_ws));
     pair<int, int> bp2 = make_pair(getx(b.data.b_pawn_bs), gety(b.data.b_pawn_bs));
 
@@ -525,37 +494,25 @@ int evaluate_function(Board b)
         else
             return 0;
     }
-
     int material = calculate_material(b);  // range -5 to +5
-    int w1 = 100;
-
-    int pawn_score = 0; // count_pawn_score(b); // range -20 to +20
+    int w1 = 85;
+    int pawn_score = count_pawn_score(b); // range -20 to +20
     int w2 = 6;
-    // wrong code for count_pawn_score, uses b.data.w_pawn_ws and b.data.w_pawn_bs
-    int protected_score = 0;  // how_many_protected_score(b);  // -1 to 1
-    int w4 = 8;
-
     int check_score = calc_check_score(b); // -10 or 10
     int w3 = 7;
-
-    int positional_score = calculate_positional_score(b); // range -20/-13 to +20/+13 (for rook)
-                                                            // -9 to 9 for pawn, -8 to 8 for bishop
-    int w5 = 2;
+    int protected_score = 0;  // how_many_protected_score(b);
+    int w4 = 8;
+    int positional_score = calculate_positional_score(b); // range -20 to +20
+    int w5 = 5;
 
     int final_score = (w1*material) + (w2*pawn_score) + (w3*check_score) + (w4*protected_score) + (w5*positional_score);
     return final_score;
 }
 
-
 pair<int, U16> Min_value(Board b, int depth, int alpha, int beta, Engine* e);
 
 pair<int, U16> Max_value(Board b, int depth, int alpha, int beta, Engine* e)
 {
-    if (!(e->search))
-    {
-        return make_pair(0, U16(e->best_move));
-    }
-
     if (depth > MAX_DEPTH)
     {
         return make_pair(evaluate_function(b), 0);
@@ -576,19 +533,14 @@ pair<int, U16> Max_value(Board b, int depth, int alpha, int beta, Engine* e)
         }
         else {
 
-            int max_value = -100050;
+            int max_value = -100000;
             for (auto m : moveset) {
-                if (!(e->search))
-                {
-                    return make_pair(0, U16(e->best_move));
-                }
-
                 Board b_copy = *b.copy();
                 b_copy.do_move(m);
                 auto min_ans = Min_value(b_copy, depth + 1, alpha, beta, e);
                 alpha = max(alpha, min_ans.first);
                 if (alpha>=beta)
-                    return make_pair(min_ans.first, m);
+                    return make_pair(alpha, m);
 
                 if (min_ans.first > max_value)
                 {
@@ -606,15 +558,9 @@ pair<int, U16> Max_value(Board b, int depth, int alpha, int beta, Engine* e)
 
 pair<int, U16> Min_value(Board b, int depth, int alpha, int beta, Engine* e)
 {
-    if (!(e->search))
-    {
-        return make_pair(0, U16(e->best_move));
-    }
-
     if (depth > MAX_DEPTH) {
         return make_pair(evaluate_function(b), 0);
     }
-
     else {
         U16 best_move = 0;
         auto moveset = b.get_legal_moves();
@@ -629,19 +575,14 @@ pair<int, U16> Min_value(Board b, int depth, int alpha, int beta, Engine* e)
                 return make_pair(0, best_move);
         }
         else {
-            int min_value = 100050;
+            int min_value = 100000;
             for (auto m: moveset) {
-                if (!(e->search))
-                {
-                    return make_pair(0, U16(e->best_move));
-                }
-
                 Board b_copy = *b.copy();
                 b_copy.do_move(m);
                 auto max_ans = Max_value(b_copy, depth + 1, alpha, beta, e);
                 beta = min(beta, max_ans.first);
                 if (alpha>=beta)
-                    return make_pair(max_ans.first, m);
+                    return make_pair(beta, m);
                 if (max_ans.first < min_value) {
                     min_value = max_ans.first;
                     best_move = m;
@@ -659,8 +600,7 @@ pair<int, U16> Min_value(Board b, int depth, int alpha, int beta, Engine* e)
 U16 MiniMax(Board b, PlayerColor colour, Engine* e)
 {
     auto moveset = b.get_legal_moves();
-
-    if (moveset.empty()) {
+    if (moveset.size() == 0) {
         return 0;
     }
     else {
@@ -713,4 +653,3 @@ void Engine::find_best_move(const Board& b) {
 //        );
 //        this->best_move = moves[0];
 //    }
-
