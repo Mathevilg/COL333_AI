@@ -165,16 +165,16 @@ int get_pawn_score_white(U8 P)
         pawn_scores[pos(1, i)] = i+3;
     }
     pawn_scores[pos(0, 6)] = 8;
-    pawn_scores[pos(1, 6)] = 8;
+    pawn_scores[pos(1, 6)] = 9;
 
     for (int i = 2; i <= 4; i++)
     {
-        pawn_scores[pos(i, 5)] = 7+i;
-        pawn_scores[pos(i, 6)] = 7+i;
+        pawn_scores[pos(i, 5)] = 8+i;
+        pawn_scores[pos(i, 6)] = 8+i;
     }
 
-    pawn_scores[pos(3, 6)] = 12;
-    pawn_scores[pos(3, 5)] = 12;
+    pawn_scores[pos(3, 6)] = 14;
+    pawn_scores[pos(3, 5)] = 14;
     return pawn_scores[P];
 }
 
@@ -190,7 +190,7 @@ int get_bishop_score(U8 P)
     map<U8, int> bishop_scores;
     bishop_scores[pos(1, 0)] = 3;
     bishop_scores[pos(2, 1)] = 8;
-    bishop_scores[pos(3, 0)] = 7;
+    bishop_scores[pos(3, 0)] = 2;
     bishop_scores[pos(4, 1)] = 6;
     bishop_scores[pos(5, 0)] = 3;
 //    bishop_scores[pos(6, 1)] = 3;
@@ -269,7 +269,7 @@ int get_rook_score_white(U8 P)
     if ((gety(P) == 0 && getx(P) >= 1) || (gety(P) == 1 && getx(P) <= 5 && getx(P) >= 2))
     {
         rook_scores[pos(6, 0)] = 5;
-        rook_scores[pos(5, 0)] = 5;
+        rook_scores[pos(5, 0)] = 7;
         rook_scores[pos(4, 0)] = 7;
         rook_scores[pos(3, 0)] = 10;
         rook_scores[pos(2, 0)] = 11;
@@ -365,11 +365,11 @@ int calculate_material(const Board& b)
         }
         else if (i == (WHITE | ROOK))
         {
-            material += 3;
+            material += 4;
         }
         else if (i == (BLACK | ROOK))
         {
-            material -= 3;
+            material -= 4;
         }
         else if (i == (WHITE | KING))
         {
@@ -436,14 +436,15 @@ int calculate_positional_score(const Board& b)
             // PAWN score belongs to (-9 to 9)
             if (b.data.board_0[i] == (WHITE | PAWN))
             {
+
                 positional_score += (get_pawn_score_white(i)+3) * 2;
             }
             else if (b.data.board_0[i] == (BLACK | PAWN))
             {
-                 positional_score -= (get_pawn_score_black(i)+3) * 2;
+                positional_score -= (get_pawn_score_black(i)+3) * 2;
             }
 
-            // BISHOP score belongs to (-8 to 8)
+                // BISHOP score belongs to (-8 to 8)
             else if (b.data.board_0[i] == (WHITE | BISHOP))
             {
                 positional_score += get_bishop_score(i);
@@ -453,7 +454,7 @@ int calculate_positional_score(const Board& b)
                 positional_score -= get_bishop_score(i);
             }
 
-            // ROOK score belongs to (
+                // ROOK score belongs to (
             else if (b.data.board_0[i] == (WHITE | ROOK))
             {
                 positional_score += get_rook_score_white(i);
@@ -463,7 +464,7 @@ int calculate_positional_score(const Board& b)
                 positional_score -= get_rook_score_black(i);
             }
 
-            // below is useless (for now) +100 - 100 = 0 always
+                // below is useless (for now) +100 - 100 = 0 always
             else if (b.data.board_0[i] == (WHITE | KING))
             {
                 positional_score += get_king_score_white(i);
@@ -577,11 +578,11 @@ int evaluate_function(Board b)
     int w4 = 8;
 
     int check_score = calc_check_score(b); // -10 or 10
-    int w3 = 7;
+    int w3 = 6;
 
     int positional_score = calculate_positional_score(b); // range -20/-13 to +20/+13 (for rook)
-                                                            // -9 to 9 for pawn, -8 to 8 for bishop
-    int w5 = 2;
+    // -9 to 9 for pawn, -8 to 8 for bishop
+    int w5 = 3;
 
     int final_score = (w1*material) + (w2*pawn_score) + (w3*check_score) + (w4*protected_score) + (w5*positional_score);
     return final_score;
@@ -594,7 +595,7 @@ pair<int, U16> Max_value(Board b, int depth, int alpha, int beta, Engine* e)
 {
     if (!(e->search))
     {
-        return make_pair(-789, U16(e->best_move));
+        return make_pair(6789, U16(e->best_move));
     }
 
     if (depth > MAX_DEPTH)
@@ -608,9 +609,9 @@ pair<int, U16> Max_value(Board b, int depth, int alpha, int beta, Engine* e)
         if (moveset.size() == 0) {
             if (b.in_check()) {
                 if (b.data.player_to_play == WHITE)
-                    return make_pair(-100000, best_move);
+                    return make_pair(-100000, U16(e->best_move));
                 else
-                    return make_pair(100000, best_move);
+                    return make_pair(100000, U16(e->best_move));
             }
             else
                 return make_pair(0, best_move);
@@ -659,7 +660,7 @@ pair<int, U16> Min_value(Board b, int depth, int alpha, int beta, Engine* e)
     }
 
     if (depth > MAX_DEPTH) {
-        return make_pair(evaluate_function(b), 0);
+        return make_pair(evaluate_function(b), U16(e->best_move));
     }
 
     else {
@@ -668,12 +669,12 @@ pair<int, U16> Min_value(Board b, int depth, int alpha, int beta, Engine* e)
         if (moveset.empty()) {
             if (b.in_check()) {
                 if (b.data.player_to_play == WHITE)
-                    return make_pair(-100000, best_move);
+                    return make_pair(-100000, U16(e->best_move));
                 else
-                    return make_pair(100000, best_move);
+                    return make_pair(100000, U16(e->best_move));
             }
             else
-                return make_pair(0, best_move);
+                return make_pair(0, U16(e->best_move));
         }
         else {
             int min_value = 100050;
@@ -681,6 +682,11 @@ pair<int, U16> Min_value(Board b, int depth, int alpha, int beta, Engine* e)
                 if (!(e->search))
                 {
                     return make_pair(6789, U16(e->best_move));
+                }
+
+                if (m & (1 << 6))
+                {
+                    continue;
                 }
 
                 Board b_copy = *b.copy();
@@ -769,7 +775,7 @@ void Engine::find_best_move(const Board& b) {
 }
 
 
-    // pick a random move
+// pick a random move
 //    std::cout<<move_number++<<'\n';
 //
 //    auto moveset = b.get_legal_moves();
@@ -792,4 +798,3 @@ void Engine::find_best_move(const Board& b) {
 //        );
 //        this->best_move = moves[0];
 //    }
-
