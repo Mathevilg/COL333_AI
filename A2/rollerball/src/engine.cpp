@@ -253,7 +253,7 @@ int get_bishop_score(U8 P)
 int get_rook_score_white(U8 P)
 {
     map<U8, int> rook_scores;
-    rook_scores[pos(1, 0)] = 16;
+    rook_scores[pos(1, 0)] = 17;
     for (int i = 2; i <= 5; i++)
     {
         rook_scores[pos(i, 0)] = 10+ i;
@@ -264,9 +264,9 @@ int get_rook_score_white(U8 P)
     {
         rook_scores[pos(i, 1)] = i+ 2;
     }
-    rook_scores[pos(5, 1)] = 8;
+    rook_scores[pos(5, 1)] = 9;
 
-    if ((gety(P) == 0 && getx(P) >= 1) || (gety(P) == 1 && getx(P) <= 5 && getx(P) >= 2))
+    if ((gety(P) == 0 && getx(P) >= 0) || (gety(P) == 1 && getx(P) <= 6 && getx(P) >= 0))
     {
         rook_scores[pos(6, 0)] = 5;
         rook_scores[pos(5, 0)] = 7;
@@ -569,7 +569,7 @@ int evaluate_function(Board b)
     }
 
     int material = calculate_material(b);  // range -5 to +5
-    int w1 = 100;
+    int w1 = 110;
 
     int pawn_score = 0; // count_pawn_score(b); // range -20 to +20
     int w2 = 6;
@@ -623,6 +623,11 @@ pair<int, U16> Max_value(Board b, int depth, int alpha, int beta, Engine* e)
                 if (!(e->search))
                 {
                     return make_pair(0, U16(e->best_move));
+                }
+
+                if (m & (1 << 6))
+                {
+                    continue;
                 }
 
                 Board b_copy = *b.copy();
@@ -761,7 +766,10 @@ void Engine::find_best_move(const Board& b) {
 
             auto p = MiniMax(b, colour, this);
             this->best_move = p.second;
-            if (p.first == 100000)
+            if ((p.first == 100000) && (b.data.player_to_play == WHITE))
+                break;
+
+            if ((p.first == -100000) && (b.data.player_to_play == BLACK))
                 break;
 
             if (MAX_DEPTH == 0)
