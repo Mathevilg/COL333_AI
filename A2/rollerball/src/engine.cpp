@@ -165,30 +165,15 @@ int get_pawn_score_white(U8 P)
         pawn_scores[pos(i, 6)] = 5+i;
     }
 
+    pawn_scores[3, 6] = 11;
     return pawn_scores[P];
 }
 
 int get_pawn_score_black(U8 P1)
 {
     U8 P = cw_180_pos(P1);
-    map<U8, int> pawn_scores;
-    pawn_scores[pos(2, 0)] = 0;
-    pawn_scores[pos(2, 1)] = 0;
-    for (int i = 0; i < 6; i++)
-    {
-        pawn_scores[pos(0, i)] = i+1;
-        pawn_scores[pos(1, i)] = i+1;
-    }
-    pawn_scores[pos(0, 6)] = 6;
-    pawn_scores[pos(1, 6)] = 6;
 
-    for (int i = 2; i <= 4; i++)
-    {
-        pawn_scores[pos(i, 5)] = 5+i;
-        pawn_scores[pos(i, 6)] = 5+i;
-    }
-
-    return pawn_scores[P];
+    return get_pawn_score_white(P);
 }
 
 int get_bishop_score(U8 P)
@@ -730,11 +715,11 @@ void Engine::find_best_move(const Board& b) {
         while (this->search)
         {
             this->best_move = MiniMax(b, colour, this);
-//            if (MAX_DEPTH == 0)
-//                MAX_DEPTH++;
-//            else
-//                MAX_DEPTH += 2;
-            MAX_DEPTH++;
+            if (MAX_DEPTH == 0)
+                MAX_DEPTH++;
+            else
+                MAX_DEPTH += 2;
+//            MAX_DEPTH++;
         }
         return;
     }
