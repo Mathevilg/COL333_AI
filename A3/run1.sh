@@ -1,1 +1,1 @@
-./part1_gensat < test_1.txt
+./part1_gensat "$1" < "$1".graphs

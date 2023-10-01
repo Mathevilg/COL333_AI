@@ -8,9 +8,8 @@ int s(int i, int j, int k, int offset){
 
 
 
-void generateSAT(int n, int k1, int k2, set<pair<int, int> > &st){
+void generateSAT(int n, int k1, int k2, set<pair<int, int> > &st, string output_filename = "out_1.txt"){
 
-    string output_filename = "out_1.txt";
     ofstream outputFile(output_filename);
 
 
@@ -111,7 +110,7 @@ void generateSAT(int n, int k1, int k2, set<pair<int, int> > &st){
 
 
 
-int main(){
+int main(int argc, char* argv[]){
 
     int n, m, k1, k2;
     cin >> n >> m >> k1 >> k2;
@@ -130,8 +129,9 @@ int main(){
         st.erase(make_pair(min(u, v), max(u, v)));
     }
 
-
-    generateSAT(n, k1, k2, st);
+    string output_filename = argv[1];
+    output_filename += ".satinput";
+    generateSAT(n, k1, k2, st, output_filename);
 
     return 0;
 

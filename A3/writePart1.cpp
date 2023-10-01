@@ -4,13 +4,12 @@ using namespace std;
 
 
 
-void write(int n, int k1, int k2, string sat_output = "satOut1.txt"){
+void write(int n, int k1, int k2, string sat_output = "satOut1.txt", string output_file = "test_1.mapping"){
     ifstream inputFile(sat_output);
     string result;
     getline(inputFile, result);
     bool out =  result == "SAT";
     // cout << "\n\n\n\n\n\n" << returnCode << " " << result << out << "\n\n\n\n\n\n\n\n";
-    string output_file = "part1_ans.txt";
     ofstream outFile(output_file);
     if (out) {
         string secondLine;
@@ -47,10 +46,16 @@ void write(int n, int k1, int k2, string sat_output = "satOut1.txt"){
 }
 
 
-int main(){
+int main(int argc, char* argv[]){
 
     int n, m, k1, k2;
     cin >> n >> m >> k1 >> k2;
-    write(n, k1, k2);
+    string sat_output = argv[1];
+    sat_output += ".satoutput";
+    string output_file = argv[1];
+    output_file += ".mapping";
+    // cout << sat_output << " " << output_file << endl;
+    // cout << n << " " << m << " " << k1 << " " << k2 << endl;
+    write(n, k1, k2, sat_output);
     return 0;
 }
