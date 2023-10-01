@@ -13,7 +13,6 @@ using namespace std;
 //# define MAX_DEPTH 3
 
 
-
 int MAX_DEPTH = 0;
 // actual depth is this value + 1. So if MAX_DEPTH = 3, then depth = 4
 
@@ -60,6 +59,53 @@ constexpr U8 id[64] = {
         48, 49, 50, 51, 52, 53, 54, 55,
         56, 57, 58, 59, 60, 61, 62, 63
 };
+
+
+void undo_last_move(U16 move, Board* b) {
+
+    U8 p0 = getp0(move);
+    U8 p1 = getp1(move);
+    U8 promo = getpromo(move);
+
+    U8 piecetype = b->data.board_0[p1];
+    U8 deadpiece = b->data.last_killed_piece;
+    b->data.last_killed_piece = 0;
+
+    // scan and get piece from coord
+    U8 *pieces = (U8*)(&(b->data));
+    for (int i=0; i<12; i++) {
+        if (pieces[i] == p1) {
+            pieces[i] = p0;
+            break;
+        }
+    }
+    if (b->data.last_killed_piece_idx >= 0) {
+        pieces[b->data.last_killed_piece_idx] = p1;
+        b->data.last_killed_piece_idx = -1;
+    }
+
+    if (promo == PAWN_ROOK) {
+        piecetype = ((piecetype & (WHITE | BLACK)) ^ ROOK) | PAWN;
+    }
+    else if (promo == PAWN_BISHOP) {
+        piecetype = ((piecetype & (WHITE | BLACK)) ^ BISHOP) | PAWN;
+    }
+
+    b->data.board_0[p0]           = piecetype;
+    b->data.board_90[cw_90[p0]]   = piecetype;
+    b->data.board_180[cw_180[p0]] = piecetype;
+    b->data.board_270[acw_90[p0]] = piecetype;
+
+    b->data.board_0[p1]           = deadpiece;
+    b->data.board_90[cw_90[p1]]   = deadpiece;
+    b->data.board_180[cw_180[p1]] = deadpiece;
+    b->data.board_270[acw_90[p1]] = deadpiece;
+
+    // std::cout << "Undid last move\n";
+    // std::cout << all_boards_to_str(*this);
+}
+
+
 
 #define cw_90_pos(p) cw_90[p]
 #define cw_180_pos(p) cw_180[p]
@@ -595,9 +641,10 @@ pair<int, U16> Max_value(Board b, int depth, int alpha, int beta, Engine* e)
                     return make_pair(0, U16(e->best_move));
                 }
 
-                Board b_copy = *b.copy();
-                b_copy.do_move(m);
-                auto min_ans = Min_value(b_copy, depth + 1, alpha, beta, e);
+                // Board b_copy = *b.copy();
+                b.do_move(m);
+                auto min_ans = Min_value(b, depth + 1, alpha, beta, e);
+                undo_last_move(m, &b);
                 if (!(e->search))
                 {
                     return make_pair(6789, U16(e->best_move));
@@ -654,9 +701,10 @@ pair<int, U16> Min_value(Board b, int depth, int alpha, int beta, Engine* e)
                     return make_pair(6789, U16(e->best_move));
                 }
 
-                Board b_copy = *b.copy();
-                b_copy.do_move(m);
-                auto max_ans = Max_value(b_copy, depth + 1, alpha, beta, e);
+                // Board b_copy = *b.copy();
+                b.do_move(m);
+                auto max_ans = Max_value(b, depth + 1, alpha, beta, e);
+                undo_last_move(m, &b);
                 if (!(e->search))
                 {
                     return make_pair(6789, U16(e->best_move));
@@ -714,6 +762,13 @@ void Engine::find_best_move(const Board& b) {
     if (this->search) {
         while (this->search)
         {
+            if ((b.data.player_to_play == WHITE) && ( b.data.board_0[pos(2, 1)] == (WHITE|PAWN)) && (b.data.board_0[pos(1, 2)] == EMPTY) ) {
+
+                this->best_move = (pos(2, 1) << 8) | (pos(1, 2));
+                // cout << move_to_str(this->best_move) << endl;
+                return ;
+            }
+
             this->best_move = MiniMax(b, colour, this);
             if (MAX_DEPTH == 0)
                 MAX_DEPTH++;
