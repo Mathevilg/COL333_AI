@@ -3,6 +3,8 @@ using namespace std;
 
 #define endl "\n"
 
+vector<int> ans;
+
 int s(int i, int j, int n, int k){
     return (i * (k + 1)) + j + (n + 1);
 }
@@ -10,27 +12,26 @@ int s(int i, int j, int n, int k){
 
 
 bool checkSat(string sat_input = "out.txt", string sat_output = "miniOut.txt"){
-    const char* command = "minisat out.txt miniOut.txt";
-    FILE* pipe = popen(command, "r");
+    const char* command = "minisat out.txt miniOut.txt > /dev/null 2>&1";
+    int returnCode = system(command);
+    bool out = false;
 
-    // if (pipe == nullptr) {
-    //     std::cerr << "Error: Failed to open pipe." << std::endl;
-    //     return 1; // Return an error code
-    // }
-
-    char buffer[128]; // Buffer to read the command output
-    string result = "";
-
-    // Read the last command output 
-    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-        result = buffer;
+    ifstream inputFile(sat_output);
+    string result;
+    getline(inputFile, result);
+    out =  result == "SAT";
+    // cout << "\n\n\n\n\n\n" << returnCode << " " << result << out << "\n\n\n\n\n\n\n\n";
+    if (out) {
+        string secondLine;
+        getline(inputFile, secondLine);
+        istringstream iss(secondLine);
+        int assignment;
+        for (int i = 0; i < ans.size()-1; i++){
+            iss >> assignment;
+            ans[abs(assignment)] = assignment > 0;
+        }
     }
-
-    // Close the pipe
-    pclose(pipe);
-
-    // Print or process the captured output
-    return result == "SATISFIABLE\n";
+    return out;
 }
 
 
@@ -107,6 +108,22 @@ int search(int n, set<pair<int, int> > &st){
 }
 
 
+
+void write(int flag = 1, string output_file = "part2_ans.txt"){
+    ofstream outFile(output_file);
+
+    if (!flag) {
+        outFile << 0 << endl;
+        return ;
+    }
+
+    outFile << "#1" << endl;
+    for (int i=1; i<ans.size(); i++){
+        if (ans[i]) outFile << i << " ";
+    }
+    outFile << endl;
+}
+
 int main(int argc, char* argv[]){
 
     int n, m;
@@ -118,6 +135,8 @@ int main(int argc, char* argv[]){
             st.insert(make_pair(i, j));
         }
     }
+
+
     int u, v;
     for (int i=0; i<m; i++){
         cin >> u >> v;
@@ -125,12 +144,14 @@ int main(int argc, char* argv[]){
     }
 
 
-    // int k = stoi(argv[1]);
+    ans.resize(n+1);
+    for (int i=0; i<= n; i++) ans[i] = 0;
 
-    cout << search(n, st) << endl;
 
+
+    int clique = search(n, st);
+    if (!clique) write(0);
+    else write();
     
-
-
     return 0;
 }
