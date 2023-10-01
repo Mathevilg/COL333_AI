@@ -1,0 +1,1 @@
+./part1_gensat < test_1.txt

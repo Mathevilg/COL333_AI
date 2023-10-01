@@ -26,3 +26,13 @@ Find maximum size of clique
 
 
 ## Note: ` Your code will be killed after the given problem cutoff time, so please write good code.`
+
+
+
+## Done !!
+#### How to run ??
+1. `./compile.sh`
+2. `./run1.sh`
+3. `minisat out_1.txt satOut1.txt` This name satOut1.txt have to be changed as per the assignment !!
+4. `./run2.sh`
+5. `./run3.sh`

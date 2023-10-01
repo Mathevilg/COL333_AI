@@ -1,0 +1,1 @@
+./part1_write < test_1.txt
