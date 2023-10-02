@@ -56,6 +56,6 @@ int main(int argc, char* argv[]){
     output_file += ".mapping";
     // cout << sat_output << " " << output_file << endl;
     // cout << n << " " << m << " " << k1 << " " << k2 << endl;
-    write(n, k1, k2, sat_output);
+    write(n, k1, k2, sat_output, output_file);
     return 0;
 }
