@@ -39,8 +39,9 @@ Find maximum size of clique
 
 
 ## what is left ??
-1. check for bigger testcases by creating file checker
+1. (Done) check for bigger testcases by creating file checker -> testing left !!
 2. check if optimality can be found !! (`Devang`)
+3. remove chat gpt codes for I/O
 
 
 ## how to check for part 1 ??

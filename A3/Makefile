@@ -1,10 +1,11 @@
-
 all:
 # part1:
-	python3 generateTesetcase.py
+#	python3 generateTesetcase.py
 	./compile.sh
 	./run1.sh test
-	-minisat test.satinput test.satoutput
+	echo "Starting minisat"
+	-minisat test.satinput test.satoutput &
+	sleep 300
 	./run2.sh test
 	g++ checkGraph.cpp -o checker_1
 	./checker_1 1 < test.graphs
