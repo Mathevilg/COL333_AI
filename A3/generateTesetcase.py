@@ -1,6 +1,6 @@
 import random
 
-def generate_graph(n, k1, k2, density = 0.95):
+def generate_graph(n, k1, k2, density = 0.6):
     if n < k1 + k2 or k1 <= 0 or k2 <= 0:
         print("Invalid input. Unable to generate the graph.")
         return [None, None, None]
