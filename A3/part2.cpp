@@ -12,7 +12,8 @@ int s(int i, int j, int n, int k){
 
 
 bool checkSat(string& sat_input, string& sat_output){
-    string ter = "minisat " + sat_input + " " + sat_output + " > /dev/null 2>&1";
+    string ter = "minisat " + sat_input + " " + sat_output ;
+    // string ter = "minisat " + sat_input + " " + sat_output + " > /dev/null 2>&1";
     const char* command = ter.c_str();
     int returnCode = system(command);
     bool out = false;

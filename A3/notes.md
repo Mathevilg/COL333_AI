@@ -31,11 +31,7 @@ Find maximum size of clique
 
 ## Done !!
 #### How to run ??
-1. `./compile.sh`
-2. `./run1.sh`
-3. `minisat out_1.txt satOut1.txt` This name satOut1.txt have to be changed as per the assignment !!
-4. `./run2.sh`
-5. `./run3.sh`
+1. run `make` in terminal
 
 
 ## what is left ??
@@ -44,9 +40,13 @@ Find maximum size of clique
 3. remove chat gpt codes for I/O
 
 
-## how to check for part 1 ??
+## how to check for part 1 and part 2 ??
 1. run `make`.
 2. provide the parameters `n`, `k1`, `k2` in the terminal
 3. wait and check output :)
 
+
+## Scope of improvement
+1. part2 is taking more time in cases of n ~ 150. Investigate that wether this is because of writing I/O multiple times or what. In `part2.cpp` the updation of `ans` vector can be done once the `max_size_clique` is found.
+2. `part1` seems good enough.
 
