@@ -1,1 +1,5 @@
 writeup.txt
+*.graphs
+*.satinput
+*.satoutput
+*.mapping
