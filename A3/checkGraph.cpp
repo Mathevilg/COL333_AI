@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
             st.insert(make_pair(min(u, v), max(u, v)));
         }
         cout << "\n\n\n\n\n\n";
-        if (checkClique(st, set1)) cout << "set1 is a clique of size " << set1.size() << endl;
+        if (checkClique(st, set1)) cout << "maximum clique is of size " << set1.size() << endl;
         cout << "\n\n\n\n\n\n";
     }
 
