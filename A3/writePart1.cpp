@@ -9,7 +9,7 @@ void write(int n, int k1, int k2, string sat_output = "satOut1.txt", string outp
     string result;
     getline(inputFile, result);
     bool out =  result == "SAT";
-    // cout << "\n\n\n\n\n\n" << returnCode << " " << result << out << "\n\n\n\n\n\n\n\n";
+    cout << "\n\n\n\n\n\n bool isSAT ? ------->>>>>>" << "     " << out << "\n\n\n\n\n\n\n\n";
     ofstream outFile(output_file);
     if (out) {
         string secondLine;
