@@ -40,6 +40,12 @@ Find maximum size of clique
 
 ## what is left ??
 1. check for bigger testcases by creating file checker
-2. check if optimality can be found !!
+2. check if optimality can be found !! (`Devang`)
+
+
+## how to check for part 1 ??
+1. run `make`.
+2. provide the parameters `n`, `k1`, `k2` in the terminal
+3. wait and check output :)
 
 
