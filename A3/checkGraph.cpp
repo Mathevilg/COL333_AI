@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include "./part2.h"
+// #include "./part2.h"
 
 using namespace std;
 
