@@ -36,3 +36,10 @@ Find maximum size of clique
 3. `minisat out_1.txt satOut1.txt` This name satOut1.txt have to be changed as per the assignment !!
 4. `./run2.sh`
 5. `./run3.sh`
+
+
+## what is left ??
+1. check for bigger testcases by creating file checker
+2. check if optimality can be found !!
+
+
