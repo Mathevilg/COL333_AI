@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
-using namespace std;
+#include "./part2.h"
 
+using namespace std;
 
 
 bool checkClique(set<pair<int, int> >& graph, vector<int> &st){
@@ -109,8 +110,8 @@ int main(int argc, char* argv[]) {
 
         file.close();
 
-        int n, m, k1, k2;
-        cin >> n >> m >> k1 >> k2;
+        int n, m;
+        cin >> n >> m;
         set<pair<int, int> > st;
         int u, v;
         for (int i=0; i<m; i++){
@@ -118,7 +119,10 @@ int main(int argc, char* argv[]) {
             st.insert(make_pair(min(u, v), max(u, v)));
         }
         cout << "\n\n\n\n\n\n";
-        if (checkClique(st, set1)) cout << "maximum clique is of size " << set1.size() << endl;
+        if (checkClique(st, set1)) {
+            cout << "maximum clique is of size " << set1.size() << endl;
+            // cout << "Is clique of size " << set1.size() + 1 <<   " possible ?" << predicate(n, set1.size() + 1, st, "test2.satinput", "test2")
+        }
         cout << "\n\n\n\n\n\n";
     }
 
