@@ -1,11 +1,12 @@
 import random
 
-def generate_graph(n, k1, k2, density = 0.98):
+def generate_graph(n, k1, k2):
     if n < k1 + k2 or k1 <= 0 or k2 <= 0:
         print("Invalid input. Unable to generate the graph.")
         return [None, None, None]
 
     # Create two separate cliques
+    density = min((((k1*k2)**(0.5))/n)*1.67 , 0.85)
     graph = [[0] * n for _ in range(n)]
 
     arr = [i for i in range(n)]

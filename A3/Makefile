@@ -4,7 +4,7 @@ all:
 	./compile.sh
 	./run1.sh test
 	-minisat test.satinput test.satoutput &
-	sleep 10
+	sleep 5
 	./run2.sh test
 	g++ checkGraph.cpp -o checker
 	./checker 1 < test.graphs
