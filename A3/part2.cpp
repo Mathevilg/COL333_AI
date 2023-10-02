@@ -11,8 +11,9 @@ int s(int i, int j, int n, int k){
 
 
 
-bool checkSat(string sat_input = "out.txt", string sat_output = "miniOut.txt"){
-    const char* command = "minisat out.txt miniOut.txt > /dev/null 2>&1";
+bool checkSat(string& sat_input, string& sat_output){
+    string ter = "minisat " + sat_input + " " + sat_output + " > /dev/null 2>&1";
+    const char* command = ter.c_str();
     int returnCode = system(command);
     bool out = false;
 
@@ -35,10 +36,9 @@ bool checkSat(string sat_input = "out.txt", string sat_output = "miniOut.txt"){
 }
 
 
-void generateSAT(int n, int k, set<pair<int, int> > &st){
+void generateSAT(int n, int k, set<pair<int, int> > &st, string &sat_input){
 
-    string output_filename = "out.txt";
-    ofstream outputFile(output_filename);
+    ofstream outputFile(sat_input);
 
 
 
@@ -90,18 +90,18 @@ void generateSAT(int n, int k, set<pair<int, int> > &st){
 
 
 
-bool predicate(int n, int k, set<pair<int, int> > &st){
-    generateSAT(n, k, st);
-    return checkSat();
+bool predicate(int n, int k, set<pair<int, int> > &st, string &sat_input, string &sat_output){
+    generateSAT(n, k, st, sat_input);
+    return checkSat(sat_input, sat_output);
 }
 
 
-int search(int n, set<pair<int, int> > &st){
+int search(int n, set<pair<int, int> > &st, string &sat_input, string &sat_output){
     int low = 1;
     int high = n;
     while (low <= high){
         int mid = (low+high)/2;
-        if (predicate(n, mid, st)) low = mid + 1;
+        if (predicate(n, mid, st, sat_input, sat_output)) low = mid + 1;
         else high = mid - 1;
     }
     return high;
@@ -109,7 +109,7 @@ int search(int n, set<pair<int, int> > &st){
 
 
 
-void write(int flag = 1, string output_file = "part2_ans.txt"){
+void write(int flag, string& output_file){
     ofstream outFile(output_file);
 
     if (!flag) {
@@ -149,9 +149,15 @@ int main(int argc, char* argv[]){
 
 
 
-    int clique = search(n, st);
-    if (!clique) write(0);
-    else write();
+    string output_file = argv[1];
+    output_file += ".mapping";
+    string sat_input = argv[1];
+    sat_input += ".satinput";
+    string sat_output = argv[1];
+    sat_output += ".satoutput";
+    int clique = search(n, st, sat_input, sat_output);
+    if (!clique) write(0, output_file);
+    else write(clique, output_file);
     
     return 0;
 }

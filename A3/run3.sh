@@ -1,1 +1,1 @@
-./part2 < test_2.txt
+./part2 "$1" < "$1".graphs
