@@ -1,4 +1,5 @@
 all:
+	python3 generateTesetcase.py
 	./compile.sh
 	./run1.sh test
 	-minisat test.satinput test.satoutput

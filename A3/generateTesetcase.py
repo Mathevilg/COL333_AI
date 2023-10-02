@@ -40,6 +40,11 @@ def generate_graph(n, k1, k2, density = 0.7):
                 if (random.random() < density):
                     graph[i][j] = 1
                     graph[j][i] = 1
+                    
+    for i in range(len(set1)):
+        set1[i] += 1
+    for i in range(len(set2)):
+        set2[i] += 1
                 
     return [graph, set1, set2]
 
@@ -80,6 +85,6 @@ if __name__ == "__main__":
         
         with open(filename, 'a') as file:
             file.write("\n\n\n\n\n\n\n\n")
-            file.write(str(set1))
-            file.write(str(set2))
+            file.write(str(sorted(set1)) + "\n")
+            file.write(str(sorted(set2)) + "\n")
             
