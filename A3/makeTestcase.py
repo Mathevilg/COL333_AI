@@ -1,6 +1,6 @@
 # Define the input and output file names
-input_file_name = "test.graphs"
-output_file_name = "test2.graphs"
+input_file_name = "test.graph"
+output_file_name = "test2.graph"
 
 # Read the content of the input file
 with open(input_file_name, 'r') as input_file:

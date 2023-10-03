@@ -79,7 +79,7 @@ if __name__ == "__main__":
     set2 = data[2]
     
     if graph:
-        filename = "test.graphs"
+        filename = "test.graph"
         write_graph_to_file(graph, filename, k1, k2)
         
         print(f"Graph written to '{filename}'.")

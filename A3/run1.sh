@@ -1,1 +1,1 @@
-./part1_gensat "$1" < "$1".graphs
+./part1_gensat "$1" < "$1".graph

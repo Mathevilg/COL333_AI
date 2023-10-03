@@ -1,1 +1,1 @@
-./part2 "$1" < "$1".graphs
+./part2 "$1" < "$1".graph
