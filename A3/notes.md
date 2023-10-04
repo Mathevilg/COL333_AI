@@ -53,6 +53,7 @@ Find maximum size of clique
 ## Scope of improvement 
 1. part2 is taking more time in cases of n ~ 150. Investigate that wether this is because of writing I/O multiple times or what. In `part2.cpp` the updation of `ans` vector can be done once the `max_size_clique` is found.
 2. `part1` seems good enough.
-3. maybe and just maybe the ordering of variables in the `*.satinput` may decrease execution time !!
+3. maybe and just maybe the ordering of variables in the `*.satinput` may decrease execution time !! (`VVI` this is the difference with rajat)
 4. Add some `additional constraints` so that the evaluation becomes faster !! 
+5. Check by removing constraints which correspond to `S(n, k)` where `n < k`. Maybe executiona speeds a lot in that case.
 
