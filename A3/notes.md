@@ -38,10 +38,11 @@ Find maximum size of clique
 2. Enjoy :)
 
 
-## what is left ??
+## what is left (Updates on Piazza here) ??
 1. (Done) check for bigger testcases by creating file checker -> testing left !!
 2. (Done)check if optimality can be found !!
 3. remove chat gpt codes for I/O
+4. change to writing in `mapping` since no `whitespaces` or `linebrakes` should be at the end.
 
 
 ## how to check for part 1 and part 2 ??
