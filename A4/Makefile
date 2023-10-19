@@ -9,3 +9,7 @@ all:
 # all working !! 
 	echo "\n\n\nall working\nformat checked ...."
 
+clean:
+	-rm code format_checker
+	clear
+

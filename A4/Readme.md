@@ -29,5 +29,5 @@ learnt CPT with upto `4 decimal places` or simply output the completed version o
 
 
 #### Runnung Instructions:
-1. run `make`. Assuming the data is in `records.dat`.
+1. run `make all`. Assuming the data is in `records.dat`.
 2. `enjoy :)`.
