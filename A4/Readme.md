@@ -25,3 +25,9 @@ learnt CPT with upto `4 decimal places` or simply output the completed version o
 
 ### Constraints:
 1. completion in `2mins` !! with about `10,000` patient records.
+
+
+
+#### Runnung Instructions:
+1. run `make`. Assuming the data is in `records.dat`.
+2. `enjoy :)`.

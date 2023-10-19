@@ -1,5 +1,7 @@
 all:
 	./compile.sh
-	./run.sh alarm.bif "$(1)".dat   
+	./run.sh alarm.bif records.dat   
 # write result only to solved_alarm.bif
+	./format_checker 
+	echo "all working\n gormat checked ...."
 

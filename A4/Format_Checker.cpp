@@ -1,12 +1,12 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <list>
-#include <fstream>
-#include <sstream>
-#include <cstdlib>
-#include <math.h>
-
+// #include <iostream>
+// #include <string>
+// #include <vector>
+// #include <list>
+// #include <fstream>
+// #include <sstream>
+// #include <cstdlib>
+// #include <math.h>
+#include <bits/stdc++.h>
 
 using namespace std;
 

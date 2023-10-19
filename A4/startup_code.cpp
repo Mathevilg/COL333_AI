@@ -144,12 +144,12 @@ public:
 
 };
 
-network read_network()
+network read_network(string input_file)
 {
 	network Alarm;
 	string line;
 	int find=0;
-  	ifstream myfile("alarm.bif"); 
+  	ifstream myfile(input_file); 
   	string temp;
   	string name;
   	vector<string> values;
@@ -259,13 +259,29 @@ network read_network()
 }
 
 
-int main()
+int main(int argc, char* argv[])
 {
+
+
+	string network_file = argv[1];
+	string data_file = argv[2];
 	network Alarm;
-	Alarm=read_network();
+	Alarm=read_network(network_file);
     
 // Example: to do something
-	cout<<"Perfect! Hurrah! \n";
+	cout<<"reading network file named ....." << network_file << endl;
+	cout << "learning data from file named ....." << data_file << endl;
+
+	const char* sourceFile = "alarm.bif";
+    const char* targetFile = "solved_alarm.bif";
+
+    string command_str  = ("cp " + string(sourceFile) + " " + string(targetFile));
+	const char* command = command_str.c_str();
+    int result = system(command);
+	if (!result) cout << "Written network_file in ...." << targetFile << endl;
+	else cout << "err writing file\n";
+
+	return 0; 
 	
 }
 
