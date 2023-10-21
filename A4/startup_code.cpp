@@ -259,6 +259,32 @@ network read_network(string input_file)
 }
 
 
+class Mani{
+
+
+	void solve(int process_time = 5){ // running for 5 seconds by default 
+		// randomly initialise the unkonowns in records.dat
+		time_t start = time(NULL);
+		float time_to_write = 0.2 ; // expected time to write in solved_alarm.bif
+		while (time(NULL) - start + time_to_write < process_time){ // this should be time not exceeded 
+			// 1. learn the CPT from records.dat
+
+
+			// 2. write the CPT to solved_alarm.bif 
+			// 3. read CPT from solved_alarm.bif (useless)
+			// Note : rather use a data structure to have the CPT; no need to write !
+
+
+			// 4. write the value to records.dat using inference from the CPT learnt
+		}
+
+		// if using instruction in the Note then have to write to solved_alarm.bif here !!
+		// wirte to `solved_alarm.bif`
+
+	}
+};
+
+
 int main(int argc, char* argv[])
 {
 
