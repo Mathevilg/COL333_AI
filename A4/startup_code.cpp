@@ -263,23 +263,52 @@ class Mani{
 
 
 	void solve(int process_time = 5){ // running for 5 seconds by default 
-		// randomly initialise the unkonowns in records.dat
+		// since reading and writing could be bottleneck use intemediate
+		// data structures to represent records.dat and solved_alarm.bif 
+		dataInitialiser();
+
 		time_t start = time(NULL);
 		float time_to_write = 0.2 ; // expected time to write in solved_alarm.bif
 		while (time(NULL) - start + time_to_write < process_time){ // this should be time not exceeded 
-			// 1. learn the CPT from records.dat
-
-
-			// 2. write the CPT to solved_alarm.bif 
-			// 3. read CPT from solved_alarm.bif (useless)
-			// Note : rather use a data structure to have the CPT; no need to write !
-
-
-			// 4. write the value to records.dat using inference from the CPT learnt
+			// 1. learn the CPT from intermediat data structure 
+			CPTUpdater();
+			// 2. update the values to intermediate data structure using inference from the CPT learnt
+			dataUpdater();
 		}
 
-		// if using instruction in the Note then have to write to solved_alarm.bif here !!
 		// wirte to `solved_alarm.bif`
+		writeData();
+
+	}
+
+
+	void dataInitialiser(){
+		// parses records.dat and radomly assignes values to "?" as True or False in 
+		// the intermediate data structure
+	}
+
+
+	void CPTUpdater(){
+		// uses values given in the intermediate data structure to learn the values
+		// for the CPT
+
+		// learning algorithm ?? 
+
+	}
+
+
+	void dataUpdater(){
+		// using the intermediate CPT values modifies the data in the intermediate 
+		// data structure 
+
+		// USES SOFT METHOD !!
+		// Inference algorithm ?? 
+
+
+	}
+
+	void writeData(){
+		// write the graphs and CPT values calculated in the end in the file solved_alarm.bif
 
 	}
 };
