@@ -262,6 +262,99 @@ network read_network(string input_file)
 class Mani{
 
 
+	private:
+	vector<vector<float> > CPT;
+	time_t initTime;
+	string network_file, data_file;
+	map<string, int> mp;
+	vector<vector<int> > parents, child;
+	vector<string> names;
+	vector<vector<string> > possibleValues;
+
+
+	public:
+	Mani(string network_file, string data_file, time_t initTime){
+		this->network_file = network_file;
+		this->data_file = data_file;
+		this->initTime = initTime + (time_t)(0.01); // this needs to be checked!
+		parents.resize(37);
+		child.resize(37);
+		names.resize(37);
+		possibleValues.resize(37);
+		CPT.resize(37);
+		mp.clear();
+		readNetwork();
+	}
+
+	void readNetwork(){
+		// used ChatGPT  here !! 
+		// have to be removed / modified 
+		ifstream file(network_file);
+		if (!file.is_open()) {
+			cout << "error opening " << network_file << endl;
+			return ;
+		}
+
+		while (!file.eof()){
+
+			string line, temp, var_name;
+			getline(file, line);
+			stringstream stream;
+			stream.str(line);
+			stream >> temp;
+			if (temp.compare("probability") == 0){
+				stream >> temp; // simply '(' 
+				stream >> temp; // the variable name 
+				int current_id = mp.find(temp)->second; // the node number in the mapping
+				parents[current_id].clear(); // clear the parents vector of the node
+											// parents will be assigned now
+				// cout << "parents of node " << temp << " ";
+				stream >> temp; // parents 
+				while(true){
+					if (temp.compare(")") == 0) break;
+					// cout << temp << " ";
+					int parentIdx = mp.find(temp)->second;
+					child[parentIdx].push_back(current_id);
+					parents[current_id].push_back(parentIdx);
+					stream >> temp;
+				}
+				// cout << endl;
+				getline(file, line); // of the form -> table -1 -1 ;
+				stringstream stream2;
+				stream2.str(line);
+				stream2 >> temp;
+				stream2 >> temp;
+				while(true){
+					if (temp.compare(";") == 0) break;
+					CPT[current_id].push_back(atof(temp.c_str()));
+					stream2 >> temp;
+				}
+			} else if (temp.compare("variable") == 0){
+				stream >> var_name;
+				mp[var_name] = mp.size() ;
+				names[mp.size()-1] = var_name;
+				getline(file, line); // line with format-> type discrete[3] {  "Low"  "Normal"  "High" };
+				stringstream stream2;
+				stream2.str(line);
+				for(int i=0; i < 3; i++) stream2 >> temp;
+				possibleValues[mp.size()-1].clear();
+				while(true){
+					stream2 >> temp;
+					if (temp.compare("};") == 0) break;
+					possibleValues[mp.size()-1].push_back(temp);
+				}
+			}
+		}
+
+		// for (auto vec: possibleValues){
+		// 	for (auto str: vec) cout << str << " ";
+		// 	cout << endl;
+		// }
+
+		file.close();
+
+	}
+
 	void solve(int process_time = 5){ // running for 5 seconds by default 
 		// since reading and writing could be bottleneck use intemediate
 		// data structures to represent records.dat and solved_alarm.bif 
@@ -320,21 +413,7 @@ int main(int argc, char* argv[])
 
 	string network_file = argv[1];
 	string data_file = argv[2];
-	network Alarm;
-	Alarm=read_network(network_file);
-    
-// Example: to do something
-	cout<<"reading network file named ....." << network_file << endl;
-	cout << "learning data from file named ....." << data_file << endl;
-
-	const char* sourceFile = "alarm.bif";
-    const char* targetFile = "solved_alarm.bif";
-
-    string command_str  = ("cp " + string(sourceFile) + " " + string(targetFile));
-	const char* command = command_str.c_str();
-    int result = system(command);
-	if (!result) cout << "Written network_file in ...." << targetFile << endl;
-	else cout << "err writing file\n";
+	Mani* ans = new Mani(network_file, data_file, time(NULL));
 
 	return 0; 
 	
