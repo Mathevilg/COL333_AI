@@ -470,9 +470,8 @@ class Mani{
 		// wirte to `solved_alarm.bif`
 		writeData();
 
-		
-		// cout << initTime << endl;
-		// cout << time(NULL) << endl;
+		cout << initTime << endl;
+		cout << time(NULL) << endl;
 
 	}
 
@@ -498,8 +497,34 @@ class Mani{
 	}
 
 	void writeData(){
-		// write the graphs and CPT values calculated in the end in the file solved_alarm.bif
+		// write the CPT in solved_alarm.bif
+		ifstream input(network_file);
+		ofstream out;
+		out.open("solved_alarm.bif");
+		if (!input.is_open()) return ;
+		while (!input.eof()){
+			string line, temp, var_name;
+			getline(input, line);
+			stringstream stream;
+			stream.str(line);
+			stream >> temp;
+			if (temp.compare("probability") == 0){
+				stream >> temp; // simply '(' 
+				stream >> temp; // the variable name 
+				int current_id = mp.find(temp)->second; // the node number in the mapping
+				out << line << endl;
+				getline(input, line);
+				out << "\ttable ";
+				for (int i=0; i<CPT[current_id].size(); i++) out << fixed << setprecision(4) << CPT[current_id][i] << " ";
+				out << ";" << endl;
+			}
+			else out << line << endl; // have to check for output conditions here !!
 
+		}
+		out.close();
+		input.close();
+
+		cout << "written to solved_alarm.bif sucessfully" << endl;
 	}
 };
 
