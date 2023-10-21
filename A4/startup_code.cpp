@@ -272,7 +272,7 @@ class Mani{
 	vector<vector<string> > possibleValues;
 	vector<vector<int> > originalData, intermediateData;
 	vector<float> weights; // weights for the intermediate data columns !!
-
+	vector<int> missingValues; // the missing variables for data rows !!
 
 
 	void showDependency(){
@@ -293,6 +293,8 @@ class Mani{
 	}
 
 	public:
+
+	
 	Mani(string network_file, string data_file, time_t initTime){
 		this->network_file = network_file;
 		this->data_file = data_file;
@@ -342,6 +344,7 @@ class Mani{
 
 			}
 			originalData.push_back(values);
+			missingValues.push_back(questionMarkIdx);
 			if (questionMarkIdx == -1) {
 				// all good the current row is the only interpretable row 
 				intermediateData.push_back(values);
@@ -469,7 +472,6 @@ class Mani{
 
 		// wirte to `solved_alarm.bif`
 		writeData();
-
 		cout << initTime << endl;
 		cout << time(NULL) << endl;
 
@@ -486,6 +488,24 @@ class Mani{
 	}
 
 
+	float calculateProbability(int dataRow, int variable, int state){
+		vector<int> values, Sizes;
+		// values store the value of EVIDENCE & variable
+		// Sizes store the corrsponding size of possible values 
+		values.push_back(state);
+		Sizes.push_back(possibleValues[variable].size());
+		for (int i = 0; i < parents[variable].size(); i++) {
+			values.push_back(originalData[dataRow][parents[variable][i]]);
+			Sizes.push_back(possibleValues[parents[variable][i]].size());
+		}
+		int idx = 0, temp = 1;
+		for (int i = values.size()-1; i >= 0; i--){
+			idx += temp * values[i];
+			temp *= Sizes[i];
+		}
+		return CPT[variable][idx];
+	}
+
 	void dataUpdater(){
 		// using the intermediate CPT values modifies the data in the intermediate 
 		// data structure 
@@ -493,6 +513,31 @@ class Mani{
 		// USES SOFT METHOD !!
 		// Inference algorithm ?? 
 
+		// assign weights to the Intermediate data values ;
+		weights.clear();
+		for (int dataRow = 0; dataRow < originalData.size(); dataRow++){
+			if (missingValues[dataRow] == -1) weights.push_back(1.0);
+			else{
+				int variable = missingValues[dataRow];
+				vector<float> probabilities ;
+				float probab_sum = 0.0;
+				for (int j = 0; j < possibleValues[variable].size(); j++){
+					// calculates P(variable = j | conditions in that data row);
+					// will pe problematic for the first time since in the originalData 
+					// the value of missing variables are -1 !!
+					float probability_of_value_given_evidence = calculateProbability(dataRow, variable, j); // j is the value
+					probabilities.push_back(probability_of_value_given_evidence);
+					probab_sum += probability_of_value_given_evidence;
+					///////////////////////////////////////////////////////////////
+					// HAVE A GUT FEELING THAT THIS COULD BE IMPROVED FURTHER !! //
+					///////////////////////////////////////////////////////////////
+				}
+				int argmaxValue = max_element(probabilities.begin(), probabilities.end())-probabilities.begin();
+				originalData[dataRow][variable] = argmaxValue;
+				float alpha = (1.0)/probab_sum;
+				for (int i=0; i < probabilities.size(); i++) weights.push_back(alpha * probabilities[i]);
+			}
+		}
 
 	}
 
