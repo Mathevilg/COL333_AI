@@ -274,6 +274,24 @@ class Mani{
 	vector<float> weights; // weights for the intermediate data columns !!
 
 
+
+	void showDependency(){
+		for (int i=0; i < 37; i++){
+			cout << names[i] << "  "<< possibleValues[i].size() << "  ----> ";
+			for (auto it : parents[i]) cout << names[it] << " " << possibleValues[it].size() << "   ";
+			cout << endl << CPT[i].size() << endl;
+		}
+	}
+
+
+	void showCPT(){
+
+		for (auto it: CPT){
+			for (auto tt: it) cout << tt << " ";
+			cout << endl;
+		}
+	}
+
 	public:
 	Mani(string network_file, string data_file, time_t initTime){
 		this->network_file = network_file;
@@ -287,6 +305,7 @@ class Mani{
 		mp.clear();
 		readNetwork();
 		readDataFile();
+		solve();
 	}
 
 
@@ -419,14 +438,29 @@ class Mani{
 
 	}
 
+
+	void CPTInitialiser(){
+		// assume equiprobable !!
+		for (int i=0; i<CPT.size(); i++){
+			float prob = 1.0 / possibleValues[i].size();
+			for (int j=0; j < CPT[i].size(); j++) {
+				CPT[i][j] = prob;
+			}
+		}
+	}
+
 	void solve(int process_time = 5){ // running for 5 seconds by default 
 		// since reading and writing could be bottleneck use intemediate
 		// data structures to represent records.dat and solved_alarm.bif 
-		dataInitialiser();
 
-		time_t start = time(NULL);
+
+		// showDependency();
+		// showCPT(); 
+		CPTInitialiser();
+		// showCPT();
+
 		float time_to_write = 0.2 ; // expected time to write in solved_alarm.bif
-		while (time(NULL) - start + time_to_write < process_time){ // this should be time not exceeded 
+		while (time(NULL) - initTime + time_to_write < process_time){ // this should be time not exceeded 
 			// 1. learn the CPT from intermediat data structure 
 			CPTUpdater();
 			// 2. update the values to intermediate data structure using inference from the CPT learnt
@@ -436,13 +470,12 @@ class Mani{
 		// wirte to `solved_alarm.bif`
 		writeData();
 
+		
+		// cout << initTime << endl;
+		// cout << time(NULL) << endl;
+
 	}
 
-
-	void dataInitialiser(){
-		// parses records.dat and radomly assignes values to "?" as True or False in 
-		// the intermediate data structure
-	}
 
 
 	void CPTUpdater(){
@@ -474,10 +507,10 @@ class Mani{
 int main(int argc, char* argv[])
 {
 
-
+	time_t initTime = time(NULL);
 	string network_file = argv[1];
 	string data_file = argv[2];
-	Mani* ans = new Mani(network_file, data_file, time(NULL));
+	Mani* ans = new Mani(network_file, data_file, initTime);
 
 	return 0; 
 	
