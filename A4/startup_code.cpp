@@ -270,6 +270,8 @@ class Mani{
 	vector<vector<int> > parents, child;
 	vector<string> names;
 	vector<vector<string> > possibleValues;
+	vector<vector<int> > originalData, intermediateData;
+	vector<float> weights; // weights for the intermediate data columns !!
 
 
 	public:
@@ -284,7 +286,69 @@ class Mani{
 		CPT.resize(37);
 		mp.clear();
 		readNetwork();
+		readDataFile();
 	}
+
+
+	void readDataFile(){
+		string line, name, temp;
+		ifstream file(data_file);
+		if (!file.is_open()) {
+			cout << "error opening data file " << data_file << endl;
+			return ;
+		}
+		while (!file.eof()){
+
+			stringstream stream;
+			getline(file, line);
+			stream.str(line); // "False" "Normal" "False" "Normal" "Normal" "Normal" "False" "Normal" "Normal" "False" "?" "False" "Normal" "False" "High" "False" "High" "High" "Low" "High" "High" "Low" "False" "False" "Normal" "False" "Normal" "High" "Normal" "Normal" "Normal" "Normal" "Normal" "Normal" "Normal" "Normal" "Normal"
+			vector<int> values;
+			int questionMarkIdx = -1;
+			for(int i=0; i<mp.size(); i++){
+
+				stream >> temp; // one by one values of the variables !!
+				if (temp.compare("\"?\"") == 0) {
+					questionMarkIdx = i;
+					values.push_back(-1);
+					continue;
+				}
+
+				// for actual values find their index in possible values table !
+				for (int j = 0; j<possibleValues[i].size(); j++){
+					if (temp.compare(possibleValues[i][j]) == 0){
+						values.push_back(j);
+						break;
+					}
+				}
+
+			}
+			originalData.push_back(values);
+			if (questionMarkIdx == -1) {
+				// all good the current row is the only interpretable row 
+				intermediateData.push_back(values);
+				weights.push_back(1.0);
+			}
+			else {
+				// have to asssign weights to all possible values of the "?"
+				int combinations = possibleValues[questionMarkIdx].size();
+				float weight = 1.0 / combinations;
+				vector<int> created_values(values);
+				for (int j = 0; j < combinations; j++){
+					created_values[questionMarkIdx] = j;
+					intermediateData.push_back(created_values);
+					weights.push_back(weight);
+				}
+			}
+
+		}
+
+		// cout << originalData.size() << endl;
+		// cout << intermediateData.size() << endl;
+
+		file.close();
+	}
+
+
 
 	void readNetwork(){
 		// used ChatGPT  here !! 
