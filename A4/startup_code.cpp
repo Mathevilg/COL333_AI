@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <chrono>
-
+#include <random>
 
 // Format checker just assumes you have Alarm.bif and Solved_Alarm.bif (your file) in current directory
 using namespace std;
@@ -97,7 +97,7 @@ class A4{
 	vector<vector<int> > originalData, intermediateData;
 	vector<float> weights; // weights for the intermediate data columns !!
 	vector<int> missingValues; // the missing variables for data rows !!
-
+	
 
 	void showDependency(){
 		int ans = 0;
@@ -113,8 +113,9 @@ class A4{
 
 	void showCPT(){
 
-		for (auto it: CPT){
-			for (auto tt: it) cout << tt << " ";
+		for (int i=0; i<37; i++){
+			vector<float> it = CPT[i];
+			for (int i=0; i<it.size(); i++) cout << it[i] << " ";
 			cout << endl;
 		}
 	}
@@ -126,7 +127,7 @@ class A4{
 		this->network_file = network_file;
 		this->data_file = data_file;
 		this->initTime = initTime;
-		this->processTime = 5; // 2 mins 
+		this->processTime = 30; // 2 mins 
 		parents.resize(37);
 		child.resize(37);
 		names.resize(37);
@@ -162,6 +163,14 @@ class A4{
 			iter ++;
 			iterTime->showTime("iteration " + to_string(iter), 1);
 		}
+	}
+
+
+	double getRandom(){
+		random_device rd;
+		mt19937 gen(rd());
+		uniform_real_distribution<double> dist(0.0, 1.0);
+		return dist(gen);
 	}
 
 
@@ -377,8 +386,13 @@ class A4{
 
 		// assign weights to the Intermediate data values ;
 		weights.clear();
+		ofstream out;
+		out.open("a.txt");
 		for (int dataRow = 0; dataRow < originalData.size(); dataRow++){
-			if (missingValues[dataRow] == -1) weights.push_back(1.0);
+			
+			if (missingValues[dataRow] == -1) {
+				weights.push_back(1.0);
+			}
 			else{
 				int variable = missingValues[dataRow];
 				vector<float> probabilities ;
@@ -393,6 +407,7 @@ class A4{
 															// value for inferencing on childrens
 						int childVar = child[variable][k];
 						float factor = calculateProbability(dataRow, childVar, originalData[dataRow][childVar]);
+						
 						// the weight for the fact child value in the dataRow 
 						// given the parents of that childVar
 						probability_of_value_given_evidence *= factor;
@@ -400,13 +415,32 @@ class A4{
 					probabilities.push_back(probability_of_value_given_evidence);
 					probab_sum += probability_of_value_given_evidence;
 				}
-				int argmaxValue = max_element(probabilities.begin(), probabilities.end())-probabilities.begin();
-				originalData[dataRow][variable] = argmaxValue;
+
+
+
+				// int argmaxValue = max_element(probabilities.begin(), probabilities.end())-probabilities.begin();
+				// originalData[dataRow][variable] = argmaxValue;
+
+
+
 				float alpha = (1.0)/probab_sum;
-				for (int i=0; i < probabilities.size(); i++) weights.push_back(alpha * probabilities[i]);
+				for (int i=0; i < probabilities.size(); i++) {
+					probabilities[i] *= alpha;
+					weights.push_back(probabilities[i]);
+					// out << probabilities[i] << " ";
+				}
+				float cumulativeProb = 0.0;
+				double random = getRandom();
+				for (int i=0; i<probabilities.size(); i++) {
+					cumulativeProb += probabilities[i];
+					if (random < cumulativeProb){
+						originalData[dataRow][variable] = i;
+						break;
+					}
+				}
 			}
 		}
-
+		out.close();
 	}
 
 	void writeData(){
