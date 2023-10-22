@@ -8,15 +8,87 @@
 #include <map>
 #include <algorithm>
 #include <iomanip>
-// #include<bits/stdc++.h>
+#include <chrono>
 
 
 // Format checker just assumes you have Alarm.bif and Solved_Alarm.bif (your file) in current directory
 using namespace std;
+
+
+class Time{
+	private:
+		chrono::high_resolution_clock::time_point init_time;
+		string line;
+		int flag; // 1 means ms, 2 means µs, and 3 means ns
+	
+	
+	public:
+		Time(){
+			init_time = chrono::high_resolution_clock::now();
+		}
+
+		void showTime(string line, int flag = 2){
+			std::chrono::high_resolution_clock::time_point current_time = std::chrono::high_resolution_clock::now();
+			cout << line << "\t---->\t" ;
+			switch (flag)
+			{
+				case 1:
+					{
+						chrono::milliseconds d1 = chrono::duration_cast<chrono::milliseconds>(current_time - init_time);
+						cout << d1.count() << " ms";
+						break;
+					}
+				case 2:
+					{
+						chrono::microseconds d2 = chrono::duration_cast<chrono::microseconds>(current_time - init_time);
+						cout << d2.count() << " µs";
+						break;
+					}
+				case 3:
+					{
+						chrono::nanoseconds d3 = chrono::duration_cast<chrono::nanoseconds>(current_time - init_time);
+						cout << d3.count() << " ns";
+						break;
+					}
+				default:
+					cout << endl;
+			}
+			cout << endl;
+		}
+
+
+		long long getTime(int flag = 1){
+			std::chrono::high_resolution_clock::time_point current_time = std::chrono::high_resolution_clock::now();
+			switch (flag)
+			{
+				case 1:
+					{
+						chrono::milliseconds d1 = chrono::duration_cast<chrono::milliseconds>(current_time - init_time);
+						return  d1.count();
+					}
+				case 2:
+					{
+						chrono::microseconds d2 = chrono::duration_cast<chrono::microseconds>(current_time - init_time);
+						return d2.count();
+					}
+				case 3:
+					{
+						chrono::nanoseconds d3 = chrono::duration_cast<chrono::nanoseconds>(current_time - init_time);
+						return d3.count();
+					}
+				default:
+					return 0;
+			}
+		}
+
+};
+
+
 class A4{
 	private:
 	vector<vector<float> > CPT;
-	time_t initTime;
+	Time* initTime;
+	float processTime, smoothingFactor;
 	string network_file, data_file;
 	map<string, int> mp;
 	vector<vector<int> > parents, child;
@@ -47,20 +119,47 @@ class A4{
 	public:
 
 
-	A4(string network_file, string data_file, time_t initTime){
+	A4(string network_file, string data_file, Time* initTime){
 		this->network_file = network_file;
 		this->data_file = data_file;
-		this->initTime = initTime + (time_t)(0.01); // THIS NEEDS TO BE CHECKED!
+		this->initTime = initTime;
+		this->processTime = 5; // 2 mins 
 		parents.resize(37);
 		child.resize(37);
 		names.resize(37);
 		possibleValues.resize(37);
 		CPT.resize(37);
 		mp.clear();
+		Time* read = new Time();
 		readNetwork();
 		readDataFile();
+		smoothingFactor = (originalData.size() / intermediateData.size()); // ANALYSE IT MANI SARTHAK !! (this is everything!)
+		CPTInitialiser();
+		writeData();
+		read->showTime("reading and initialising both network and data", 1);
+		Time* solving = new Time();
 		solve();
+		solving->showTime("learning and inferencing", 1);
 	}
+
+
+	void solve(){  
+		float time_to_write = 0.002; // max time to write in solved_alarm.bif
+		float bufferTime = 0.255; // for last iteration to take place
+		int iter = 0;
+		while ((float)initTime->getTime(2)   < (processTime - time_to_write - bufferTime)*(1e6)){ // this should be time not exceeded 
+			Time* iterTime = new Time();
+			// 1. learn the CPT from intermediat data structure 
+			CPTUpdater();
+			// 2. wirte to `solved_alarm.bif` since time <  1 ms.
+			writeData();
+			// 3. update the values to intermediate data structure using inference from the CPT learnt
+			if ((float)initTime->getTime(2)   < (processTime - 0.030)*(1e6)) dataUpdater();
+			iter ++;
+			// iterTime->showTime("iteration " + to_string(iter), 1);
+		}
+	}
+
 
 
 	void readDataFile(){
@@ -204,43 +303,16 @@ class A4{
 		}
 	}
 
-	void solve(int process_time = 5){ // running for 5 seconds by default 
-		// since reading and writing could be bottleneck use intemediate
-		// data structures to represent records.dat and solved_alarm.bif 
-
-
-		// showDependency();
-		// showCPT(); 
-		CPTInitialiser();
-		dataUpdater();
-		// showCPT();
-
-		float time_to_write = 0.0 ; // expected time to write in solved_alarm.bif
-		while (time(NULL) - initTime + time_to_write < process_time){ // this should be time not exceeded 
-			// 1. learn the CPT from intermediat data structure 
-			CPTUpdater();
-			// 2. update the values to intermediate data structure using inference from the CPT learnt
-			dataUpdater();
-		}
-
-		// wirte to `solved_alarm.bif`
-		writeData();
-		// cout << initTime << endl;
-		// cout << time(NULL) << endl;
-
-	}
-
-
 
 	void CPTUpdater(){
 		// uses values given in the intermediate data structure to learn the values
 		// for the CPT
 
-		// learning algorithm ?? 
+		// learning algorithm = weighted sampling and smoothing
 
 
 		for (int i = 0; i< CPT.size(); i++){
-			CPT[i] = vector<float>(CPT[i].size(), 1.0);
+			CPT[i] = vector<float>(CPT[i].size(), smoothingFactor);
 			vector<int> ids, Sizes;
 			ids.push_back(i);
 			Sizes.push_back(possibleValues[i].size());
@@ -249,7 +321,7 @@ class A4{
 				ids.push_back(parents[i][j]);
 			}
 			int len = CPT[i].size() / possibleValues[i].size();
-			vector<float> sumParts(len, possibleValues[i].size());
+			vector<float> sumParts(len, possibleValues[i].size()*smoothingFactor);
 			for (int j = 0; j < intermediateData.size(); j++){
 				vector<int> values;
 				for (int k = 0; k < ids.size(); k++){
@@ -266,7 +338,8 @@ class A4{
 			}
 
 			for(int j = 0; j < CPT[i].size(); j++){
-				if (sumParts[ j % len] == 0) CPT[i][j] = 0.0;
+				if (sumParts[ j % len] == 0) CPT[i][j] = 0.0; // wont be the case ever
+															// still to avoid div by 0 err
 				else CPT[i][j] /= sumParts[j % len]; 
 			}
 		}
@@ -296,7 +369,7 @@ class A4{
 		// data structure 
 
 		// USES SOFT METHOD !!
-		// Inference algorithm ?? 
+		// Inference algorithm = Likelihood weighting in Markov Blanket !
 
 		// assign weights to the Intermediate data values ;
 		weights.clear();
@@ -311,11 +384,17 @@ class A4{
 					// will pe problematic for the first time since in the originalData 
 					// the value of missing variables are -1 !!
 					float probability_of_value_given_evidence = calculateProbability(dataRow, variable, j); // j is the value
+					for (int k=0; k < child[variable].size(); k++){
+						originalData[dataRow][variable] = j; // fixing the variable to current
+															// value for inferencing on childrens
+						int childVar = child[variable][k];
+						float factor = calculateProbability(dataRow, childVar, originalData[dataRow][childVar]);
+						// the weight for the fact child value in the dataRow 
+						// given the parents of that childVar
+						probability_of_value_given_evidence *= factor;
+					}
 					probabilities.push_back(probability_of_value_given_evidence);
 					probab_sum += probability_of_value_given_evidence;
-					///////////////////////////////////////////////////////////////
-					// HAVE A GUT FEELING THAT THIS COULD BE IMPROVED FURTHER !! //
-					///////////////////////////////////////////////////////////////
 				}
 				int argmaxValue = max_element(probabilities.begin(), probabilities.end())-probabilities.begin();
 				originalData[dataRow][variable] = argmaxValue;
@@ -355,19 +434,18 @@ class A4{
 		out.close();
 		input.close();
 
-		cout << "written to solved_alarm.bif sucessfully" << endl;
+		// cout << "written to solved_alarm.bif sucessfully" << endl;
 	}
 };
 
 
 int main(int argc, char* argv[])
 {
-
-	time_t initTime = time(NULL);
+	Time* t = new Time();
 	string network_file = argv[1];
 	string data_file = argv[2];
-	A4* ans = new A4(network_file, data_file, initTime);
-
+	A4* ans = new A4(network_file, data_file, t);
+	t->showTime("wholeProcess", 1);
 	return 0; 
 	
 }
