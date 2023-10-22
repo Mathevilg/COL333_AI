@@ -144,8 +144,8 @@ class A4{
 
 
 	void solve(){  
-		float time_to_write = 0.002; // max time to write in solved_alarm.bif
-		float bufferTime = 0.255; // for last iteration to take place
+		float time_to_write = 0.005; // max time to write in solved_alarm.bif
+		float bufferTime = 0.800; // for last iteration to take place
 		int iter = 0;
 		while ((float)initTime->getTime(2)   < (processTime - time_to_write - bufferTime)*(1e6)){ // this should be time not exceeded 
 			Time* iterTime = new Time();
@@ -156,7 +156,7 @@ class A4{
 			// 3. update the values to intermediate data structure using inference from the CPT learnt
 			if ((float)initTime->getTime(2)   < (processTime - 0.030)*(1e6)) dataUpdater();
 			iter ++;
-			// iterTime->showTime("iteration " + to_string(iter), 1);
+			iterTime->showTime("iteration " + to_string(iter), 1);
 		}
 	}
 

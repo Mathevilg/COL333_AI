@@ -51,7 +51,7 @@ learnt CPT with upto `4 decimal places` or simply output the completed version o
 
 
 #### Time Analysis
-1. reading neywork and dataalong with initialising CPT and intermediateData `70ms - 75 ms`. 
-2. Each iteration in learning and inferencing takes abt `255ms to 275ms`. Out of them learnign takes most of the time `240ms - 250ms` and the time by inferencing is around `20ms to 25ms`.
+1. reading neywork and dataalong with initialising CPT and intermediateData `70ms - 75 ms` -> `150ms`. 
+2. Each iteration in learning and inferencing takes abt `255ms to 275ms` -> `800ms` now. Out of them learnign takes most of the time `240ms - 250ms` and the time by inferencing is around `20ms to 25ms`.
 3. writing to solved_alarm.bif happens in less than `2ms`.
 
