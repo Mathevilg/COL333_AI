@@ -28,6 +28,20 @@ learnt CPT with upto `4 decimal places` or simply output the completed version o
 
 
 
-#### Runnung Instructions:
+#### Running Instructions:
+0. `git pull origin main`
 1. run `make all`. Assuming the data is in `records.dat`.
 2. `enjoy :)`.
+
+
+
+
+## Draft completed on OCT'22
+#### Only optimisations and review left
+
+#### Scope of Improvement
+1. `dataUpdater()`: I think that the probabilities using inference can be made even better (with using childs into account too; ie. considering the whole `markov blanket`).
+2. `CPTUpdater()`: What is implemeted is based on input from ChatGPT and we have to apply the learning algorithms learnt in class (`weighted average`).
+3. `readDataFile()`: Since i dont know much of `ifstream` in c++, input from ChatGPT have been taken in consideration. If you know better one please implement.
+4. `readNetwork()`: Since i dont know much of `ifstream` & `ofstream` in c++, input from ChatGPT have been taken in consideration. If you know better one please implement.
+5. `Note`: `Timing effects` are to be checked else gandi bt ho sakti hai !!
