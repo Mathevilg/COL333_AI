@@ -1,11 +1,14 @@
-// #include <iostream>
-// #include <string>
-// #include <vector>
-// #include <list>
-// #include <fstream>
-// #include <sstream>
-// #include <cstdlib>
-#include<bits/stdc++.h>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <list>
+#include <fstream>
+#include <sstream>
+#include <cstdlib>
+#include <map>
+#include <algorithm>
+#include <iomanip>
+// #include<bits/stdc++.h>
 
 
 // Format checker just assumes you have Alarm.bif and Solved_Alarm.bif (your file) in current directory
@@ -268,7 +271,7 @@ class Mani{
 	string network_file, data_file;
 	map<string, int> mp;
 	vector<vector<int> > parents, child;
-	vector<string> names;
+	vector<string> names; // redundant 
 	vector<vector<string> > possibleValues;
 	vector<vector<int> > originalData, intermediateData;
 	vector<float> weights; // weights for the intermediate data columns !!
@@ -294,7 +297,7 @@ class Mani{
 
 	public:
 
-	
+
 	Mani(string network_file, string data_file, time_t initTime){
 		this->network_file = network_file;
 		this->data_file = data_file;
@@ -460,9 +463,10 @@ class Mani{
 		// showDependency();
 		// showCPT(); 
 		CPTInitialiser();
+		dataUpdater();
 		// showCPT();
 
-		float time_to_write = 0.2 ; // expected time to write in solved_alarm.bif
+		float time_to_write = 0.0 ; // expected time to write in solved_alarm.bif
 		while (time(NULL) - initTime + time_to_write < process_time){ // this should be time not exceeded 
 			// 1. learn the CPT from intermediat data structure 
 			CPTUpdater();
@@ -472,8 +476,8 @@ class Mani{
 
 		// wirte to `solved_alarm.bif`
 		writeData();
-		cout << initTime << endl;
-		cout << time(NULL) << endl;
+		// cout << initTime << endl;
+		// cout << time(NULL) << endl;
 
 	}
 
@@ -485,6 +489,38 @@ class Mani{
 
 		// learning algorithm ?? 
 
+
+		for (int i = 0; i< CPT.size(); i++){
+			CPT[i] = vector<float>(CPT[i].size(), 1.0);
+			vector<int> ids, Sizes;
+			ids.push_back(i);
+			Sizes.push_back(possibleValues[i].size());
+			for (int j = 0; j < parents[i].size(); j++){
+				Sizes.push_back(possibleValues[parents[i][j]].size());
+				ids.push_back(parents[i][j]);
+			}
+			int len = CPT[i].size() / possibleValues[i].size();
+			vector<float> sumParts(len, possibleValues[i].size());
+			for (int j = 0; j < intermediateData.size(); j++){
+				vector<int> values;
+				for (int k = 0; k < ids.size(); k++){
+					values.push_back(intermediateData[j][ids[k]]);
+				}
+
+				int data_index = 0, temp = 1;
+				for (int k = values.size()-1; k >= 0; k--){
+					data_index += temp * values[k];
+					temp *= Sizes[k];
+				}
+				CPT[i][data_index] += weights[j];
+				sumParts[data_index%len] += weights[j];
+			}
+
+			for(int j = 0; j < CPT[i].size(); j++){
+				if (sumParts[ j % len] == 0) CPT[i][j] = 0.0;
+				else CPT[i][j] /= sumParts[j % len]; 
+			}
+		}
 	}
 
 
@@ -560,9 +596,10 @@ class Mani{
 				out << line << endl;
 				getline(input, line);
 				out << "\ttable ";
-				for (int i=0; i<CPT[current_id].size(); i++) out << fixed << setprecision(4) << CPT[current_id][i] << " ";
+				for (int i=0; i<CPT[current_id].size(); i++) out << fixed << setprecision(4) << max((float)0.0001, CPT[current_id][i]) << " ";
 				out << ";" << endl;
 			}
+			else if (temp.compare("") == 0) out << line; //THIS LINE ALONE FUCKED IT ALL !!
 			else out << line << endl; // have to check for output conditions here !!
 
 		}
