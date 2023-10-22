@@ -127,7 +127,7 @@ class A4{
 		this->network_file = network_file;
 		this->data_file = data_file;
 		this->initTime = initTime;
-		this->processTime = 30; // 2 mins 
+		this->processTime = 5; // 2 mins 
 		parents.resize(37);
 		child.resize(37);
 		names.resize(37);
@@ -406,21 +406,22 @@ class A4{
 						originalData[dataRow][variable] = j; // fixing the variable to current
 															// value for inferencing on childrens
 						int childVar = child[variable][k];
-						float factor = calculateProbability(dataRow, childVar, originalData[dataRow][childVar]);
+						float factor1 = calculateProbability(dataRow, childVar, originalData[dataRow][childVar]);
 						
+						// float factor2 = 1.0;
+						// for (int l=0; l < parents[childVar].size(); l++){
+						// 	int parentVar = parents[childVar][l];
+						// 	factor2 *= calculateProbability(dataRow, parentVar, originalData[dataRow][parentVar]);
+						// }
+
 						// the weight for the fact child value in the dataRow 
 						// given the parents of that childVar
-						probability_of_value_given_evidence *= factor;
+						probability_of_value_given_evidence *= factor1;
+						// probability_of_value_given_evidence *= factor2;
 					}
 					probabilities.push_back(probability_of_value_given_evidence);
 					probab_sum += probability_of_value_given_evidence;
 				}
-
-
-
-				// int argmaxValue = max_element(probabilities.begin(), probabilities.end())-probabilities.begin();
-				// originalData[dataRow][variable] = argmaxValue;
-
 
 
 				float alpha = (1.0)/probab_sum;
@@ -429,6 +430,15 @@ class A4{
 					weights.push_back(probabilities[i]);
 					// out << probabilities[i] << " ";
 				}
+
+
+
+				// // HARD !!!
+				// int argmaxValue = max_element(probabilities.begin(), probabilities.end())-probabilities.begin();
+				// originalData[dataRow][variable] = argmaxValue;
+
+
+				// SOFT !!!
 				float cumulativeProb = 0.0;
 				double random = getRandom();
 				for (int i=0; i<probabilities.size(); i++) {
