@@ -100,11 +100,14 @@ class A4{
 
 
 	void showDependency(){
+		int ans = 0;
 		for (int i=0; i < 37; i++){
-			cout << names[i] << "  "<< possibleValues[i].size() << "  ----> ";
-			for (auto it : parents[i]) cout << names[it] << " " << possibleValues[it].size() << "   ";
-			cout << endl << CPT[i].size() << endl;
+			// cout << names[i] << "  "<< possibleValues[i].size() << "  ----> ";
+			// for (auto it : parents[i]) cout << names[it] << " " << possibleValues[it].size() << "   ";
+			// cout << endl << CPT[i].size() << endl;
+			ans += CPT[i].size();
 		}
+		cout << ans << endl;
 	}
 
 
@@ -133,6 +136,7 @@ class A4{
 		Time* read = new Time();
 		readNetwork();
 		readDataFile();
+		// showDependency();
 		smoothingFactor = (originalData.size() / intermediateData.size()); // ANALYSE IT MANI SARTHAK !! (this is everything!)
 		CPTInitialiser();
 		writeData();

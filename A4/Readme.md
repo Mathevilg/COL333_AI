@@ -47,6 +47,7 @@ learnt CPT with upto `4 decimal places` or simply output the completed version o
 5. ~~`Note`: `Timing effects` are to be checked else gandi bt ho sakti hai !!~~
 6. ~~`smoothing` in `CPTUpdater()` needs to be implemeted.~~
 7. Analysis of `smoothingFactor`.
+8. Till now it is working on `HARD` have to shift that to `SOFT`.
 
 
 

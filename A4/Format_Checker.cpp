@@ -384,6 +384,7 @@ int main()
             score+=fabs(cpt1[j]-cpt2[j]);
     }
    cout <<"Score is "<<score << endl;
+   cout << "Avg error is " << fixed << setprecision(4) << score / 752 << endl;
 
 	//cout<<Alarm.netSize();
 	
