@@ -13,7 +13,7 @@
 
 // Format checker just assumes you have Alarm.bif and Solved_Alarm.bif (your file) in current directory
 using namespace std;
-
+#define float double
 
 class Time{
 	private:
@@ -139,7 +139,9 @@ class A4{
 		readDataFile();
 		// showDependency();
 		smoothingFactor = (originalData.size() / intermediateData.size()); // ANALYSE IT MANI SARTHAK !! (this is everything!)
+		// smoothingFactor = 0.0035;
 		CPTInitialiser();
+		dataUpdater();
 		writeData();
 		read->showTime("reading and initialising both network and data", 1);
 		Time* solving = new Time();
@@ -157,7 +159,9 @@ class A4{
 			// 1. learn the CPT from intermediat data structure 
 			CPTUpdater();
 			// 2. wirte to `solved_alarm.bif` since time <  1 ms.
+			Time* write = new Time();
 			writeData();
+			write->showTime("writing in iteration "+to_string(iter+1), 2);
 			// 3. update the values to intermediate data structure using inference from the CPT learnt
 			if ((float)initTime->getTime(2)   < (processTime - 0.030)*(1e6)) dataUpdater();
 			iter ++;
