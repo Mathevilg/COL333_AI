@@ -56,3 +56,8 @@ learnt CPT with upto `4 decimal places` or simply output the completed version o
 2. Each iteration in learning and inferencing takes abt `255ms to 275ms` -> `800ms` now. Out of them learnign takes most of the time `240ms - 250ms` and the time by inferencing is around `20ms to 25ms`.
 3. writing to solved_alarm.bif happens in less than `2ms`.
 
+
+
+
+#### Rivision and further implementation !
+1. ~~since enough time, generalising the code for any graph/CPT should work!~~

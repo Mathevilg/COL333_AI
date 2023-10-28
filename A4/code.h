@@ -100,11 +100,11 @@ class A4{
 	vector<vector<int> > originalData, intermediateData;
 	vector<float> weights; // weights for the intermediate data columns !!
 	vector<int> missingValues; // the missing variables for data rows !!
-	
+	int variables;
 
 	void showDependency(){
 		int ans = 0;
-		for (int i=0; i < 37; i++){
+		for (int i=0; i < variables; i++){
 			// cout << names[i] << "  "<< possibleValues[i].size() << "  ----> ";
 			// for (auto it : parents[i]) cout << names[it] << " " << possibleValues[it].size() << "   ";
 			// cout << endl << CPT[i].size() << endl;
@@ -116,7 +116,7 @@ class A4{
 
 	void showCPT(){
 
-		for (int i=0; i<37; i++){
+		for (int i=0; i<variables; i++){
 			vector<float> it = CPT[i];
 			for (int i=0; i<it.size(); i++) cout << it[i] << " ";
 			cout << endl;
@@ -132,11 +132,12 @@ class A4{
 		this->data_file = data_file;
 		this->initTime = initTime;
 		this->processTime = 5; // 2 mins 
-		parents.resize(37);
-		child.resize(37);
-		names.resize(37);
-		possibleValues.resize(37);
-		CPT.resize(37);
+		this->variables = getVars();
+		parents.resize(variables);
+		child.resize(variables);
+		names.resize(variables);
+		possibleValues.resize(variables);
+		CPT.resize(variables);
 		mp.clear();
 		Time* read = new Time();
 		readNetwork();
@@ -225,6 +226,33 @@ class A4{
 		file.close();
 	}
 
+
+	int getVars(){
+		ifstream file(network_file);
+		if (!file.is_open()) {
+			cout << "error opening " << network_file << endl;
+			return -1;
+		}
+		int vars = 0;
+		int cnt1 = 0;
+		int cnt2 = 0;
+		while (!file.eof()){
+
+			string line, temp, var_name;
+			getline(file, line);
+			stringstream stream;
+			stream.str(line);
+			stream >> temp;
+			if (temp.compare("probability") == 0){
+				cnt1++;
+			} else if (temp.compare("variable") == 0){
+				cnt2++;
+			}
+		}
+		file.close();
+		if (cnt1^cnt2) return vars;
+		else return cnt1;
+	}
 
 
 	void readNetwork(){
@@ -346,6 +374,22 @@ class A4{
 
 		// cout << "written to solved_alarm.bif sucessfully" << endl;
 	}
+
+
+
+
+
+		void generateData(string outFilename){
+			ofstream out;
+			out.open(outFilename);
+			for (int lineId = 0; lineId < originalData.size(); lineId ++){
+				for (int j=0; j<variables; j++){
+					out << possibleValues[j][originalData[lineId][j]] << " ";
+				}
+				out << endl;
+			}
+			out.close();
+		}
 };
 
 

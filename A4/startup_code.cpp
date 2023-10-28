@@ -102,15 +102,15 @@ void A4::dataUpdater(){
 
 
 				// SOFT !!!
-				float cumulativeProb = 0.0;
-				double random = getRandom();
-				for (int i=0; i<probabilities.size(); i++) {
-					cumulativeProb += probabilities[i];
-					if (random < cumulativeProb){
-						originalData[dataRow][variable] = i;
-						break;
-					}
-				}
+				// float cumulativeProb = 0.0;
+				// double random = getRandom();
+				// for (int i=0; i<probabilities.size(); i++) {
+				// 	cumulativeProb += probabilities[i];
+				// 	if (random < cumulativeProb){
+				// 		originalData[dataRow][variable] = i;
+				// 		break;
+				// 	}
+				// }
 			}
 		}
 		out.close();
