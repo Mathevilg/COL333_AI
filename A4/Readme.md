@@ -61,3 +61,4 @@ learnt CPT with upto `4 decimal places` or simply output the completed version o
 
 #### Rivision and further implementation !
 1. ~~since enough time, generalising the code for any graph/CPT should work!~~
+2. check for writing in `solved_alarm.bif` that the sum is 1.0000 and not more !!
