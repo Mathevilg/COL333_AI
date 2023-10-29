@@ -2,7 +2,7 @@ all:
 	@echo "\n"
 	@g++ -ld_classic Format_Checker.cpp -o format_checker
 	@g++ -ld_classic code.h startup_code.cpp -o code
-	@./run.sh alarm.bif records.dat
+	@./run.sh alarm.bif receords_check.dat
 	@echo "\n"
 	@./format_checker
 	@echo "\n"
