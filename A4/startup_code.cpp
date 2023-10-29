@@ -1,5 +1,5 @@
 #include "code.h"
-#include <stack>
+
 // only change in code needed here
 class Node{
 	public:
@@ -27,7 +27,7 @@ class Node{
 				CPTUpdater();
 				// 2. wirte to `solved_alarm.bif` since time <  1 ms.
 				Time* write = new Time();
-				writeData();
+				writeData("solved_alarm.bif");
 				int exitcode = std::system("./format_checker");
 				// write->showTime("writing in iteration "+to_string(iter+1), 2);
 				// 3. update the values to intermediate data structure using inference from the CPT learnt
@@ -94,29 +94,24 @@ class Node{
 	}
 
 	float A4::calculateProbability(int dataRow, int variable, int state){
-		vector<int> values, Sizes;
+		vector<int> values, sizes;
 		// values store the value of EVIDENCE & variable
 		// Sizes store the corrsponding size of possible values 
 		values.push_back(state);
-		Sizes.push_back(possibleValues[variable].size());
+		sizes.push_back(possibleValues[variable].size());
 		for (int i = 0; i < parents[variable].size(); i++) {
 			values.push_back(originalData[dataRow][parents[variable][i]]);
-			Sizes.push_back(possibleValues[parents[variable][i]].size());
+			sizes.push_back(possibleValues[parents[variable][i]].size());
 		}
 		int idx = 0, temp = 1;
 		for (int i = values.size()-1; i >= 0; i--){
 			idx += temp * values[i];
-			temp *= Sizes[i];
+			temp *= sizes[i];
 		}
 		return CPT[variable][idx];
 	}
 
 	void A4::dataUpdater(){
-		// using the intermediate CPT values modifies the data in the intermediate 
-		// data structure 
-		// USES SOFT METHOD !!
-		// Inference algorithm = Likelihood weighting in Markov Blanket !
-		// assign weights to the Intermediate data values ;
 		weights.clear();
 		for (int i=0; i<originalData.size(); i++) {
 			int var = missingValues[i];
@@ -127,14 +122,18 @@ class Node{
 				vector<float> prob;
 				float sum=0.0;
 				for (int j=0; j<possibleValues[var].size(); j++) {
-					// calculates P(variable = j | conditions in that data row);
-					// will pe problematic for the first time since in the originalData 
-					// the value of missing variables are -1 !!
 					float p = calculateProbability(i,var,j);
 					originalData[i][var] = j;
 					for (auto child: child[var]) {
 						p*=calculateProbability(i,child,originalData[i][child]);
+						// // MARKOV Blanket !!
+						// double p2 = 1.000;
+						// for (auto childPar:parents[child]){
+						// 	p2 *= calculateProbability(i, childPar, originalData[i][childPar]);
+						// }
+						// p *= p2;
 					}
+					
 					prob.push_back(p);
 					sum+=p;
 				}
@@ -145,15 +144,14 @@ class Node{
 		}
 	}
 
-
 	void A4::CPTUpdater(){
 		// uses values given in the intermediate data structure to learn the values
 		// for the CPT
 		// learning algorithm = weighted sampling and smoothing
 		for (int i=0; i<CPT.size(); i++) {
-			CPT[i] = vector<float>(CPT[i].size(),0);
+			CPT[i] = vector<float>(CPT[i].size(),smoothingFactor);
 			int len = CPT[i].size()/possibleValues[i].size();
-			vector<float> sumParts(len,0);
+			vector<float> sumParts(len,smoothingFactor*possibleValues[i].size());
 			for (int j=0; j<intermediateData.size(); j++) {
 				int idx = 0, temp = 1;
 				for (int k=parents[i].size()-1; k>=0; k--) {

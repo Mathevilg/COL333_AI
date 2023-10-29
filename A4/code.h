@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <chrono>
 #include <random>
+#include <stack>
 using namespace std;
 #define float double
 
@@ -114,7 +115,6 @@ class A4{
 		cout << ans << endl;
 	}
 
-
 	void showCPT(){
 
 		for (int i=0; i<variables; i++){
@@ -149,22 +149,15 @@ class A4{
 		// genTestcase("records_gen.dat");
 		readNetwork();
 		readDataFile();
-		// showDependency();
-		// smoothingFactor = ((float)originalData.size() / intermediateData.size()); // ANALYSE IT MANI SARTHAK !! (this is everything!)
 		smoothingFactor = 0.0;
-		// cout << smoothingFactor <<  endl;
 		CPTInitialiser();
 		dataUpdater();
-		writeData();
+		writeData("solved_alarm.bif");
 		read->showTime("reading and initialising both network and data", 1);
 		Time* solving = new Time();
 		solve();
 		solving->showTime("learning and inferencing", 1);
 	}
-
-
-	
-
 
 	double getRandom(double start = 0.0, double end = 1.0){
 		random_device rd;
@@ -172,8 +165,6 @@ class A4{
 		uniform_real_distribution<double> dist(start, end);
 		return dist(gen);
 	}
-
-
 
 	void readDataFile(){
 		string line, name, temp;
@@ -228,12 +219,8 @@ class A4{
 
 		}
 
-		// cout << originalData.size() << endl;
-		// cout << intermediateData.size() << endl;
-
 		file.close();
 	}
-
 
 	int getVars(){
 		ifstream file(network_file);
@@ -262,10 +249,7 @@ class A4{
 		else return cnt1;
 	}
 
-
 	void readNetwork(){
-		// used ChatGPT  here !! 
-		// have to be removed / modified 
 		ifstream file(network_file);
 		if (!file.is_open()) {
 			cout << "error opening " << network_file << endl;
@@ -332,7 +316,6 @@ class A4{
 
 	}
 
-
 	void CPTInitialiser(){
 		// assume equiprobable !!
 		for (int i=0; i<CPT.size(); i++){
@@ -343,66 +326,19 @@ class A4{
 		}
 	}
 
-
 	void CPTUpdater();
 
-
 	float calculateProbability(int dataRow, int variable, int state);
+	
 	double calculateProbabilityTopoSort(int var, int varState, map<int, int>& stateMap);
     
 	vector<double> genCumulative(int var, map<int, int>& stateMap);
+	
 	vector<int> generateDataRow(vector<int> &topo);
+	
 	void dataUpdater();
 
-	void writeData(){
-		// write the CPT in solved_alarm.bif
-		ifstream input(network_file);
-		ofstream out;
-		out.open("solved_alarm.bif");
-		if (!input.is_open()) return ;
-		while (!input.eof()){
-			string line, temp, var_name;
-			getline(input, line);
-			stringstream stream;
-			stream.str(line);
-			stream >> temp;
-			if (temp.compare("probability") == 0){
-				stream >> temp; // simply '(' 
-				stream >> temp; // the variable name 
-				int current_id = mp.find(temp)->second; // the node number in the mapping
-				out << line << endl;
-				getline(input, line);
-				out << "\ttable ";
-				vector<float> cptRow = CPT[current_id];
-				int sz = possibleValues[current_id].size();
-				int len = cptRow.size() / sz;
-				double pmf[sz] ;
-				for (int i = 0; i<len; i++){
-					for (int j = 0; j < sz; j++){
-						pmf[j] = cptRow[j*len + i];
-					}
-					convert(pmf, sz);
-					for (int j=0; j < sz; j++){
-						cptRow[j*len + i] = pmf[j];
-					}
-				}
-				for (int i=0; i<sz * len; i++) {
-					out << fixed << setprecision(4) << cptRow[i] << " ";
-					// out << cptRow[i] << " ";
-				}
-				out << ";" << endl;
-			}
-			else if (temp.compare("") == 0) out << line;
-			else out << line << endl; 
-
-		}
-		out.close();
-		input.close();
-
-	}
-
 	void writeData(string filename){
-		// write the CPT in solved_alarm.bif
 		ifstream input(network_file);
 		ofstream out;
 		out.open(filename);
@@ -448,8 +384,6 @@ class A4{
 
 	}
 
-
-
 	void generateData(string outFilename){
 		ofstream out;
 		out.open(outFilename);
@@ -462,8 +396,6 @@ class A4{
 		out.close();
 	}
 
-
-
 	double findValue(double f){
 		int tmp = f * pow(10, precision);
 		double pre = pow(10, -precision);
@@ -471,8 +403,6 @@ class A4{
 		if (delta < 0.49999 * pre) return (tmp*pre);
 		else return (tmp+1)*pre;
 	}
-
-
 
 	void print(double arr[], int len){
 		// for (int i=0; i<len; i++) cout << arr[i] << " ";
