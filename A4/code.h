@@ -126,6 +126,9 @@ class A4{
 	public:
 
     void solve();
+	void restart();
+	void likelihood();
+
 
 	A4(string network_file, string data_file, Time* initTime){
 		this->network_file = network_file;

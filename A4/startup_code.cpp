@@ -6,21 +6,69 @@ void A4::solve(){
 		float bufferTime = 0.800; // for last iteration to take place
 		int iter = 0;
 		while ((float)initTime->getTime(2)   < (processTime - time_to_write - bufferTime)*(1e6) && (iter < 3)){ // this should be time not exceeded 
-			Time* iterTime = new Time();
-			// 1. learn the CPT from intermediat data structure 
-			CPTUpdater();
-			// 2. wirte to `solved_alarm.bif` since time <  1 ms.
-			Time* write = new Time();
-			writeData();
-			// write->showTime("writing in iteration "+to_string(iter+1), 2);
-			// 3. update the values to intermediate data structure using inference from the CPT learnt
-			if ((float)initTime->getTime(2)   < (processTime - 0.030)*(1e6)) dataUpdater();
-			iter ++;
-			iterTime->showTime("iteration " + to_string(iter), 1);
+			restart();
+			cout<<"restarted\n";
+			for (int i=0; i<5; i++) {
+				Time* iterTime = new Time();
+				// 1. learn the CPT from intermediat data structure 
+				CPTUpdater();
+				// 2. wirte to `solved_alarm.bif` since time <  1 ms.
+				Time* write = new Time();
+				writeData();
+				int exitcode = std::system("./format_checker");
+				// write->showTime("writing in iteration "+to_string(iter+1), 2);
+				// 3. update the values to intermediate data structure using inference from the CPT learnt
+				if ((float)initTime->getTime(2)   < (processTime - 0.030)*(1e6)) dataUpdater();
+				likelihood();
+				iter ++;
+				iterTime->showTime("iteration " + to_string(iter), 1);
+			}
 		}
 	}
 
+	void A4::restart() {
+		weights.clear();
+		for (int i=0; i<originalData.size(); i+=1) {
 
+			if (missingValues[i] == -1) {
+				weights.push_back(1.0);
+			}
+			else {
+				vector<float> temp_weights;
+				float sum=0;
+				for (int j=0; j < possibleValues[missingValues[i]].size(); j++) {
+					float random = getRandom();
+					temp_weights.push_back(random);
+					sum+=random;
+				}
+				for (int j=0; j < possibleValues[missingValues[i]].size(); j++) {
+					weights.push_back(temp_weights[j]/sum);
+				}
+			}
+		}
+	}
+
+	void A4::likelihood() {
+		float likelihood = 1.0;
+		for (int dataRow=0; dataRow<originalData.size(); dataRow++) {
+			// calculate the probability of seeing that data row 
+			int variable = missingValues[dataRow];
+			float prob = 0.0;
+			for (int state=0; state<possibleValues[variable].size(); state++) {
+				originalData[dataRow][variable] = state;
+				float p = 1.0;
+				for (int i=0; i<originalData[dataRow].size(); i++) {
+					p*=calculateProbability(dataRow, i, originalData[dataRow][i]);
+				} 
+				prob+=1000*p;
+				// cout<<calculateProbability(dataRow,variable,state)<<" ";
+			}
+			// cout<<"\t"<<dataRow<<" "<<prob<<"\t";
+			// if (prob==0) cout<<log(prob)<<" ";
+			likelihood*=prob;
+		}
+		cout<<"\t"<<likelihood<<"\t";
+	}
 float A4::calculateProbability(int dataRow, int variable, int state){
 	vector<int> values, Sizes;
 		// values store the value of EVIDENCE & variable
