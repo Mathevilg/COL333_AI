@@ -134,7 +134,7 @@ class A4{
 		this->network_file = network_file;
 		this->data_file = data_file;
 		this->initTime = initTime;
-		this->processTime = 5; // 2 mins 
+		this->processTime = 10; // 2 mins 
 		this->variables = getVars();
 		parents.resize(variables);
 		child.resize(variables);
