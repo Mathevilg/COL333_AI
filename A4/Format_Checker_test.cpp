@@ -372,7 +372,7 @@ int main()
 	network Alarm1,Alarm2;
 	check_format();
     Alarm1=read_network((char*)"solved_alarm.bif");
-    Alarm2=read_network((char*)"gold_alarm.bif");
+    Alarm2=read_network((char*)"gold_gen.bif");
     float score=0;
     for(int i=0;i<Alarm1.netSize();i++)
     {

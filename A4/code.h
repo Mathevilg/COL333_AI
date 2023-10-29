@@ -128,7 +128,8 @@ class A4{
     void solve();
 	void restart();
 	void likelihood();
-
+	void genTestcase(string filename);
+	vector<int> getTopoSort();
 
 	A4(string network_file, string data_file, Time* initTime){
 		this->network_file = network_file;
@@ -143,6 +144,7 @@ class A4{
 		CPT.resize(variables);
 		mp.clear();
 		Time* read = new Time();
+		// genTestcase("records_gen.dat");
 		readNetwork();
 		readDataFile();
 		// showDependency();
@@ -162,10 +164,10 @@ class A4{
 	
 
 
-	double getRandom(){
+	double getRandom(double start = 0.0, double end = 1.0){
 		random_device rd;
 		mt19937 gen(rd());
-		uniform_real_distribution<double> dist(0.0, 1.0);
+		uniform_real_distribution<double> dist(start, end);
 		return dist(gen);
 	}
 
@@ -344,8 +346,11 @@ class A4{
 
 
 	float calculateProbability(int dataRow, int variable, int state);
-
-    void dataUpdater();
+	double calculateProbabilityTopoSort(int var, int varState, map<int, int>& stateMap);
+    
+	vector<double> genCumulative(int var, map<int, int>& stateMap);
+	vector<int> generateDataRow(vector<int> &topo);
+	void dataUpdater();
 
 	void writeData(){
 		// write the CPT in solved_alarm.bif
@@ -394,7 +399,52 @@ class A4{
 
 	}
 
+	void writeData(string filename){
+		// write the CPT in solved_alarm.bif
+		ifstream input(network_file);
+		ofstream out;
+		out.open(filename);
+		if (!input.is_open()) return ;
+		while (!input.eof()){
+			string line, temp, var_name;
+			getline(input, line);
+			stringstream stream;
+			stream.str(line);
+			stream >> temp;
+			if (temp.compare("probability") == 0){
+				stream >> temp; // simply '(' 
+				stream >> temp; // the variable name 
+				int current_id = mp.find(temp)->second; // the node number in the mapping
+				out << line << endl;
+				getline(input, line);
+				out << "\ttable ";
+				vector<float> cptRow = CPT[current_id];
+				int sz = possibleValues[current_id].size();
+				int len = cptRow.size() / sz;
+				double pmf[sz] ;
+				for (int i = 0; i<len; i++){
+					for (int j = 0; j < sz; j++){
+						pmf[j] = cptRow[j*len + i];
+					}
+					convert(pmf, sz);
+					for (int j=0; j < sz; j++){
+						cptRow[j*len + i] = pmf[j];
+					}
+				}
+				for (int i=0; i<sz * len; i++) {
+					out << fixed << setprecision(4) << cptRow[i] << " ";
+					// out << cptRow[i] << " ";
+				}
+				out << ";" << endl;
+			}
+			else if (temp.compare("") == 0) out << line;
+			else out << line << endl; 
 
+		}
+		out.close();
+		input.close();
+
+	}
 
 
 

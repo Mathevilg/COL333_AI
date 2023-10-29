@@ -1,9 +1,22 @@
 #include "code.h"
+#include <stack>
 // only change in code needed here
+class Node{
+	public:
+	int number;
+	string name;
+	vector<Node*> child;
 
-void A4::solve(){  
-		float time_to_write = 0.005; // max time to write in solved_alarm.bif
-		float bufferTime = 0.800; // for last iteration to take place
+
+	Node(int number, string name){
+		this->number = number;
+		this->name = name;
+	}
+};
+
+	void A4::solve(){  
+		float time_to_write = 2; // max time to write in solved_alarm.bif
+		float bufferTime = 3; // for last iteration to take place
 		int iter = 0;
 		while ((float)initTime->getTime(2)   < (processTime - time_to_write - bufferTime)*(1e6)){ // this should be time not exceeded 
 			restart();
@@ -69,8 +82,9 @@ void A4::solve(){
 		}
 		cout<<"\t"<<log_likelihood<<"\t";
 	}
-float A4::calculateProbability(int dataRow, int variable, int state){
-	vector<int> values, Sizes;
+
+	float A4::calculateProbability(int dataRow, int variable, int state){
+		vector<int> values, Sizes;
 		// values store the value of EVIDENCE & variable
 		// Sizes store the corrsponding size of possible values 
 		values.push_back(state);
@@ -87,8 +101,7 @@ float A4::calculateProbability(int dataRow, int variable, int state){
 		return CPT[variable][idx];
 	}
 
-
-void A4::dataUpdater(){
+	void A4::dataUpdater(){
 		// using the intermediate CPT values modifies the data in the intermediate 
 		// data structure 
 
@@ -164,8 +177,7 @@ void A4::dataUpdater(){
 		out.close();
 	}
 
-
-void A4::CPTUpdater(){
+	void A4::CPTUpdater(){
 		// uses values given in the intermediate data structure to learn the values
 		// for the CPT
 
@@ -205,6 +217,156 @@ void A4::CPTUpdater(){
 			}
 		}
 	}
+
+	void dfs(Node* currNode, stack<int> &st, vector<int> &vis){
+		vis[currNode->number] = 1;
+		for (auto child: currNode->child){
+			if (!vis[child->number]) dfs(child, st, vis);
+		}
+		st.push(currNode->number);
+	}
+
+	double A4::calculateProbabilityTopoSort(int var, int varState, map<int, int> &stateMap){
+		vector<int> values, Sizes;
+		values.push_back(varState);
+		Sizes.push_back(possibleValues[var].size());
+		for (int i=0; i<parents[var].size(); i++){
+			values.push_back(stateMap[parents[var][i]]);
+			Sizes.push_back(possibleValues[parents[var][i]].size());
+		}
+		int idx = 0, temp = 1;
+		for (int i = values.size()-1; i >= 0; i--){
+			idx += temp * values[i];
+			temp *= Sizes[i];
+		}
+		return CPT[var][idx];
+	}
+
+	vector<double> A4::genCumulative(int var, map<int, int>& stateMap){
+		vector<double> cumulative;
+		double base = 0.0;
+		for (int i=0; i < possibleValues[var].size(); i++){
+			// cout << possibleValues[var][i] << endl;
+			base += calculateProbabilityTopoSort(var, i, stateMap);
+			cumulative.push_back(base);
+		}
+		for (int i=0; i<cumulative.size(); i++){
+			cumulative[i] /= base;
+		}
+		return cumulative;
+	}
+
+	int findState(vector<double> cumulative, double coinFlip){
+		double sum = 0.0;
+		for (int i=0; i<cumulative.size(); i++) {
+			if (coinFlip < cumulative[i]) return i;
+		}
+		return cumulative.size()-1;
+	}
+
+	vector<int> A4::generateDataRow(vector<int>& topo){
+		map<int, int> stateMap;
+		stateMap.clear();
+		vector<int> row(variables, -1);
+		for (auto var: topo){
+			double coinFlip = getRandom();
+			vector<double> cumulative = genCumulative(var, stateMap);
+			int state = findState(cumulative, coinFlip);
+			stateMap[var] = state;
+			row[var] = state;
+		}
+		return row;
+	}
+
+
+	vector<int> A4::getTopoSort(){
+		map<int, Node*> graph;
+		for (int i=0; i<variables; i++){
+			graph[i] = new Node(i, names[i]);
+		}
+
+
+		for (int i=0; i<variables; i++){
+			for (int j=0; j<child[i].size(); j++){
+				(graph[i]->child).push_back(graph[child[i][j]]);
+			}
+		}
+
+		vector<int> vis(variables, 0);
+		stack<int> st;
+		for (int i=0; i<variables; i++){
+			if (!vis[i]) {
+				dfs(graph[i], st, vis);
+			}
+		}
+
+		vector<int> topo;
+		while (!st.empty()){
+			topo.push_back(st.top());
+			st.pop();
+		}
+		return topo;
+	}
+
+	void A4::genTestcase(string filename){
+		//parameters
+		double mini = 0.2;
+		double maxi = 0.8;
+		int dataLines = 20000;
+		double missingRate = 0.85;
+
+		//get the structure !
+		readNetwork();
+
+		//generate the CPT;
+		for (int i=0; i<variables; i++){
+			int sz = possibleValues[i].size();
+			int len = CPT[i].size() / sz;
+			vector<double> probability_sum(len, 0.0);
+			for (int j = 0; j< sz * len; j++){
+				CPT[i][j] = getRandom(mini, maxi);
+				probability_sum[j%len] += CPT[i][j];
+			}
+			for (int j=0; j<sz*len; j++){
+				CPT[i][j] /= probability_sum[j % len];
+			}
+		}
+
+		// write the network in gold_gen.bif for checking
+		writeData("gold_gen.bif");
+
+		//generate the topoSort
+		vector<int> topo = getTopoSort();
+
+		// write the data to file_name;
+		ofstream out;
+		out.open(filename);
+		for (int i=0; i<dataLines; i++){
+			vector<int> row = generateDataRow(topo);
+			vector<string> rowName;
+			for (int i=0; i<row.size(); i++){
+				rowName.push_back(possibleValues[i][row[i]]);
+			}
+			double missing = getRandom();
+			if (missing < missingRate){
+				double idx = getRandom()*variables;
+				rowName[(int) idx] = "\"?\"";
+			}
+			for (auto it: rowName) {
+				out << it << " ";
+			}
+			if (i == dataLines-1) continue;
+			else out << endl;
+		}
+		out.close();
+	}
+
+
+
+
+
+
+
 
 int main(int argc, char* argv[])
 {
