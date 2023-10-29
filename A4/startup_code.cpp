@@ -5,7 +5,7 @@ void A4::solve(){
 		float time_to_write = 0.005; // max time to write in solved_alarm.bif
 		float bufferTime = 0.800; // for last iteration to take place
 		int iter = 0;
-		while ((float)initTime->getTime(2)   < (processTime - time_to_write - bufferTime)*(1e6) && (iter < 10)){ // this should be time not exceeded 
+		while ((float)initTime->getTime(2)   < (processTime - time_to_write - bufferTime)*(1e6) && (iter < 3)){ // this should be time not exceeded 
 			Time* iterTime = new Time();
 			// 1. learn the CPT from intermediat data structure 
 			CPTUpdater();

@@ -62,3 +62,9 @@ learnt CPT with upto `4 decimal places` or simply output the completed version o
 #### Rivision and further implementation !
 1. ~~since enough time, generalising the code for any graph/CPT should work!~~
 2. check for writing in `solved_alarm.bif` that the sum is 1.0000 and not more !!
+
+
+#### Discussions on 29th Oct
+1. Update the writting method (`setprecision fix`).
+2. Update the codes in `startup_code.cpp`.
+3. Look for `likelihood estimate` for the optimal solution.

@@ -143,8 +143,9 @@ class A4{
 		readNetwork();
 		readDataFile();
 		// showDependency();
-		smoothingFactor = (originalData.size() / intermediateData.size()); // ANALYSE IT MANI SARTHAK !! (this is everything!)
-		// smoothingFactor = 0.0035;
+		// smoothingFactor = ((float)originalData.size() / intermediateData.size()); // ANALYSE IT MANI SARTHAK !! (this is everything!)
+		smoothingFactor = 0.0;
+		// cout << smoothingFactor <<  endl;
 		CPTInitialiser();
 		dataUpdater();
 		writeData();
