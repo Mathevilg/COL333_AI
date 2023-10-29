@@ -7,3 +7,5 @@ harshit.cpp
 harshit
 !records.dat
 *.dat
+!alarm.bif
+*.bif

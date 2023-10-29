@@ -144,20 +144,20 @@ class A4{
 		CPT.resize(variables);
 		mp.clear();
 		Time* read = new Time();
-		// genTestcase("records_gen.dat");
-		readNetwork();
-		readDataFile();
-		// showDependency();
-		// smoothingFactor = ((float)originalData.size() / intermediateData.size()); // ANALYSE IT MANI SARTHAK !! (this is everything!)
-		smoothingFactor = 0.0;
-		// cout << smoothingFactor <<  endl;
-		CPTInitialiser();
-		dataUpdater();
-		writeData();
-		read->showTime("reading and initialising both network and data", 1);
-		Time* solving = new Time();
-		solve();
-		solving->showTime("learning and inferencing", 1);
+		genTestcase("records_gen.dat");
+		// readNetwork();
+		// readDataFile();
+		// // showDependency();
+		// // smoothingFactor = ((float)originalData.size() / intermediateData.size()); // ANALYSE IT MANI SARTHAK !! (this is everything!)
+		// smoothingFactor = 0.0;
+		// // cout << smoothingFactor <<  endl;
+		// CPTInitialiser();
+		// dataUpdater();
+		// writeData();
+		// read->showTime("reading and initialising both network and data", 1);
+		// Time* solving = new Time();
+		// solve();
+		// solving->showTime("learning and inferencing", 1);
 	}
 
 
