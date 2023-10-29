@@ -49,7 +49,7 @@ void A4::solve(){
 	}
 
 	void A4::likelihood() {
-		float likelihood = 1.0;
+		float log_likelihood = 1.0;
 		for (int dataRow=0; dataRow<originalData.size(); dataRow++) {
 			// calculate the probability of seeing that data row 
 			int variable = missingValues[dataRow];
@@ -60,14 +60,14 @@ void A4::solve(){
 				for (int i=0; i<originalData[dataRow].size(); i++) {
 					p*=calculateProbability(dataRow, i, originalData[dataRow][i]);
 				} 
-				prob+=1000*p;
+				prob+=p;
 				// cout<<calculateProbability(dataRow,variable,state)<<" ";
 			}
 			// cout<<"\t"<<dataRow<<" "<<prob<<"\t";
 			// if (prob==0) cout<<log(prob)<<" ";
-			likelihood*=prob;
+			log_likelihood+=log(prob);
 		}
-		cout<<"\t"<<likelihood<<"\t";
+		cout<<"\t"<<log_likelihood<<"\t";
 	}
 float A4::calculateProbability(int dataRow, int variable, int state){
 	vector<int> values, Sizes;
