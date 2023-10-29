@@ -6,9 +6,9 @@ void A4::solve(){
 		float bufferTime = 0.800; // for last iteration to take place
 		int iter = 0;
 		while ((float)initTime->getTime(2)   < (processTime - time_to_write - bufferTime)*(1e6)){ // this should be time not exceeded 
-			restart();
-			cout<<"restarted\n";
-			for (int i=0; i<5; i++) {
+			// restart();
+			// cout<<"restarted\n";
+			// for (int i=0; i<5; i++) {
 				Time* iterTime = new Time();
 				// 1. learn the CPT from intermediat data structure 
 				CPTUpdater();
@@ -19,10 +19,10 @@ void A4::solve(){
 				// write->showTime("writing in iteration "+to_string(iter+1), 2);
 				// 3. update the values to intermediate data structure using inference from the CPT learnt
 				if ((float)initTime->getTime(2)   < (processTime - 0.030)*(1e6)) dataUpdater();
-				likelihood();
+				// likelihood();
 				iter ++;
 				iterTime->showTime("iteration " + to_string(iter), 1);
-			}
+			// }
 		}
 	}
 
@@ -49,25 +49,35 @@ void A4::solve(){
 	}
 
 	void A4::likelihood() {
-		float log_likelihood = 1.0;
+		float log_likelihood = 0.0;
 		for (int dataRow=0; dataRow<originalData.size(); dataRow++) {
 			// calculate the probability of seeing that data row 
 			int variable = missingValues[dataRow];
-			float prob = 0.0;
-			for (int state=0; state<possibleValues[variable].size(); state++) {
-				originalData[dataRow][variable] = state;
-				float p = 1.0;
+			float prob;
+			if (variable == -1) {
+				prob=1.0;
 				for (int i=0; i<originalData[dataRow].size(); i++) {
-					p*=calculateProbability(dataRow, i, originalData[dataRow][i]);
-				} 
-				prob+=p;
-				// cout<<calculateProbability(dataRow,variable,state)<<" ";
+					prob*=calculateProbability(dataRow, i, originalData[dataRow][i]);
+				}
+				
+			}
+			else {
+				prob = 0.0;
+				for (int state=0; state<possibleValues[variable].size(); state++) {
+					originalData[dataRow][variable] = state;
+					float p = 1.0;
+					for (int i=0; i<originalData[dataRow].size(); i++) {
+						p*=calculateProbability(dataRow, i, originalData[dataRow][i]);
+					} 
+					prob+=p;
+					// cout<<p<<" ";
+				}
 			}
 			// cout<<"\t"<<dataRow<<" "<<prob<<"\t";
 			// if (prob==0) cout<<log(prob)<<" ";
 			log_likelihood+=log(prob);
 		}
-		cout<<"\t"<<log_likelihood<<"\t";
+		cout<<"\t"<<fixed << setprecision(4) <<log_likelihood<<"\t";
 	}
 float A4::calculateProbability(int dataRow, int variable, int state){
 	vector<int> values, Sizes;
@@ -91,120 +101,63 @@ float A4::calculateProbability(int dataRow, int variable, int state){
 void A4::dataUpdater(){
 		// using the intermediate CPT values modifies the data in the intermediate 
 		// data structure 
-
 		// USES SOFT METHOD !!
 		// Inference algorithm = Likelihood weighting in Markov Blanket !
-
 		// assign weights to the Intermediate data values ;
 		weights.clear();
-		ofstream out;
-		out.open("a.txt");
-		for (int dataRow = 0; dataRow < originalData.size(); dataRow++){
-			
-			if (missingValues[dataRow] == -1) {
+		for (int i=0; i<originalData.size(); i++) {
+			int var = missingValues[i];
+			if (var == -1) {
 				weights.push_back(1.0);
 			}
-			else{
-				int variable = missingValues[dataRow];
-				vector<float> probabilities ;
-				float probab_sum = 0.0;
-				for (int j = 0; j < possibleValues[variable].size(); j++){
+			else {
+				vector<float> prob;
+				float sum=0.0;
+				for (int j=0; j<possibleValues[var].size(); j++) {
 					// calculates P(variable = j | conditions in that data row);
 					// will pe problematic for the first time since in the originalData 
 					// the value of missing variables are -1 !!
-					float probability_of_value_given_evidence = calculateProbability(dataRow, variable, j); // j is the value
-					for (int k=0; k < child[variable].size(); k++){
-						originalData[dataRow][variable] = j; // fixing the variable to current
-															// value for inferencing on childrens
-						int childVar = child[variable][k];
-						float factor1 = calculateProbability(dataRow, childVar, originalData[dataRow][childVar]);
-						
-						// float factor2 = 1.0;
-						// for (int l=0; l < parents[childVar].size(); l++){
-						// 	int parentVar = parents[childVar][l];
-						// 	factor2 *= calculateProbability(dataRow, parentVar, originalData[dataRow][parentVar]);
-						// }
-
-						// the weight for the fact child value in the dataRow 
-						// given the parents of that childVar
-						probability_of_value_given_evidence *= factor1;
-						// probability_of_value_given_evidence *= factor2;
+					float p = calculateProbability(i,var,j);
+					originalData[i][var] = j;
+					for (auto child: child[var]) {
+						p*=calculateProbability(i,child,originalData[i][child]);
 					}
-					probabilities.push_back(probability_of_value_given_evidence);
-					probab_sum += probability_of_value_given_evidence;
+					prob.push_back(p);
+					sum+=p;
 				}
-
-
-				float alpha = (1.0)/probab_sum;
-				for (int i=0; i < probabilities.size(); i++) {
-					probabilities[i] *= alpha;
-					weights.push_back(probabilities[i]);
-					// out << probabilities[i] << " ";
+				for (auto p: prob) {
+					weights.push_back(p/sum);
 				}
-
-
-
-				// // HARD !!!
-				// int argmaxValue = max_element(probabilities.begin(), probabilities.end())-probabilities.begin();
-				// originalData[dataRow][variable] = argmaxValue;
-
-
-				// SOFT !!!
-				// float cumulativeProb = 0.0;
-				// double random = getRandom();
-				// for (int i=0; i<probabilities.size(); i++) {
-				// 	cumulativeProb += probabilities[i];
-				// 	if (random < cumulativeProb){
-				// 		originalData[dataRow][variable] = i;
-				// 		break;
-				// 	}
-				// }
 			}
 		}
-		out.close();
 	}
 
 
 void A4::CPTUpdater(){
-		// uses values given in the intermediate data structure to learn the values
+	// uses values given in the intermediate data structure to learn the values
 		// for the CPT
-
 		// learning algorithm = weighted sampling and smoothing
 
-
-		for (int i = 0; i< CPT.size(); i++){
-			CPT[i] = vector<float>(CPT[i].size(), smoothingFactor);
-			vector<int> ids, Sizes;
-			ids.push_back(i);
-			Sizes.push_back(possibleValues[i].size());
-			for (int j = 0; j < parents[i].size(); j++){
-				Sizes.push_back(possibleValues[parents[i][j]].size());
-				ids.push_back(parents[i][j]);
+	for (int i=0; i<CPT.size(); i++) {
+		CPT[i] = vector<float>(CPT[i].size(),0);
+		int len = CPT[i].size()/possibleValues[i].size();
+		vector<float> sumParts(len,0);
+		for (int j=0; j<intermediateData.size(); j++) {
+			int idx = 0, temp = 1;
+			for (int k=parents[i].size()-1; k>=0; k--) {
+				idx+=temp*intermediateData[j][parents[i][k]];
+				temp*=possibleValues[parents[i][k]].size();
 			}
-			int len = CPT[i].size() / possibleValues[i].size();
-			vector<float> sumParts(len, possibleValues[i].size()*smoothingFactor);
-			for (int j = 0; j < intermediateData.size(); j++){
-				vector<int> values;
-				for (int k = 0; k < ids.size(); k++){
-					values.push_back(intermediateData[j][ids[k]]);
-				}
-
-				int data_index = 0, temp = 1;
-				for (int k = values.size()-1; k >= 0; k--){
-					data_index += temp * values[k];
-					temp *= Sizes[k];
-				}
-				CPT[i][data_index] += weights[j];
-				sumParts[data_index%len] += weights[j];
-			}
-
-			for(int j = 0; j < CPT[i].size(); j++){
-				if (sumParts[ j % len] == 0) CPT[i][j] = 0.0; // wont be the case ever
-															// still to avoid div by 0 err
-				else CPT[i][j] /= sumParts[j % len]; 
-			}
+			idx+=temp*intermediateData[j][i];
+			CPT[i][idx] += weights[j];
+			sumParts[idx%len]+=weights[j];
+		}
+		for (int j=0; j<CPT[i].size(); j++) {
+			if (sumParts[j%len]==0) CPT[i][j] = 0.0;
+			else CPT[i][j]/=sumParts[j%len];
 		}
 	}
+}
 
 int main(int argc, char* argv[])
 {
