@@ -231,7 +231,6 @@ class Node{
 		return row;
 	}
 
-
 	vector<int> A4::getTopoSort(){
 		map<int, Node*> graph;
 		for (int i=0; i<variables; i++){
@@ -313,13 +312,6 @@ class Node{
 		}
 		out.close();
 	}
-
-
-
-
-
-
-
 
 int main(int argc, char* argv[])
 {

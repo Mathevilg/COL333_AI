@@ -101,6 +101,7 @@ class A4{
 	vector<float> weights; // weights for the intermediate data columns !!
 	vector<int> missingValues; // the missing variables for data rows !!
 	int variables;
+	int precision;
 
 	void showDependency(){
 		int ans = 0;
@@ -137,6 +138,7 @@ class A4{
 		this->initTime = initTime;
 		this->processTime = 10; // 2 mins 
 		this->variables = getVars();
+		this->precision = 2;
 		parents.resize(variables);
 		child.resize(variables);
 		names.resize(variables);
@@ -144,20 +146,20 @@ class A4{
 		CPT.resize(variables);
 		mp.clear();
 		Time* read = new Time();
-		genTestcase("records_gen.dat");
-		// readNetwork();
-		// readDataFile();
-		// // showDependency();
-		// // smoothingFactor = ((float)originalData.size() / intermediateData.size()); // ANALYSE IT MANI SARTHAK !! (this is everything!)
-		// smoothingFactor = 0.0;
-		// // cout << smoothingFactor <<  endl;
-		// CPTInitialiser();
-		// dataUpdater();
-		// writeData();
-		// read->showTime("reading and initialising both network and data", 1);
-		// Time* solving = new Time();
-		// solve();
-		// solving->showTime("learning and inferencing", 1);
+		// genTestcase("records_gen.dat");
+		readNetwork();
+		readDataFile();
+		// showDependency();
+		// smoothingFactor = ((float)originalData.size() / intermediateData.size()); // ANALYSE IT MANI SARTHAK !! (this is everything!)
+		smoothingFactor = 0.0;
+		// cout << smoothingFactor <<  endl;
+		CPTInitialiser();
+		dataUpdater();
+		writeData();
+		read->showTime("reading and initialising both network and data", 1);
+		Time* solving = new Time();
+		solve();
+		solving->showTime("learning and inferencing", 1);
 	}
 
 
@@ -463,10 +465,11 @@ class A4{
 
 
 	double findValue(double f){
-		int tmp = f / 0.0001;
-		double delta = f - (tmp * 0.0001);
-		if (delta < 0.00004999999) return (tmp*0.0001);
-		else return (tmp+1)*0.0001;
+		int tmp = f * pow(10, precision);
+		double pre = pow(10, -precision);
+		double delta = f - (tmp * pre);
+		if (delta < 0.49999 * pre) return (tmp*pre);
+		else return (tmp+1)*pre;
 	}
 
 
@@ -478,12 +481,13 @@ class A4{
 
 	void convert(double pmf[], int size){
 		double sum = 1.0000;
+		double pre = pow(10, -precision);
 		int hash = 0;
 		print(pmf, size);
 		for (int i=0; i<size; i++){
-			if (pmf[i] < 0.00015) {
+			if (pmf[i] < 1.5 * pre) {
 				sum -= pmf[i];
-				pmf[i] = 0.0001;
+				pmf[i] = pre;
 			}
 			else {
 				hash += (1 << i);

@@ -43,15 +43,16 @@ learnt CPT with upto `4 decimal places` or simply output the completed version o
 1. ~~`dataUpdater()`: I think that the probabilities using inference can be made even better (with using childs into account too; ie. considering the whole `markov blanket`).~~
 2. ~~`CPTUpdater()`: What is implemeted is based on input from ChatGPT and we have to apply the learning algorithms learnt in class (`weighted average`).~~
 3. `readDataFile()`: Since i dont know much of `ifstream` in c++, input from ChatGPT have been taken in consideration. If you know better one please implement.
-4. `readNetwork()`: Since i dont know much of `ifstream` & `ofstream` in c++, input from ChatGPT have been taken in consideration. If you know better one please implement.
+4. `readNetwork()`: Since i don
+t know much of `ifstream` & `ofstream` in c++, input from ChatGPT have been taken in consideration. If you know better one please implement.
 5. ~~`Note`: `Timing effects` are to be checked else gandi bt ho sakti hai !!~~
 6. ~~`smoothing` in `CPTUpdater()` needs to be implemeted.~~
-7. Analysis of `smoothingFactor`.
-8. Till now it is working on `HARD` have to shift that to `SOFT`.
+7. ~~Analysis of `smoothingFactor`~~. This remains 0;
+8. ~~Till now it is working on `HARD` have to shift that to `SOFT`~~.
 
 
 
-#### Time Analysis
+#### Time Analysis (it canges with each implemetation, cant comment on it !!)
 1. reading neywork and dataalong with initialising CPT and intermediateData `70ms - 75 ms` -> `150ms`. 
 2. Each iteration in learning and inferencing takes abt `255ms to 275ms` -> `800ms` now. Out of them learnign takes most of the time `240ms - 250ms` and the time by inferencing is around `20ms to 25ms`.
 3. writing to solved_alarm.bif happens in less than `2ms`.
@@ -61,10 +62,10 @@ learnt CPT with upto `4 decimal places` or simply output the completed version o
 
 #### Rivision and further implementation !
 1. ~~since enough time, generalising the code for any graph/CPT should work!~~
-2. check for writing in `solved_alarm.bif` that the sum is 1.0000 and not more !!
+2. ~~check for writing in `solved_alarm.bif` that the sum is 1.0000 and not more !!~~
 
 
 #### Discussions on 29th Oct
-1. Update the writting method (`setprecision fix`).
-2. Update the codes in `startup_code.cpp`.
-3. Look for `likelihood estimate` for the optimal solution.
+1. ~~Update the writting method (`setprecision fix`)~~.
+2. ~~Update the codes in `startup_code.cpp`~~.
+3. Look for `likelihood estimate` for the optimal solution. Probably wont be using !!
