@@ -138,7 +138,7 @@ class A4{
 		this->initTime = initTime;
 		this->processTime = 10; // 2 mins 
 		this->variables = getVars();
-		this->precision = 2;
+		this->precision = 4;
 		parents.resize(variables);
 		child.resize(variables);
 		names.resize(variables);
