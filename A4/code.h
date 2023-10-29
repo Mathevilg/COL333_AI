@@ -363,34 +363,98 @@ class A4{
 				out << line << endl;
 				getline(input, line);
 				out << "\ttable ";
-				for (int i=0; i<CPT[current_id].size(); i++) out << fixed << setprecision(4) << max((float)0.0001, CPT[current_id][i]) << " ";
+				vector<float> cptRow = CPT[current_id];
+				int sz = possibleValues[current_id].size();
+				int len = cptRow.size() / sz;
+				double pmf[sz] ;
+				for (int i = 0; i<len; i++){
+					for (int j = 0; j < sz; j++){
+						pmf[j] = cptRow[j*len + i];
+					}
+					convert(pmf, sz);
+					for (int j=0; j < sz; j++){
+						cptRow[j*len + i] = pmf[j];
+					}
+				}
+				for (int i=0; i<sz * len; i++) {
+					out << fixed << setprecision(4) << cptRow[i] << " ";
+					// out << cptRow[i] << " ";
+				}
 				out << ";" << endl;
 			}
-			else if (temp.compare("") == 0) out << line; //THIS LINE ALONE FUCKED IT ALL !!
-			else out << line << endl; // have to check for output conditions here !!
+			else if (temp.compare("") == 0) out << line;
+			else out << line << endl; 
 
 		}
 		out.close();
 		input.close();
 
-		// cout << "written to solved_alarm.bif sucessfully" << endl;
 	}
 
 
 
 
 
-		void generateData(string outFilename){
-			ofstream out;
-			out.open(outFilename);
-			for (int lineId = 0; lineId < originalData.size(); lineId ++){
-				for (int j=0; j<variables; j++){
-					out << possibleValues[j][originalData[lineId][j]] << " ";
-				}
-				out << endl;
+	void generateData(string outFilename){
+		ofstream out;
+		out.open(outFilename);
+		for (int lineId = 0; lineId < originalData.size(); lineId ++){
+			for (int j=0; j<variables; j++){
+				out << possibleValues[j][originalData[lineId][j]] << " ";
 			}
-			out.close();
+			out << endl;
 		}
+		out.close();
+	}
+
+
+
+	double findValue(double f){
+		int tmp = f / 0.0001;
+		double delta = f - (tmp * 0.0001);
+		if (delta < 0.00004999999) return (tmp*0.0001);
+		else return (tmp+1)*0.0001;
+	}
+
+
+
+	void print(double arr[], int len){
+		// for (int i=0; i<len; i++) cout << arr[i] << " ";
+		// cout << endl;
+	}
+
+	void convert(double pmf[], int size){
+		double sum = 1.0000;
+		int hash = 0;
+		print(pmf, size);
+		for (int i=0; i<size; i++){
+			if (pmf[i] < 0.00015) {
+				sum -= pmf[i];
+				pmf[i] = 0.0001;
+			}
+			else {
+				hash += (1 << i);
+			}
+		}
+		print(pmf, size);
+		for (int i=0; i<size; i++){
+			if (hash && (1 << i)){
+				pmf[i] /= sum;
+				pmf[i] = findValue(pmf[i]);
+			}
+		}
+		print(pmf, size);
+		sum = 1.0000;
+		// ab yaha ml toh nahi laga sakte 
+		// hardcoding kani hogi 🥲
+		int maxInd = max_element(pmf, pmf +size) - pmf;
+		for (int i=0; i<size; i++){
+			sum -= pmf[i];
+		}
+		pmf[maxInd] += sum;
+		print(pmf, size);
+	}
+
 };
 
 

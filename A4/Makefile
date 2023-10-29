@@ -17,3 +17,8 @@ move:
 	@cp writeup.txt compile.sh run.sh startup_code.cpp code.h ./2021CS10095_2021CS10566/
 	@zip -rj  2021CS10095_2021CS10566.zip ./2021CS10095_2021CS10566
 
+test:
+	@g++ -ld_classic test.cpp -o test
+	@./test
+	@sleep 2
+	@rm test
