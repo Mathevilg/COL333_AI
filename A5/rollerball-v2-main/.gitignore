@@ -1,2 +1,5 @@
 Makefile
 /part2/*
+/.vscode/*
+/cmake-build-debug/*
+CMakeLists.txt
