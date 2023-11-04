@@ -42,7 +42,7 @@ void Engine::find_best_move(const Board& b) {
 
     }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    // std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
 //        std::vector<U16> moves;
 //        std::cout << show_moves(&b.data, moveset) << std::endl;

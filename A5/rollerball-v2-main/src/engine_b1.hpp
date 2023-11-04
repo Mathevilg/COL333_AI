@@ -15,5 +15,6 @@ public:
 
 
     int calculate_material(const Board& b);
+    bool isTimeValid();
 
 };

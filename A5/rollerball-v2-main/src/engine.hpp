@@ -2,6 +2,7 @@
 
 #include "engine_base.hpp"
 #include <atomic>
+#include <chrono>
 
 class Engine : public AbstractEngine {
 
