@@ -42,7 +42,6 @@ int engine_b1::calculate_material(const Board& b) {
 }
 
 
-// #define cw_90_pos(p) (cw_90_7x7[p])
 #define cw_180_pos(p) cw_180_7x7[((int)p)%64]
 #define acw_90_pos(p) acw_90_7x7[((int)p)%64]
 #define cw_90_pos(p) cw_90_7x7[((int)p)%64]
@@ -121,6 +120,70 @@ int get_bishop_score(U8 P)
 
     cout<<"no matching position for bishop";
     return -1;
+}
+
+
+int get_rook_score_white(U8 P)
+{
+    map<U8, int> rook_scores;
+    rook_scores[pos(1, 0)] = 17;
+    for (int i = 2; i <= 5; i++)
+    {
+        rook_scores[pos(i, 0)] = 10+ i;
+    }
+    rook_scores[pos(6, 0)] = 16;
+
+    for (int i = 2; i <= 4; i++)
+    {
+        rook_scores[pos(i, 1)] = i+ 2;
+    }
+    rook_scores[pos(5, 1)] = 9;
+
+    if ((gety(P) == 0 && getx(P) >= 0) || (gety(P) == 1 && getx(P) <= 6 && getx(P) >= 0))
+    {
+        rook_scores[pos(6, 0)] = 5;
+        rook_scores[pos(5, 0)] = 7;
+        rook_scores[pos(4, 0)] = 7;
+        rook_scores[pos(3, 0)] = 10;
+        rook_scores[pos(2, 0)] = 11;
+        rook_scores[pos(1, 0)] = 16;
+        rook_scores[pos(0, 0)] = 16;
+
+        rook_scores[pos(6, 1)] = 2;
+        rook_scores[pos(5, 1)] = 2;
+        rook_scores[pos(4, 1)] = 4;
+        rook_scores[pos(3, 1)] = 6;
+        rook_scores[pos(2, 1)] = 7;
+        rook_scores[pos(1, 1)] = 15;
+        rook_scores[pos(0, 1)] = 15;
+
+        return rook_scores[P];
+    }
+
+    U8 P1 = cw_90_pos(P);
+    U8 P2 = cw_180_pos(P);
+    U8 P3 = acw_90_pos(P);
+    if ((gety(P1) == 0 && getx(P1) >= 1) || (gety(P1) == 1 && getx(P1) <= 5 && getx(P1) >= 2))
+    {
+        return rook_scores[P1];
+    }
+    if ((gety(P2) == 0 && getx(P2) >= 1) || (gety(P2) == 1 && getx(P2) <= 5 && getx(P2) >= 2))
+    {
+        return rook_scores[P2]+4;
+    }
+    if ((gety(P3) == 0 && getx(P3) >= 1) || (gety(P3) == 1 && getx(P3) <= 5 && getx(P3) >= 2))
+    {
+        return rook_scores[P3]+4;
+    }
+
+    cout<<"no matching position for bishop";
+    return -1;
+}
+
+int get_rook_score_black(U8 P)
+{
+    U8 P1 = cw_180_pos(P);
+    return get_rook_score_white(P1);
 }
 
 

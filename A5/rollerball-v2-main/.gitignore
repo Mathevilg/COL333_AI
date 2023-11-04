@@ -3,3 +3,4 @@ Makefile
 /.vscode/*
 /cmake-build-debug/*
 CMakeLists.txt
+bin/rollerball
