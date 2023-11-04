@@ -1,10 +1,10 @@
 
 #MANI
-timing considersarion
-roataion ka code 
-weight assign ka code 
+timing considersarion (done)
+roataion ka code (done, defined macros !! a lot of errors were coming but fixed that)
+weight assign ka code (done, all errors checked !!)
 
 
 #SHLOK
 MINIMAX 
-code alignment !!
+code alignment !! (i have done a bit)
