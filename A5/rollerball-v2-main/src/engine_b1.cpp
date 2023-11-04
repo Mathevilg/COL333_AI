@@ -28,7 +28,7 @@ int engine_b1::calculate_material(const Board& b) {
             case BISHOP | BLACK:
                 material -= 3;
                 break;
-            case BISHOP | ROOK:
+            case ROOK | BLACK:
                 material -= 5;
                 break;
             // case B_QUEEN:
