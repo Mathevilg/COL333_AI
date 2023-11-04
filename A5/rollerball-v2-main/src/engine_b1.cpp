@@ -88,6 +88,42 @@ int get_pawn_score_black(U8 P1)
 }
 
 
+int get_bishop_score(U8 P)
+{
+    map<U8, int> bishop_scores;
+    bishop_scores[pos(1, 0)] = 3;
+    bishop_scores[pos(2, 1)] = 8;
+    bishop_scores[pos(3, 0)] = 2;
+    bishop_scores[pos(4, 1)] = 6;
+    bishop_scores[pos(5, 0)] = 3;
+//    bishop_scores[pos(6, 1)] = 3;
+
+    if (gety(P) <= 1 && getx(P) >= 1 && getx(P) <= 5)
+    {
+        return bishop_scores[P];
+    }
+
+    U8 P1 = cw_90_pos(P);
+    U8 P2 = cw_180_pos(P);
+    U8 P3 = acw_90_pos(P);
+    if (gety(P1) <= 1 && getx(P1) >= 1 && getx(P1) <= 5)
+    {
+        return bishop_scores[P1];
+    }
+    if (gety(P2) <= 1 && getx(P2) >= 1 && getx(P2) <= 5)
+    {
+        return bishop_scores[P2];
+    }
+    if (gety(P3) <= 1 && getx(P3) >= 1 && getx(P3) <= 5)
+    {
+        return bishop_scores[P3];
+    }
+
+    cout<<"no matching position for bishop";
+    return -1;
+}
+
+
 chrono::high_resolution_clock::time_point start_time;
 int time_left_to_match;
 // this is the main function !
