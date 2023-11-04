@@ -1,0 +1,10 @@
+
+#MANI
+timing considersarion
+roataion ka code 
+weight assign ka code 
+
+
+#SHLOK
+MINIMAX 
+code alignment !!
