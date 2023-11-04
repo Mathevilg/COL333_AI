@@ -42,6 +42,51 @@ int engine_b1::calculate_material(const Board& b) {
 }
 
 
+// #define cw_90_pos(p) (cw_90_7x7[p])
+#define cw_180_pos(p) cw_180_7x7[((int)p)%64]
+#define acw_90_pos(p) acw_90_7x7[((int)p)%64]
+#define cw_90_pos(p) cw_90_7x7[((int)p)%64]
+
+int get_pawn_score_white(U8 P)
+{
+    map<U8, int> pawn_scores;
+    pawn_scores[pos(2, 0)] = 0;
+    pawn_scores[pos(2, 1)] = 0;
+
+    pawn_scores[pos(0, 0)] = 1;
+    pawn_scores[pos(1, 0)] = 1;
+
+    pawn_scores[pos(0, 1)] = 2;
+    pawn_scores[pos(1, 1)] = 2;
+
+
+    for (int i = 2; i < 6; i++)
+    {
+        pawn_scores[pos(0, i)] = i+3;
+        pawn_scores[pos(1, i)] = i+3;
+    }
+    pawn_scores[pos(0, 6)] = 8;
+    pawn_scores[pos(1, 6)] = 9;
+
+    for (int i = 2; i <= 4; i++)
+    {
+        pawn_scores[pos(i, 5)] = 8+i;
+        pawn_scores[pos(i, 6)] = 8+i;
+    }
+
+    pawn_scores[pos(3, 6)] = 14;
+    pawn_scores[pos(3, 5)] = 14;
+    return pawn_scores[P];
+}
+
+int get_pawn_score_black(U8 P1)
+{
+    // int idx = (int) P1;
+    U8 P = cw_180_pos(P1);
+
+    return get_pawn_score_white(P);
+}
+
 
 chrono::high_resolution_clock::time_point start_time;
 int time_left_to_match;
