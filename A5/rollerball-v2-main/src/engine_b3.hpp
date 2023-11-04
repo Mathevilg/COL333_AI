@@ -7,3 +7,13 @@
 #include "engine.hpp"
 #include "butils.hpp"
 
+class engine_b3
+{
+public:
+
+    U16 return_best_move(const Board& b, Engine *e);
+
+
+    int calculate_material(const Board& b);
+
+};
