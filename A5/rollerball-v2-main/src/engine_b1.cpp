@@ -187,6 +187,30 @@ int get_rook_score_black(U8 P)
 }
 
 
+
+int get_king_score_white(U8 P)
+{
+//    map<U8, int> king_scores;
+//
+//    king_scores[pos(3, 1)] = 0;
+//    king_scores[pos(3, 0)] = 0;
+//
+//    if ((getx(P) == 3) || getx)
+//    {
+//        return king_scores[P] = 0;
+//    }
+
+    return 10;
+}
+
+int get_king_score_black(U8 P)
+{
+    U8 P1 = cw_180_pos(P);
+    return get_king_score_white(P1);
+}
+
+
+
 chrono::high_resolution_clock::time_point start_time;
 int time_left_to_match;
 // this is the main function !
