@@ -88,3 +88,9 @@ The starter code's engine.cpp randomly picks a move from the moveset and sets th
 - Your code must compile with the Makefile provided **without any modifications**.
 - Your implemented algorithm should be **single-threaded**. You are not allowed to make use of multiple threads, asyncio or any other form of parallel execution.
 - You are allowed to use any and all techniques subject to these constraints (including but not limited to value functions, tablebases, neural networks, MCTS, distillation, learning via Self-Play etc). Note that the assignment is competitive, and the TA bots are not necessarily the best benchmark to optimize against :)
+
+
+
+### IMPORT ERRORS
+1. need include<cstring> in bdata.hpp
+2. need include<map> in board.hpp
