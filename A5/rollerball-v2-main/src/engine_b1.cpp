@@ -6,7 +6,7 @@ using namespace std;
 int engine_b1::calculate_material(const Board& b) {
     int material = 0;
     for (int i = 0; i < 64; i++) {
-        switch (b.data.board[i]) {
+        switch (b.data.board_0[i]) {
             case PAWN | WHITE:
                 material += 1;
                 break;
@@ -28,12 +28,12 @@ int engine_b1::calculate_material(const Board& b) {
             case BISHOP | BLACK:
                 material -= 3;
                 break;
-            case B_ROOK:
+            case BISHOP | ROOK:
                 material -= 5;
                 break;
-            case B_QUEEN:
-                material -= 9;
-                break;
+            // case B_QUEEN:
+            //     material -= 9;
+            //     break;
             default:
                 break;
         }
