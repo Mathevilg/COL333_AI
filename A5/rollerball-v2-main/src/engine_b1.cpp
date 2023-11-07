@@ -2,6 +2,7 @@
 
 using namespace std;
 
+// editing trial
 
 int engine_b1::calculate_material(const Board& b) {
     int material = 0;
