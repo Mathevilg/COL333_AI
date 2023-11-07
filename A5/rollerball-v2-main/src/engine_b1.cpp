@@ -2,44 +2,9 @@
 
 using namespace std;
 
+// editing trial
 
-int engine_b1::calculate_material(const Board& b) {
-    int material = 0;
-    for (int i = 0; i < 64; i++) {
-        switch (b.data.board_0[i]) {
-            case PAWN | WHITE:
-                material += 1;
-                break;
-            case KNIGHT | WHITE:
-                material += 3;
-                break;
-            case BISHOP | WHITE:
-                material += 3;
-                break;
-            case ROOK | WHITE:
-                material += 5;
-                break;
-            case PAWN | BLACK:
-                material -= 1;
-                break;
-            case KNIGHT | BLACK:
-                material -= 3;
-                break;
-            case BISHOP | BLACK:
-                material -= 3;
-                break;
-            case ROOK | BLACK:
-                material -= 5;
-                break;
-            // case B_QUEEN:
-            //     material -= 9;
-            //     break;
-            default:
-                break;
-        }
-    }
-    return material;
-}
+int MAX_DEPTH = 3;
 
 
 #define cw_180_pos(p) cw_180_7x7[((int)p)%64]
@@ -86,7 +51,6 @@ int get_pawn_score_black(U8 P1)
     return get_pawn_score_white(P);
 }
 
-
 int get_bishop_score(U8 P)
 {
     map<U8, int> bishop_scores;
@@ -121,7 +85,6 @@ int get_bishop_score(U8 P)
     cout<<"no matching position for bishop";
     return -1;
 }
-
 
 int get_rook_score_white(U8 P)
 {
@@ -186,8 +149,6 @@ int get_rook_score_black(U8 P)
     return get_rook_score_white(P1);
 }
 
-
-
 int get_king_score_white(U8 P)
 {
 //    map<U8, int> king_scores;
@@ -210,7 +171,6 @@ int get_king_score_black(U8 P)
 }
 
 
-
 chrono::high_resolution_clock::time_point start_time;
 int time_left_to_match;
 // this is the main function !
@@ -218,6 +178,198 @@ bool engine_b1::isTimeValid() {
     this_thread::sleep_for(std::chrono::milliseconds(1950));
     return chrono::high_resolution_clock::now() - start_time < chrono::milliseconds(2000);
 }
+
+int engine_b1::calculate_material(const Board& b)
+{
+    int material = 0;
+    for (int i = 0; i < 64; i++) {
+        switch (b.data.board_0[i]) {
+            case PAWN | WHITE:
+                material += 1;
+                break;
+            case KNIGHT | WHITE:
+                material += 3;
+                break;
+            case BISHOP | WHITE:
+                material += 3;
+                break;
+            case ROOK | WHITE:
+                material += 5;
+                break;
+            case PAWN | BLACK:
+                material -= 1;
+                break;
+            case KNIGHT | BLACK:
+                material -= 3;
+                break;
+            case BISHOP | BLACK:
+                material -= 3;
+                break;
+            case ROOK | BLACK:
+                material -= 5;
+                break;
+                // case B_QUEEN:
+                //     material -= 9;
+                //     break;
+            default:
+                break;
+        }
+    }
+    return material;
+}
+
+int engine_b1::evaluate_function(const Board& b)
+{
+    int final_score = calculate_material(b);
+
+    if (b.get_legal_moves().empty())
+    {
+        if (b.in_check()) {
+            if (b.data.player_to_play == WHITE)
+                return -100000;
+            else
+                return 100000;
+        }
+        else
+            return 0;
+    }
+
+    return final_score;
+}
+
+//pair<int, U16> engine_b1::Min_value(Board b, int depth, int alpha, int beta, Engine* e);
+
+pair<int, U16> engine_b1::Max_value(Board b, int depth, int alpha, int beta, Engine* e)
+{
+
+    if (depth > MAX_DEPTH)
+    {
+        return make_pair(evaluate_function(b), 0);
+    }
+    else
+    {
+        U16 best_move = 0;
+        auto moveset = b.get_legal_moves();
+        if (moveset.empty()) {
+            if (b.in_check()) {
+                if (b.data.player_to_play == WHITE)
+                    return make_pair(-100000, U16(e->best_move));
+                else
+                    return make_pair(100000, U16(e->best_move));
+            }
+            else
+                return make_pair(0, best_move);
+        }
+        else {
+
+            int max_value = -100050;
+            for (auto m : moveset) {
+
+                if (m & (1 << 6))
+                {
+                    continue;
+                }
+
+                Board b_copy = Board(b); // create a copy constructor??
+                b_copy.do_move_(m);
+                auto min_ans = Min_value(b_copy, depth + 1, alpha, beta, e);
+                alpha = max(alpha, min_ans.first);
+                if (alpha>=beta)
+                    return make_pair(min_ans.first, m);
+
+
+                if (min_ans.first > max_value)
+                {
+                    max_value = min_ans.first;
+                    best_move = m;
+//                    if (depth == 0)
+//                        e->best_move = m;
+                }
+            }
+
+            return make_pair(max_value, best_move);
+        }
+    }
+}
+
+pair<int, U16> engine_b1::Min_value(Board b, int depth, int alpha, int beta, Engine* e)
+{
+
+    if (depth > MAX_DEPTH) {
+        return make_pair(evaluate_function(b), U16(e->best_move));
+    }
+    else {
+        U16 best_move = 0;
+        auto moveset = b.get_legal_moves();
+        if (moveset.empty()) {
+            if (b.in_check()) {
+                if (b.data.player_to_play == WHITE)
+                    return make_pair(-100000, U16(e->best_move));
+                else
+                    return make_pair(100000, U16(e->best_move));
+            }
+            else
+                return make_pair(0, U16(e->best_move));
+        }
+        else {
+            int min_value = 100050;
+            for (auto m: moveset) {
+
+                if (m & (1 << 6))
+                {
+                    continue;
+                }
+
+                Board b_copy = Board(b);
+                b_copy.do_move_(m);
+                auto max_ans = Max_value(b_copy, depth + 1, alpha, beta, e);
+                beta = min(beta, max_ans.first);
+                if (alpha>=beta)
+                    return make_pair(max_ans.first, m);
+                if (max_ans.first < min_value) {
+                    min_value = max_ans.first;
+                    best_move = m;
+//                    if (depth == 0)
+//                        e->best_move = m;
+                }
+            }
+
+            return make_pair(min_value, best_move);
+        }
+    }
+}
+
+
+pair<int, U16> engine_b1::MiniMax(Board b, PlayerColor colour, Engine* e)
+{
+    auto moveset = b.get_legal_moves();
+
+    if (moveset.empty()) {
+        return make_pair(0, 0);
+    }
+    else {
+        auto ans = make_pair(0, 0);
+        if (colour == BLACK)
+        {
+            ans = Min_value(b, 0, -100000, 100000, e);
+            cout<<"\n\n\n";
+            cout<< "final evaluation is, "<<ans.first<< " at MAX_DEPTH: "<<MAX_DEPTH<<'\n';
+            cout<<"best move at this depth is: "<<move_to_str(ans.second)<<"\n";
+            cout<<"\n\n\n";
+            return ans;
+        }
+        else
+        {
+            ans = engine_b1::Max_value(b, 0, -100000, 100000, e);
+            cout<<"\n\n\n";
+            cout<< "final evaluation is, "<<ans.first<< " at MAX_DEPTH: "<<MAX_DEPTH<<'\n';
+            cout<<"best move at this depth is: "<<move_to_str(ans.second)<<"\n";
+            cout<<"\n\n\n";
+            return ans;
+        }
+    }
+}
+
 
 U16 engine_b1::return_best_move(const Board &b, Engine *e) {
     start_time = chrono::high_resolution_clock::now();
@@ -231,21 +383,25 @@ U16 engine_b1::return_best_move(const Board &b, Engine *e) {
     }
     else{
         std::vector<U16> moves;
-        while (isTimeValid()){
-            std::cout << show_moves(&b.data, moveset) << std::endl;
-            for (auto m : moveset) {
-                std::cout << move_to_str(m) << " ";
-            }
-            std::cout << std::endl;
-            std::sample(
-                moveset.begin(),
-                moveset.end(),
-                std::back_inserter(moves),
-                1,
-                std::mt19937{std::random_device{}()}
-            );
-        }
-        return moves[0];
+
+        auto ans = MiniMax(b, b.data.player_to_play, e);
+
+        return ans.second;
+//        while (isTimeValid()){
+//            std::cout << show_moves(&b.data, moveset) << std::endl;
+//            for (auto m : moveset) {
+//                std::cout << move_to_str(m) << " ";
+//            }
+//            std::cout << std::endl;
+//            std::sample(
+//                moveset.begin(),
+//                moveset.end(),
+//                std::back_inserter(moves),
+//                1,
+//                std::mt19937{std::random_device{}()}
+//            );
+//        }
+//        return moves[0];
     }
 }
 
