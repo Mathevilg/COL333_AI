@@ -4,7 +4,7 @@ using namespace std;
 
 // editing trial
 
-int MAX_DEPTH = 3;
+// int MAX_DEPTH = 3;
 
 int engine_b2::calculate_material(const Board& b) {
     int material = 0;
@@ -49,7 +49,7 @@ int engine_b2::calculate_material(const Board& b) {
 #define acw_90_pos(p) acw_90_7x7[((int)p)%64]
 #define cw_90_pos(p) cw_90_7x7[((int)p)%64]
 
-int get_pawn_score_white(U8 P)
+int engine_b2::get_pawn_score_white(U8 P)
 {
     map<U8, int> pawn_scores;
     pawn_scores[pos(2, 0)] = 0;
@@ -81,7 +81,7 @@ int get_pawn_score_white(U8 P)
     return pawn_scores[P];
 }
 
-int get_pawn_score_black(U8 P1)
+int engine_b2::get_pawn_score_black(U8 P1)
 {
     // int idx = (int) P1;
     U8 P = cw_180_pos(P1);
@@ -89,7 +89,7 @@ int get_pawn_score_black(U8 P1)
     return get_pawn_score_white(P);
 }
 
-int get_bishop_score(U8 P)
+int engine_b2::get_bishop_score(U8 P)
 {
     map<U8, int> bishop_scores;
     bishop_scores[pos(1, 0)] = 3;
@@ -124,7 +124,7 @@ int get_bishop_score(U8 P)
     return -1;
 }
 
-int get_rook_score_white(U8 P)
+int engine_b2::get_rook_score_white(U8 P)
 {
     map<U8, int> rook_scores;
     rook_scores[pos(1, 0)] = 17;
@@ -181,13 +181,13 @@ int get_rook_score_white(U8 P)
     return -1;
 }
 
-int get_rook_score_black(U8 P)
+int engine_b2::get_rook_score_black(U8 P)
 {
     U8 P1 = cw_180_pos(P);
     return get_rook_score_white(P1);
 }
 
-int get_king_score_white(U8 P)
+int engine_b2::get_king_score_white(U8 P)
 {
 //    map<U8, int> king_scores;
 //
@@ -202,7 +202,7 @@ int get_king_score_white(U8 P)
     return 10;
 }
 
-int get_king_score_black(U8 P)
+int engine_b2::get_king_score_black(U8 P)
 {
     U8 P1 = cw_180_pos(P);
     return get_king_score_white(P1);
@@ -210,51 +210,12 @@ int get_king_score_black(U8 P)
 
 
 
-chrono::high_resolution_clock::time_point start_time;
-int time_left_to_match;
+// chrono::high_resolution_clock::time_point start_time;
+// int time_left_to_match;
 // this is the main function !
 bool engine_b2::isTimeValid() {
     this_thread::sleep_for(std::chrono::milliseconds(1950));
     return chrono::high_resolution_clock::now() - start_time < chrono::milliseconds(2000);
-}
-
-int engine_b2::calculate_material(const Board& b)
-{
-    int material = 0;
-    for (int i = 0; i < 64; i++) {
-        switch (b.data.board_0[i]) {
-            case PAWN | WHITE:
-                material += 1;
-                break;
-            case KNIGHT | WHITE:
-                material += 3;
-                break;
-            case BISHOP | WHITE:
-                material += 3;
-                break;
-            case ROOK | WHITE:
-                material += 5;
-                break;
-            case PAWN | BLACK:
-                material -= 1;
-                break;
-            case KNIGHT | BLACK:
-                material -= 3;
-                break;
-            case BISHOP | BLACK:
-                material -= 3;
-                break;
-            case ROOK | BLACK:
-                material -= 5;
-                break;
-                // case B_QUEEN:
-                //     material -= 9;
-                //     break;
-            default:
-                break;
-        }
-    }
-    return material;
 }
 
 int engine_b2::evaluate_function(const Board& b)

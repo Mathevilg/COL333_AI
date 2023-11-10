@@ -12,7 +12,16 @@ using namespace std;
 class engine_b1
 {
 public:
-
+    int MAX_DEPTH = 4;
+    int time_left_to_match;
+    chrono::high_resolution_clock::time_point start_time;
+    int get_pawn_score_white(U8 P);
+    int get_pawn_score_black(U8 P);
+    int get_bishop_score(U8 P);
+    int get_rook_score_white(U8 P);
+    int get_rook_score_black(U8 P);
+    int get_king_score_white(U8 P);
+    int get_king_score_black(U8 P);
     U16 return_best_move(const Board& b, Engine *e);
 
     int calculate_material(const Board& b);

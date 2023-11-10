@@ -4,14 +4,14 @@ using namespace std;
 
 // editing trial
 
-int MAX_DEPTH = 3;
+// int MAX_DEPTH = 3;
 
 
 #define cw_180_pos(p) cw_180_7x7[((int)p)%64]
 #define acw_90_pos(p) acw_90_7x7[((int)p)%64]
 #define cw_90_pos(p) cw_90_7x7[((int)p)%64]
 
-int get_pawn_score_white(U8 P)
+int engine_b1::get_pawn_score_white(U8 P)
 {
     map<U8, int> pawn_scores;
     pawn_scores[pos(2, 0)] = 0;
@@ -43,7 +43,7 @@ int get_pawn_score_white(U8 P)
     return pawn_scores[P];
 }
 
-int get_pawn_score_black(U8 P1)
+int engine_b1::get_pawn_score_black(U8 P1)
 {
     // int idx = (int) P1;
     U8 P = cw_180_pos(P1);
@@ -51,7 +51,7 @@ int get_pawn_score_black(U8 P1)
     return get_pawn_score_white(P);
 }
 
-int get_bishop_score(U8 P)
+int engine_b1::get_bishop_score(U8 P)
 {
     map<U8, int> bishop_scores;
     bishop_scores[pos(1, 0)] = 3;
@@ -86,7 +86,7 @@ int get_bishop_score(U8 P)
     return -1;
 }
 
-int get_rook_score_white(U8 P)
+int engine_b1::get_rook_score_white(U8 P)
 {
     map<U8, int> rook_scores;
     rook_scores[pos(1, 0)] = 17;
@@ -143,13 +143,13 @@ int get_rook_score_white(U8 P)
     return -1;
 }
 
-int get_rook_score_black(U8 P)
+int engine_b1::get_rook_score_black(U8 P)
 {
     U8 P1 = cw_180_pos(P);
     return get_rook_score_white(P1);
 }
 
-int get_king_score_white(U8 P)
+int engine_b1::get_king_score_white(U8 P)
 {
 //    map<U8, int> king_scores;
 //
@@ -164,15 +164,15 @@ int get_king_score_white(U8 P)
     return 10;
 }
 
-int get_king_score_black(U8 P)
+int engine_b1::get_king_score_black(U8 P)
 {
     U8 P1 = cw_180_pos(P);
     return get_king_score_white(P1);
 }
 
 
-chrono::high_resolution_clock::time_point start_time;
-int time_left_to_match;
+// chrono::high_resolution_clock::time_point start_time;
+// int time_left_to_match;
 // this is the main function !
 bool engine_b1::isTimeValid() {
     this_thread::sleep_for(std::chrono::milliseconds(1950));
