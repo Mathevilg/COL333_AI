@@ -33,7 +33,14 @@ public:
         {pos(3, 5), 14}, {pos(3, 6), 14}
     };
 
-    
+    map<U8, int> bishop_scores = {
+        {pos(1, 0), 3},
+        {pos(2, 1), 8},
+        {pos(3, 0), 2},
+        {pos(4, 1), 6},
+        {pos(5, 0), 3}
+    };
+
 
     int get_pawn_score_white(U8 P);
     int get_pawn_score_black(U8 P);

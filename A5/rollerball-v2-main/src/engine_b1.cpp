@@ -26,13 +26,7 @@ int engine_b1::get_pawn_score_black(U8 P1)
 
 int engine_b1::get_bishop_score(U8 P)
 {
-    map<U8, int> bishop_scores;
-    bishop_scores[pos(1, 0)] = 3;
-    bishop_scores[pos(2, 1)] = 8;
-    bishop_scores[pos(3, 0)] = 2;
-    bishop_scores[pos(4, 1)] = 6;
-    bishop_scores[pos(5, 0)] = 3;
-//    bishop_scores[pos(6, 1)] = 3;
+
 
     if (gety(P) <= 1 && getx(P) >= 1 && getx(P) <= 5)
     {
@@ -193,7 +187,6 @@ int engine_b1::calculate_material(const Board& b)
 
 int engine_b1::evaluate_function(const Board& b)
 {
-    int final_score = calculate_material(b);
 
     if (b.get_legal_moves().empty())
     {
@@ -207,7 +200,8 @@ int engine_b1::evaluate_function(const Board& b)
             return 0;
     }
 
-    return final_score;
+    int material = calculate_material(b);
+    return material;
 }
 
 //pair<int, U16> engine_b1::Min_value(Board b, int depth, int alpha, int beta, Engine* e);
