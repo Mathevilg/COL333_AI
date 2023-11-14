@@ -67,6 +67,8 @@ public:
     int get_king_score_black(U8 P);
     U16 return_best_move(const Board& b, Engine *e);
 
+    int calc_check_score(Board b);
+    int calc_positional_score(const Board& b);
     int calculate_material(const Board& b);
 
     bool isTimeValid();

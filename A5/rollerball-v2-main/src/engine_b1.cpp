@@ -88,15 +88,6 @@ int engine_b1::get_rook_score_black(U8 P)
 
 int engine_b1::get_king_score_white(U8 P)
 {
-//    map<U8, int> king_scores;
-//
-//    king_scores[pos(3, 1)] = 0;
-//    king_scores[pos(3, 0)] = 0;
-//
-//    if ((getx(P) == 3) || getx)
-//    {
-//        return king_scores[P] = 0;
-//    }
 
     return 10;
 }
@@ -145,15 +136,69 @@ int engine_b1::calculate_material(const Board& b)
             case ROOK | BLACK:
                 material -= 5;
                 break;
-                // case B_QUEEN:
-                //     material -= 9;
-                //     break;
             default:
                 break;
         }
     }
     return material;
 }
+
+
+int engine_b1::calc_check_score(Board b)
+{
+    if (b.in_check())
+    {
+        if (b.data.player_to_play == WHITE)
+            return -10;
+        else
+            return 10;
+    }
+    else
+        return 0;
+}
+
+
+int engine_b1::calc_positional_score(const Board &b){
+    int positional_score = 0;
+    for (int i=0; i<64; i++){
+        if (b.data.board_0[i] == EMPTY)
+            continue;
+        else{
+            switch (b.data.board_0[i])
+            {
+            case WHITE | PAWN:
+                positional_score += (get_pawn_score_white(i)+3)*2;
+                break;
+            case BLACK | PAWN:
+                positional_score -= (get_pawn_score_black(i)+3)*2;
+                break;
+            case WHITE | BISHOP:
+                positional_score += get_bishop_score(i);
+                break;
+            case BLACK | BISHOP:
+                positional_score -= get_bishop_score(i);
+                break;
+            case WHITE | ROOK:
+                positional_score += get_rook_score_white(i);
+                break;
+            case BLACK | ROOK:
+                positional_score -= get_rook_score_black(i);
+                break;
+            case WHITE | KING:
+                positional_score += get_king_score_white(i);
+                break;
+            case BLACK | KING:
+                positional_score -= get_king_score_black(i);
+                break;
+            
+            default:
+                break;
+            }
+        }
+    }
+    return positional_score;
+}
+
 
 int engine_b1::evaluate_function(const Board& b)
 {
@@ -170,11 +215,30 @@ int engine_b1::evaluate_function(const Board& b)
             return 0;
     }
 
-    int material = calculate_material(b);
-    return material;
+    int material = calculate_material(b);  // range -5 to +5
+    int w1 = 110;
+
+    int pawn_score = 0; // count_pawn_score(b); // range -20 to +20
+    int w2 = 6;
+    
+    
+    int check_score = calc_check_score(b); // -10 or 10
+    int w3 = 6;
+
+
+    // wrong code for count_pawn_score, uses b.data.w_pawn_ws and b.data.w_pawn_bs
+    int protected_score = 0;  // how_many_protected_score(b);  // -1 to 1
+    int w4 = 8;
+
+
+    int positional_score = calc_positional_score(b); // range -20/-13 to +20/+13 (for rook)
+    // -9 to 9 for pawn, -8 to 8 for bishop
+    int w5 = 3;
+
+    int final_score = (w1*material) + (w2*pawn_score) + (w3*check_score) + (w4*protected_score) + (w5*positional_score);
+    return final_score;
 }
 
-//pair<int, U16> engine_b1::Min_value(Board b, int depth, int alpha, int beta, Engine* e);
 
 pair<int, U16> engine_b1::Max_value(Board b, int depth, int alpha, int beta, Engine* e)
 {
