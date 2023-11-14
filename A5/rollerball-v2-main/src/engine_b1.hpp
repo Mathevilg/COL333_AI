@@ -41,7 +41,23 @@ public:
         {pos(5, 0), 3}
     };
 
-
+    map<U8, int> rook_scores = {
+        {pos(6, 0), 5},
+        {pos(5, 0), 7},
+        {pos(4, 0), 7},
+        {pos(3, 0), 10},
+        {pos(2, 0), 11},
+        {pos(1, 0), 16},
+        {pos(0, 0), 16},
+        {pos(6, 1), 2},
+        {pos(5, 1), 2},
+        {pos(4, 1), 4},
+        {pos(3, 1), 6},
+        {pos(2, 1), 7},
+        {pos(1, 1), 15},
+        {pos(0, 1), 15}
+    };
+    
     int get_pawn_score_white(U8 P);
     int get_pawn_score_black(U8 P);
     int get_bishop_score(U8 P);

@@ -55,38 +55,8 @@ int engine_b1::get_bishop_score(U8 P)
 
 int engine_b1::get_rook_score_white(U8 P)
 {
-    map<U8, int> rook_scores;
-    rook_scores[pos(1, 0)] = 17;
-    for (int i = 2; i <= 5; i++)
-    {
-        rook_scores[pos(i, 0)] = 10+ i;
-    }
-    rook_scores[pos(6, 0)] = 16;
-
-    for (int i = 2; i <= 4; i++)
-    {
-        rook_scores[pos(i, 1)] = i+ 2;
-    }
-    rook_scores[pos(5, 1)] = 9;
-
     if ((gety(P) == 0 && getx(P) >= 0) || (gety(P) == 1 && getx(P) <= 6 && getx(P) >= 0))
     {
-        rook_scores[pos(6, 0)] = 5;
-        rook_scores[pos(5, 0)] = 7;
-        rook_scores[pos(4, 0)] = 7;
-        rook_scores[pos(3, 0)] = 10;
-        rook_scores[pos(2, 0)] = 11;
-        rook_scores[pos(1, 0)] = 16;
-        rook_scores[pos(0, 0)] = 16;
-
-        rook_scores[pos(6, 1)] = 2;
-        rook_scores[pos(5, 1)] = 2;
-        rook_scores[pos(4, 1)] = 4;
-        rook_scores[pos(3, 1)] = 6;
-        rook_scores[pos(2, 1)] = 7;
-        rook_scores[pos(1, 1)] = 15;
-        rook_scores[pos(0, 1)] = 15;
-
         return rook_scores[P];
     }
 
