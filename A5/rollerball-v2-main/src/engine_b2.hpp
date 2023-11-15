@@ -19,46 +19,17 @@ public:
     chrono::high_resolution_clock::time_point start_time;
     
     map<U8, int> pawn_scores = {
-        // Initial entries
-        {pos(2, 0), 0}, {pos(2, 1), 0},
-        {pos(0, 0), 1}, {pos(1, 0), 1},
-        {pos(0, 1), 2}, {pos(1, 1), 2},
-        // Entries from your existing code
-        {pos(0, 2), 5}, {pos(1, 2), 5},
-        {pos(0, 3), 6}, {pos(1, 3), 6},
-        {pos(0, 4), 7}, {pos(1, 4), 7},
-        {pos(0, 5), 8}, {pos(1, 5), 8},
-        {pos(0, 6), 8}, {pos(1, 6), 9},
-        {pos(2, 5), 10}, {pos(2, 6), 10},
-        // {pos(3, 5), 11}, {pos(3, 6), 11},
-        // Remaining entries
-        {pos(4, 5), 12}, {pos(4, 6), 12},
-        {pos(3, 5), 14}, {pos(3, 6), 14}
+        
     };
 
     map<U8, int> bishop_scores = {
-        {pos(1, 0), 3},
-        {pos(2, 1), 8},
-        {pos(3, 0), 2},
-        {pos(4, 1), 6},
-        {pos(5, 0), 3}
+                       {pos(2, 1), 3}, {pos(3, 1), 4}, {pos(4, 1), 3}, {pos(5, 1), 4}, {pos(6, 1), 4},
+        {pos(1, 0), 3}, {pos(2, 0), 4}, {pos(3, 0), 3}, {pos(4, 0), 3}, {pos(5, 0), 3}, {pos(6, 0), 3}, {pos(7, 0), 1}
     };
 
     map<U8, int> rook_scores = {
-        {pos(6, 0), 5},
-        {pos(5, 0), 7},
-        {pos(4, 0), 7},
-        {pos(3, 0), 10},
-        {pos(2, 0), 11},
-        {pos(1, 0), 16},
-        {pos(0, 0), 16},
-        {pos(6, 1), 2},
-        {pos(5, 1), 2},
-        {pos(4, 1), 4},
-        {pos(3, 1), 6},
-        {pos(2, 1), 7},
-        {pos(1, 1), 15},
-        {pos(0, 1), 15}
+                       {pos(2, 1), 4}, {pos(3, 1), 5}, {pos(4, 1), 6}, {pos(5, 1), 7}, {pos(6, 1), 9},
+        {pos(1, 0), 16}, {pos(2, 0), 11}, {pos(3, 0), 12}, {pos(4, 0), 13}, {pos(5, 0), 14}, {pos(6, 0), 15}, {pos(7, 0), 15}
     };
    
     

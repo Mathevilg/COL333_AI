@@ -22,6 +22,8 @@ engine_b3 E3;
 void Engine::find_best_move(const Board& b) {
 
     auto moveset = b.get_legal_moves();
+    // check functions for debugging
+    // E3.check();
     if (moveset.size() == 0) {
         std::cout << "Could not get any moves from board!\n";
         std::cout << board_to_str(&b.data);

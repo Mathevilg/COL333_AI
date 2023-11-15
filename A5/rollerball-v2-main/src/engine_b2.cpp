@@ -10,9 +10,11 @@ using namespace std;
 #define acw_90_pos_2(p) acw_90_8x8[((int)p)%64]
 #define cw_90_pos_2(p) cw_90_8x8[((int)p)%64]
 
+
+//@ShlokDotPande this is the function you need to edit
 int engine_b2::get_pawn_score_white(U8 P)
-{
-    return pawn_scores[P];
+{   return 0;
+    // return pawn_scores[P];
 }
 
 int engine_b2::get_pawn_score_black(U8 P1)

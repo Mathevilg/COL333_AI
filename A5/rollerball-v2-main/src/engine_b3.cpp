@@ -2,6 +2,138 @@
 
 using namespace std;
 
+
+#define cw_180_pos_3(p) cw_180_8x8[((int)p)%64]
+#define acw_90_pos_3(p) acw_90_8x8[((int)p)%64]
+#define cw_90_pos_3(p) cw_90_8x8[((int)p)%64]
+
+
+// isme reflection ki bt ho sakti hai !! @ShlokDotPande
+int engine_b3::get_pawn_score_white(U8 P)
+{
+    return pawn_scores[P];
+}
+
+int engine_b3::get_pawn_score_black(U8 P1)
+{
+    // int idx = (int) P1;
+    U8 P = cw_180_pos_3(P1);
+    return get_pawn_score_white(P);
+}
+
+int engine_b3::get_bishop_score(U8 P)
+{
+
+    U8 P1 = cw_90_pos_3(P);
+    U8 P2 = cw_180_pos_3(P);
+    U8 P3 = acw_90_pos_3(P);
+    if (bishop_scores.find(P) != bishop_scores.end())
+    {
+        return bishop_scores[P];
+    }
+    if (bishop_scores.find(P1) != bishop_scores.end())
+    {
+        return bishop_scores[P1];
+    }
+    if (bishop_scores.find(P2) != bishop_scores.end())
+    {
+        return bishop_scores[P2];
+    }
+    if (bishop_scores.find(P3) != bishop_scores.end())
+    {
+        return bishop_scores[P3];
+    }
+    cout << getx(P) << " " << gety(P) ;
+    cout<<" no matching position for bishop" << endl;
+    return -1;
+}
+
+int engine_b3::get_rook_score_white(U8 P)
+{
+
+    U8 P1 = cw_90_pos_3(P);
+    U8 P2 = cw_180_pos_3(P);
+    U8 P3 = acw_90_pos_3(P);
+    if (rook_scores.find(P) != rook_scores.end())
+    {
+        return rook_scores[P];
+    }
+
+    else if (rook_scores.find(P1) != rook_scores.end())
+    {
+        return rook_scores[P1];
+    }
+    else if (rook_scores.find(P2) != rook_scores.end())
+    {
+        return rook_scores[P2];
+    }
+    else if (rook_scores.find(P3) != rook_scores.end())
+    {
+        return rook_scores[P3];
+    }
+
+    cout<<"no matching position for rook";
+    return -1;
+}
+
+int engine_b3::get_rook_score_black(U8 P)
+{
+    U8 P1 = cw_180_pos_3(P);
+    return get_rook_score_white(P1);
+}
+
+int engine_b3::get_king_score_white(U8 P)
+{
+    return 10;
+}
+
+int engine_b3::get_king_score_black(U8 P)
+{
+    U8 P1 = cw_180_pos_3(P);
+    return get_king_score_white(P1);
+}
+
+// @ShlokDotPande knight scores is how many it can attack !!
+int engine_b3::get_knight_score_white(U8 P)
+{
+    U8 P1 = cw_90_pos_3(P);
+    U8 P2 = cw_180_pos_3(P);
+    U8 P3 = acw_90_pos_3(P);
+    if (knight_scores.find(P) != knight_scores.end())
+    {
+        return knight_scores[P];
+    }
+    else if (knight_scores.find(P1) != knight_scores.end())
+    {
+        return knight_scores[P1];
+    }
+    else if (knight_scores.find(P2) != knight_scores.end())
+    {
+        return knight_scores[P2];
+    }
+    else if (knight_scores.find(P3) != knight_scores.end())
+    {
+        return knight_scores[P3];
+    }
+
+    cout<<"no matching position for knight";
+    return -1;
+}
+
+int engine_b3::get_knight_score_black(U8 P)
+{
+    U8 P1 = cw_180_pos_3(P);
+    return get_knight_score_white(P1);
+}
+
+// chrono::high_resolution_clock::time_point start_time;
+// int time_left_to_match;
+// this is the main function !
+bool engine_b3::isTimeValid() {
+    this_thread::sleep_for(std::chrono::milliseconds(1950));
+    return chrono::high_resolution_clock::now() - start_time < chrono::milliseconds(2000);
+}
+
 int engine_b3::calculate_material(const Board& b) {
     int material = 0;
     for (int i = 0; i < 64; i++) {
@@ -30,9 +162,6 @@ int engine_b3::calculate_material(const Board& b) {
             case ROOK | BLACK:
                 material -= 5;
                 break;
-                // case B_QUEEN:
-                //     material -= 9;
-                //     break;
             default:
                 break;
         }
@@ -41,182 +170,69 @@ int engine_b3::calculate_material(const Board& b) {
 }
 
 
-#define cw_180_pos(p) cw_180_7x7[((int)p)%64]
-#define acw_90_pos(p) acw_90_7x7[((int)p)%64]
-#define cw_90_pos(p) cw_90_7x7[((int)p)%64]
-
-int engine_b3::get_pawn_score_white(U8 P)
+int engine_b3::calc_check_score(Board b)
 {
-    map<U8, int> pawn_scores;
-    pawn_scores[pos(2, 0)] = 0;
-    pawn_scores[pos(2, 1)] = 0;
-
-    pawn_scores[pos(0, 0)] = 1;
-    pawn_scores[pos(1, 0)] = 1;
-
-    pawn_scores[pos(0, 1)] = 2;
-    pawn_scores[pos(1, 1)] = 2;
-
-
-    for (int i = 2; i < 6; i++)
+    if (b.in_check())
     {
-        pawn_scores[pos(0, i)] = i+3;
-        pawn_scores[pos(1, i)] = i+3;
+        if (b.data.player_to_play == WHITE)
+            return -10;
+        else
+            return 10;
     }
-    pawn_scores[pos(0, 6)] = 8;
-    pawn_scores[pos(1, 6)] = 9;
-
-    for (int i = 2; i <= 4; i++)
-    {
-        pawn_scores[pos(i, 5)] = 8+i;
-        pawn_scores[pos(i, 6)] = 8+i;
-    }
-
-    pawn_scores[pos(3, 6)] = 14;
-    pawn_scores[pos(3, 5)] = 14;
-    return pawn_scores[P];
-}
-
-int engine_b3::get_pawn_score_black(U8 P1)
-{
-    // int idx = (int) P1;
-    U8 P = cw_180_pos(P1);
-
-    return get_pawn_score_white(P);
-}
-
-int engine_b3::get_bishop_score(U8 P)
-{
-    map<U8, int> bishop_scores;
-    bishop_scores[pos(1, 0)] = 3;
-    bishop_scores[pos(2, 1)] = 8;
-    bishop_scores[pos(3, 0)] = 2;
-    bishop_scores[pos(4, 1)] = 6;
-    bishop_scores[pos(5, 0)] = 3;
-//    bishop_scores[pos(6, 1)] = 3;
-
-    if (gety(P) <= 1 && getx(P) >= 1 && getx(P) <= 5)
-    {
-        return bishop_scores[P];
-    }
-
-    U8 P1 = cw_90_pos(P);
-    U8 P2 = cw_180_pos(P);
-    U8 P3 = acw_90_pos(P);
-    if (gety(P1) <= 1 && getx(P1) >= 1 && getx(P1) <= 5)
-    {
-        return bishop_scores[P1];
-    }
-    if (gety(P2) <= 1 && getx(P2) >= 1 && getx(P2) <= 5)
-    {
-        return bishop_scores[P2];
-    }
-    if (gety(P3) <= 1 && getx(P3) >= 1 && getx(P3) <= 5)
-    {
-        return bishop_scores[P3];
-    }
-
-    cout<<"no matching position for bishop";
-    return -1;
-}
-
-int engine_b3::get_rook_score_white(U8 P)
-{
-    map<U8, int> rook_scores;
-    rook_scores[pos(1, 0)] = 17;
-    for (int i = 2; i <= 5; i++)
-    {
-        rook_scores[pos(i, 0)] = 10+ i;
-    }
-    rook_scores[pos(6, 0)] = 16;
-
-    for (int i = 2; i <= 4; i++)
-    {
-        rook_scores[pos(i, 1)] = i+ 2;
-    }
-    rook_scores[pos(5, 1)] = 9;
-
-    if ((gety(P) == 0 && getx(P) >= 0) || (gety(P) == 1 && getx(P) <= 6 && getx(P) >= 0))
-    {
-        rook_scores[pos(6, 0)] = 5;
-        rook_scores[pos(5, 0)] = 7;
-        rook_scores[pos(4, 0)] = 7;
-        rook_scores[pos(3, 0)] = 10;
-        rook_scores[pos(2, 0)] = 11;
-        rook_scores[pos(1, 0)] = 16;
-        rook_scores[pos(0, 0)] = 16;
-
-        rook_scores[pos(6, 1)] = 2;
-        rook_scores[pos(5, 1)] = 2;
-        rook_scores[pos(4, 1)] = 4;
-        rook_scores[pos(3, 1)] = 6;
-        rook_scores[pos(2, 1)] = 7;
-        rook_scores[pos(1, 1)] = 15;
-        rook_scores[pos(0, 1)] = 15;
-
-        return rook_scores[P];
-    }
-
-    U8 P1 = cw_90_pos(P);
-    U8 P2 = cw_180_pos(P);
-    U8 P3 = acw_90_pos(P);
-    if ((gety(P1) == 0 && getx(P1) >= 1) || (gety(P1) == 1 && getx(P1) <= 5 && getx(P1) >= 2))
-    {
-        return rook_scores[P1];
-    }
-    if ((gety(P2) == 0 && getx(P2) >= 1) || (gety(P2) == 1 && getx(P2) <= 5 && getx(P2) >= 2))
-    {
-        return rook_scores[P2]+4;
-    }
-    if ((gety(P3) == 0 && getx(P3) >= 1) || (gety(P3) == 1 && getx(P3) <= 5 && getx(P3) >= 2))
-    {
-        return rook_scores[P3]+4;
-    }
-
-    cout<<"no matching position for bishop";
-    return -1;
-}
-
-int engine_b3::get_rook_score_black(U8 P)
-{
-    U8 P1 = cw_180_pos(P);
-    return get_rook_score_white(P1);
-}
-
-int engine_b3::get_king_score_white(U8 P)
-{
-//    map<U8, int> king_scores;
-//
-//    king_scores[pos(3, 1)] = 0;
-//    king_scores[pos(3, 0)] = 0;
-//
-//    if ((getx(P) == 3) || getx)
-//    {
-//        return king_scores[P] = 0;
-//    }
-
-    return 10;
-}
-
-int engine_b3::get_king_score_black(U8 P)
-{
-    U8 P1 = cw_180_pos(P);
-    return get_king_score_white(P1);
+    else
+        return 0;
 }
 
 
-
-chrono::high_resolution_clock::time_point start_time;
-int time_left_to_match;
-// this is the main function !
-bool engine_b3::isTimeValid() {
-    this_thread::sleep_for(std::chrono::milliseconds(1950));
-    return chrono::high_resolution_clock::now() - start_time < chrono::milliseconds(2000);
+int engine_b3::calc_positional_score(const Board &b){
+    int positional_score = 0;
+    for (int i=0; i<64; i++){
+        if (b.data.board_0[i] == EMPTY)
+            continue;
+        else{
+            switch (b.data.board_0[i])
+            {
+            case WHITE | PAWN:
+                positional_score += (get_pawn_score_white(i)+3)*2;
+                break;
+            case BLACK | PAWN:
+                positional_score -= (get_pawn_score_black(i)+3)*2;
+                break;
+            case WHITE | BISHOP:
+                positional_score += get_bishop_score(i);
+                break;
+            case BLACK | BISHOP:
+                positional_score -= get_bishop_score(i);
+                break;
+            case WHITE | ROOK:
+                positional_score += get_rook_score_white(i);
+                break;
+            case BLACK | ROOK:
+                positional_score -= get_rook_score_black(i);
+                break;
+            case WHITE | KING:
+                positional_score += get_king_score_white(i);
+                break;
+            case BLACK | KING:
+                positional_score -= get_king_score_black(i);
+                break;
+            case WHITE | KNIGHT:
+                positional_score += get_knight_score_white(i);
+                break;
+            case BLACK | KNIGHT:
+                positional_score -= get_knight_score_black(i);
+                break;
+            default:
+                break;
+            }
+        }
+    }
+    return positional_score;
 }
+
 
 int engine_b3::evaluate_function(const Board& b)
 {
-    int final_score = calculate_material(b);
 
     if (b.get_legal_moves().empty())
     {
@@ -230,6 +246,27 @@ int engine_b3::evaluate_function(const Board& b)
             return 0;
     }
 
+    int material = calculate_material(b);  // range -5 to +5
+    int w1 = 110;
+
+    int pawn_score = 0; // count_pawn_score(b); // range -20 to +20
+    int w2 = 6;
+    
+    
+    int check_score = calc_check_score(b); // -10 or 10
+    int w3 = 6;
+
+
+    // wrong code for count_pawn_score, uses b.data.w_pawn_ws and b.data.w_pawn_bs
+    int protected_score = 0;  // how_many_protected_score(b);  // -1 to 1
+    int w4 = 8;
+
+
+    int positional_score = calc_positional_score(b); // range -20/-13 to +20/+13 (for rook)
+    // -9 to 9 for pawn, -8 to 8 for bishop
+    int w5 = 3;
+
+    int final_score = (w1*material) + (w2*pawn_score) + (w3*check_score) + (w4*protected_score) + (w5*positional_score);
     return final_score;
 }
 
