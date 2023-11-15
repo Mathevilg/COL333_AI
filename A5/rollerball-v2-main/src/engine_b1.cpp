@@ -144,7 +144,7 @@ int engine_b1::calculate_material(const Board& b)
 }
 
 
-int engine_b1::calc_check_score(Board b)
+int engine_b1::calc_check_score(const Board& b)
 {
     if (b.in_check())
     {
@@ -240,7 +240,7 @@ int engine_b1::evaluate_function(const Board& b)
 }
 
 
-pair<int, U16> engine_b1::Max_value(Board b, int depth, int alpha, int beta, Engine* e)
+pair<int, U16> engine_b1::Max_value(const Board& b, int depth, int alpha, int beta, Engine* e)
 {
 
     if (depth > MAX_DEPTH)
@@ -266,12 +266,12 @@ pair<int, U16> engine_b1::Max_value(Board b, int depth, int alpha, int beta, Eng
             int max_value = -100050;
             for (auto m : moveset) {
 
-                if (m & (1 << 6))
+                if (m & (1 << 6)) // what is this??
                 {
                     continue;
                 }
 
-                Board b_copy = Board(b); // create a copy constructor??
+                Board b_copy = Board(b); // Copy constructor, make move and undo move instead??
                 b_copy.do_move_(m);
                 auto min_ans = Min_value(b_copy, depth + 1, alpha, beta, e);
                 alpha = max(alpha, min_ans.first);
@@ -293,7 +293,7 @@ pair<int, U16> engine_b1::Max_value(Board b, int depth, int alpha, int beta, Eng
     }
 }
 
-pair<int, U16> engine_b1::Min_value(Board b, int depth, int alpha, int beta, Engine* e)
+pair<int, U16> engine_b1::Min_value(const Board& b, int depth, int alpha, int beta, Engine* e)
 {
 
     if (depth > MAX_DEPTH) {
@@ -341,7 +341,7 @@ pair<int, U16> engine_b1::Min_value(Board b, int depth, int alpha, int beta, Eng
 }
 
 
-pair<int, U16> engine_b1::MiniMax(Board b, PlayerColor colour, Engine* e)
+pair<int, U16> engine_b1::MiniMax(const Board& b, PlayerColor colour, Engine* e)
 {
     auto moveset = b.get_legal_moves();
 
@@ -352,7 +352,7 @@ pair<int, U16> engine_b1::MiniMax(Board b, PlayerColor colour, Engine* e)
         auto ans = make_pair(0, 0);
         if (colour == BLACK)
         {
-            ans = Min_value(b, 0, -100000, 100000, e);
+            ans = Min_value(b, 1, -100000, 100000, e);
             cout<<"\n\n\n";
             cout<< "final evaluation is, "<<ans.first<< " at MAX_DEPTH: "<<MAX_DEPTH<<'\n';
             cout<<"best move at this depth is: "<<move_to_str(ans.second)<<"\n";
@@ -361,7 +361,7 @@ pair<int, U16> engine_b1::MiniMax(Board b, PlayerColor colour, Engine* e)
         }
         else
         {
-            ans = engine_b1::Max_value(b, 0, -100000, 100000, e);
+            ans = engine_b1::Max_value(b, 1, -100000, 100000, e);
             cout<<"\n\n\n";
             cout<< "final evaluation is, "<<ans.first<< " at MAX_DEPTH: "<<MAX_DEPTH<<'\n';
             cout<<"best move at this depth is: "<<move_to_str(ans.second)<<"\n";
@@ -374,20 +374,66 @@ pair<int, U16> engine_b1::MiniMax(Board b, PlayerColor colour, Engine* e)
 
 U16 engine_b1::return_best_move(const Board &b, Engine *e) {
     start_time = chrono::high_resolution_clock::now();
-    time_left_to_match = e->time_left.count();
+    time_left_to_match = (int) e->time_left.count();
     cout << "time left to match: " << time_left_to_match << endl;
     auto moveset = b.get_legal_moves();
-    if (moveset.size() == 0) {
-        std::cout << "Could not get any moves from board!\n";
-        std::cout << board_to_str(&b.data);
-        return 0;
+    auto colour = b.data.player_to_play;
+    auto curr_time = chrono::high_resolution_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(curr_time - start_time);
+
+    // Convert the duration to seconds (as a floating-point number)
+    double elapsed_time = duration.count() / 1e6;
+
+    vector<pair<int, pair<U16, Board>>> moveset_boards;
+
+    MAX_DEPTH = 1;
+    while (MAX_DEPTH <= 4)
+    {
+
+        if ((b.data.player_to_play == WHITE) && ( b.data.board_0[pos(2, 1)] == (WHITE|PAWN)) && (b.data.board_0[pos(1, 2)] == EMPTY) ) {
+            e->best_move = (pos(2, 1) << 8) | (pos(1, 2));
+            cout << move_to_str(e->best_move) << endl;
+            return e->best_move;
+        }
+
+        auto p = MiniMax(b, colour, e);
+        e->best_move = p.second;
+        if ((p.first == 100000) && (b.data.player_to_play == WHITE))
+            break;
+
+        if ((p.first == -100000) && (b.data.player_to_play == BLACK))
+            break;
+
+        if (MAX_DEPTH == 1)
+            MAX_DEPTH++;
+        else
+            MAX_DEPTH += 2;
+        //    MAX_DEPTH++;
+        curr_time = chrono::high_resolution_clock::now();
+
+        duration = std::chrono::duration_cast<std::chrono::microseconds>(curr_time - start_time);
+
+        // Convert the duration to seconds (as a floating-point number)
+        elapsed_time = duration.count() / 1e6;
     }
-    else{
-        std::vector<U16> moves;
 
-        auto ans = MiniMax(b, b.data.player_to_play, e);
+    return e->best_move;
 
-        return ans.second;
+//    if (moveset.size() == 0) {
+//        std::cout << "Could not get any moves from board!\n";
+//        std::cout << board_to_str(&b.data);
+//        return 0;
+//    }
+//    else {
+//        std::vector<U16> moves;
+//
+//        auto ans = MiniMax(b, b.data.player_to_play, e);
+//
+//        return ans.second;
+//    }
+
+
 //        while (isTimeValid()){
 //            std::cout << show_moves(&b.data, moveset) << std::endl;
 //            for (auto m : moveset) {
@@ -403,7 +449,6 @@ U16 engine_b1::return_best_move(const Board &b, Engine *e) {
 //            );
 //        }
 //        return moves[0];
-    }
 }
 
 

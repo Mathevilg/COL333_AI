@@ -67,17 +67,18 @@ public:
     int get_king_score_black(U8 P);
     U16 return_best_move(const Board& b, Engine *e);
 
-    int calc_check_score(Board b);
+    int calc_check_score(const Board& b);
     int calc_positional_score(const Board& b);
     int calculate_material(const Board& b);
 
     bool isTimeValid();
+    float time_for_this_move = 4;
 
-    pair<int, U16> MiniMax(Board b, PlayerColor colour, Engine* e);
+    pair<int, U16> MiniMax(const Board& b, PlayerColor colour, Engine* e);
 
-    pair<int, U16> Min_value(Board b, int depth, int alpha, int beta, Engine* e);
+    pair<int, U16> Min_value(const Board& b, int depth, int alpha, int beta, Engine* e);
 
-    pair<int, U16> Max_value(Board b, int depth, int alpha, int beta, Engine* e);
+    pair<int, U16> Max_value(const Board& b, int depth, int alpha, int beta, Engine* e);
 
     int evaluate_function(const Board& b);
 
