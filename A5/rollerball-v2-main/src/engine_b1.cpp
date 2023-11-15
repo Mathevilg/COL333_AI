@@ -7,9 +7,9 @@ using namespace std;
 // int MAX_DEPTH = 3;
 
 
-#define cw_180_pos(p) cw_180_7x7[((int)p)%64]
-#define acw_90_pos(p) acw_90_7x7[((int)p)%64]
-#define cw_90_pos(p) cw_90_7x7[((int)p)%64]
+#define cw_180_pos_1(p) cw_180_7x7[((int)p)%64]
+#define acw_90_pos_1(p) acw_90_7x7[((int)p)%64]
+#define cw_90_pos_1(p) cw_90_7x7[((int)p)%64]
 
 int engine_b1::get_pawn_score_white(U8 P)
 {
@@ -19,7 +19,7 @@ int engine_b1::get_pawn_score_white(U8 P)
 int engine_b1::get_pawn_score_black(U8 P1)
 {
     // int idx = (int) P1;
-    U8 P = cw_180_pos(P1);
+    U8 P = cw_180_pos_1(P1);
 
     return get_pawn_score_white(P);
 }
@@ -33,9 +33,9 @@ int engine_b1::get_bishop_score(U8 P)
         return bishop_scores[P];
     }
 
-    U8 P1 = cw_90_pos(P);
-    U8 P2 = cw_180_pos(P);
-    U8 P3 = acw_90_pos(P);
+    U8 P1 = cw_90_pos_1(P);
+    U8 P2 = cw_180_pos_1(P);
+    U8 P3 = acw_90_pos_1(P);
     if (gety(P1) <= 1 && getx(P1) >= 1 && getx(P1) <= 5)
     {
         return bishop_scores[P1];
@@ -60,9 +60,9 @@ int engine_b1::get_rook_score_white(U8 P)
         return rook_scores[P];
     }
 
-    U8 P1 = cw_90_pos(P);
-    U8 P2 = cw_180_pos(P);
-    U8 P3 = acw_90_pos(P);
+    U8 P1 = cw_90_pos_1(P);
+    U8 P2 = cw_180_pos_1(P);
+    U8 P3 = acw_90_pos_1(P);
     if ((gety(P1) == 0 && getx(P1) >= 1) || (gety(P1) == 1 && getx(P1) <= 5 && getx(P1) >= 2))
     {
         return rook_scores[P1];
@@ -82,7 +82,7 @@ int engine_b1::get_rook_score_white(U8 P)
 
 int engine_b1::get_rook_score_black(U8 P)
 {
-    U8 P1 = cw_180_pos(P);
+    U8 P1 = cw_180_pos_1(P);
     return get_rook_score_white(P1);
 }
 
@@ -94,7 +94,7 @@ int engine_b1::get_king_score_white(U8 P)
 
 int engine_b1::get_king_score_black(U8 P)
 {
-    U8 P1 = cw_180_pos(P);
+    U8 P1 = cw_180_pos_1(P);
     return get_king_score_white(P1);
 }
 
