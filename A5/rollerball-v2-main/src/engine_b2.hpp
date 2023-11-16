@@ -48,11 +48,11 @@ public:
 
     bool isTimeValid();
 
-    pair<int, U16> MiniMax(Board b, PlayerColor colour, Engine* e);
+    pair<int, U16> MiniMax(const Board& b, PlayerColor colour, Engine* e);
 
-    pair<int, U16> Min_value(Board b, int depth, int alpha, int beta, Engine* e);
+    pair<int, U16> Min_value(const Board& b, int depth, int alpha, int beta, Engine* e);
 
-    pair<int, U16> Max_value(Board b, int depth, int alpha, int beta, Engine* e);
+    pair<int, U16> Max_value(const Board& b, int depth, int alpha, int beta, Engine* e);
 
     int evaluate_function(const Board& b);
 

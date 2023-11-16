@@ -346,6 +346,7 @@ pair<int, U16> engine_b3::Min_value(Board b, int depth, int alpha, int beta, Eng
         }
         else {
             int min_value = 100050;
+            U16 white_best_move = 0;
             for (auto m: moveset) {
 
                 if (m & (1 << 6))
@@ -361,12 +362,17 @@ pair<int, U16> engine_b3::Min_value(Board b, int depth, int alpha, int beta, Eng
                     return make_pair(max_ans.first, m);
                 if (max_ans.first < min_value) {
                     min_value = max_ans.first;
+                    white_best_move = max_ans.second;
                     best_move = m;
 //                    if (depth == 0)
 //                        e->best_move = m;
                 }
             }
 
+            cout<<"\n";
+            cout<<"Black final eval:"<<min_value<<move_to_str(best_move);
+            cout<<"corresponding white best move"<<move_to_str(white_best_move);
+            cout<<"\n";
             return make_pair(min_value, best_move);
         }
     }
@@ -385,19 +391,19 @@ pair<int, U16> engine_b3::MiniMax(Board b, PlayerColor colour, Engine* e)
         if (colour == BLACK)
         {
             ans = Min_value(b, 0, -100000, 100000, e);
-            cout<<"\n\n\n";
+            cout<<"\n\n";
             cout<< "final evaluation is, "<<ans.first<< " at MAX_DEPTH: "<<MAX_DEPTH<<'\n';
             cout<<"best move at this depth is: "<<move_to_str(ans.second)<<"\n";
-            cout<<"\n\n\n";
+            cout<<"\n\n";
             return ans;
         }
         else
         {
             ans = engine_b3::Max_value(b, 0, -100000, 100000, e);
-            cout<<"\n\n\n";
+            cout<<"\n\n";
             cout<< "final evaluation is, "<<ans.first<< " at MAX_DEPTH: "<<MAX_DEPTH<<'\n';
             cout<<"best move at this depth is: "<<move_to_str(ans.second)<<"\n";
-            cout<<"\n\n\n";
+            cout<<"\n\n";
             return ans;
         }
     }
@@ -406,20 +412,45 @@ pair<int, U16> engine_b3::MiniMax(Board b, PlayerColor colour, Engine* e)
 
 U16 engine_b3::return_best_move(const Board &b, Engine *e) {
     start_time = chrono::high_resolution_clock::now();
-    time_left_to_match = e->time_left.count();
+    time_left_to_match = (int) e->time_left.count();
     cout << "time left to match: " << time_left_to_match << endl;
     auto moveset = b.get_legal_moves();
-    if (moveset.size() == 0) {
-        std::cout << "Could not get any moves from board!\n";
-        std::cout << board_to_str(&b.data);
-        return 0;
+    auto colour = b.data.player_to_play;
+    auto curr_time = chrono::high_resolution_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(curr_time - start_time);
+
+    // Convert the duration to seconds (as a floating-point number)
+    double elapsed_time = duration.count() / 1e6;
+
+    vector<pair<int, pair<U16, Board>>> moveset_boards;
+
+    MAX_DEPTH = 1;
+    while (MAX_DEPTH <= 4)
+    {
+
+        auto p = MiniMax(b, colour, e);
+        e->best_move = p.second;
+        if ((p.first == 100000) && (b.data.player_to_play == WHITE))
+            break;
+
+        if ((p.first == -100000) && (b.data.player_to_play == BLACK))
+            break;
+
+        if (MAX_DEPTH == 1)
+            MAX_DEPTH++;
+        else
+            MAX_DEPTH += 2;
+        //    MAX_DEPTH++;
+        curr_time = chrono::high_resolution_clock::now();
+
+        duration = std::chrono::duration_cast<std::chrono::microseconds>(curr_time - start_time);
+
+        // Convert the duration to seconds (as a floating-point number)
+        elapsed_time = duration.count() / 1e6;
     }
-    else{
-        std::vector<U16> moves;
 
-        auto ans = MiniMax(b, b.data.player_to_play, e);
-
-        return ans.second;
+    return e->best_move;
 //        while (isTimeValid()){
 //            std::cout << show_moves(&b.data, moveset) << std::endl;
 //            for (auto m : moveset) {
@@ -435,7 +466,7 @@ U16 engine_b3::return_best_move(const Board &b, Engine *e) {
 //            );
 //        }
 //        return moves[0];
-    }
+
 }
 
 
