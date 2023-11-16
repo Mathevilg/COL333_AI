@@ -20,15 +20,14 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="881cf10a-a624-48d8-b24f-e7bebdaf06cf" name="Changes" comment="iterative deepening (like ass2)">
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11_14_2023_5_03_PM_[Changes]/shelved.patch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11_14_2023_5_03_PM_[Changes]1/shelved.patch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11_14_2023_5_03_PM__Changes_.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11_14_2023_5_03_PM__Changes_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="881cf10a-a624-48d8-b24f-e7bebdaf06cf" name="Changes" comment="iterative deepening in all boards (like ass2)">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b1.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b1.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b1.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b1.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b2.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b2.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b2.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b2.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b3.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b3.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b3.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b3.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,6 +68,7 @@
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -90,11 +90,24 @@
       <workItem from="1699090262257" duration="670000" />
       <workItem from="1699961493896" duration="6000" />
       <workItem from="1699961592456" duration="1456000" />
-      <workItem from="1700144628844" duration="385000" />
+      <workItem from="1700144628844" duration="17381000" />
     </task>
+    <task id="LOCAL-00001" summary="iterative deepening in all boards (like ass2)">
+      <option name="closed" value="true" />
+      <created>1700145038353</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1700145038353</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="iterative deepening in all boards (like ass2)" />
+    <option name="LAST_COMMIT_MESSAGE" value="iterative deepening in all boards (like ass2)" />
   </component>
 </project>

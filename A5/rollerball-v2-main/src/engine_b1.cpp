@@ -88,8 +88,29 @@ int engine_b1::get_rook_score_black(U8 P)
 
 int engine_b1::get_king_score_white(U8 P)
 {
+    if ((gety(P) == 0 && getx(P) >= 1) || (gety(P) == 1 && getx(P) <= 5 && getx(P) >= 2))
+    {
+        return king_scores[P];
+    }
 
-    return 10;
+    U8 P1 = cw_90_pos_1(P);
+    U8 P2 = cw_180_pos_1(P);
+    U8 P3 = acw_90_pos_1(P);
+    if ((gety(P1) == 0 && getx(P1) >= 1) || (gety(P1) == 1 && getx(P1) <= 5 && getx(P1) >= 2))
+    {
+        return king_scores[P1]-1;
+    }
+    if ((gety(P2) == 0 && getx(P2) >= 1) || (gety(P2) == 1 && getx(P2) <= 5 && getx(P2) >= 2))
+    {
+        return king_scores[P2]-1;
+    }
+    if ((gety(P3) == 0 && getx(P3) >= 1) || (gety(P3) == 1 && getx(P3) <= 5 && getx(P3) >= 2))
+    {
+        return king_scores[P3]+1;
+    }
+
+    cout<<"no matching position for bishop";
+    return -1;
 }
 
 int engine_b1::get_king_score_black(U8 P)
@@ -107,39 +128,83 @@ bool engine_b1::isTimeValid() {
     return chrono::high_resolution_clock::now() - start_time < chrono::milliseconds(2000);
 }
 
-int engine_b1::calculate_material(const Board& b)
-{
+int engine_b1::calculate_material(const Board& b) {
     int material = 0;
-    for (int i = 0; i < 64; i++) {
-        switch (b.data.board_0[i]) {
-            case PAWN | WHITE:
-                material += 1;
-                break;
-            case KNIGHT | WHITE:
-                material += 3;
-                break;
-            case BISHOP | WHITE:
-                material += 3;
-                break;
-            case ROOK | WHITE:
+
+    if (b.data.w_pawn_1 != DEAD)
+    {
+        if (b.data.board_0[b.data.w_pawn_1] == (PAWN | WHITE))
+            material += 1;
+        else
+        {
+            if (b.data.board_0[b.data.w_pawn_1] == (ROOK | WHITE))
                 material += 5;
-                break;
-            case PAWN | BLACK:
-                material -= 1;
-                break;
-            case KNIGHT | BLACK:
-                material -= 3;
-                break;
-            case BISHOP | BLACK:
-                material -= 3;
-                break;
-            case ROOK | BLACK:
-                material -= 5;
-                break;
-            default:
-                break;
+            else if (b.data.board_0[b.data.w_pawn_1] == (BISHOP | WHITE))
+                material += 3;
+            else if (b.data.board_0[b.data.w_pawn_1] == (KNIGHT | WHITE))
+                material += 4;
         }
     }
+    if (b.data.w_pawn_2 != DEAD)
+    {
+        if (b.data.board_0[b.data.w_pawn_2] == (PAWN | WHITE))
+            material += 1;
+        else
+        {
+            if (b.data.board_0[b.data.w_pawn_2] == (ROOK | WHITE))
+                material += 5;
+            else if (b.data.board_0[b.data.w_pawn_2] == (BISHOP | WHITE))
+                material += 3;
+            else if (b.data.board_0[b.data.w_pawn_2] == (KNIGHT | WHITE))
+                material += 4;
+        }
+    }
+
+    if (b.data.w_bishop != DEAD)
+        material += 3;
+    if (b.data.w_rook_1 != DEAD)
+        material += 5;
+    if (b.data.w_rook_2 != DEAD)
+        material += 5;
+
+
+    if (b.data.b_pawn_1 != DEAD)
+    {
+        if (b.data.board_0[b.data.b_pawn_1] == (PAWN | BLACK))
+            material -= 1;
+        else
+        {
+            if (b.data.board_0[b.data.b_pawn_1] == (ROOK | BLACK))
+                material -= 5;
+            else if (b.data.board_0[b.data.b_pawn_1] == (BISHOP | BLACK))
+                material -= 3;
+            else if (b.data.board_0[b.data.b_pawn_1] == (KNIGHT | BLACK))
+                material -= 4;
+        }
+    }
+    if (b.data.b_pawn_2 != DEAD)
+    {
+        if (b.data.board_0[b.data.b_pawn_2] == (PAWN | BLACK))
+            material -= 1;
+        else
+        {
+            if (b.data.board_0[b.data.b_pawn_2] == (ROOK | BLACK))
+                material -= 5;
+            else if (b.data.board_0[b.data.b_pawn_2] == (BISHOP | BLACK))
+                material -= 3;
+            else if (b.data.board_0[b.data.b_pawn_2] == (KNIGHT | BLACK))
+                material -= 4;
+        }
+    }
+
+    if (b.data.b_bishop != DEAD)
+        material -= 3;
+
+    if (b.data.b_rook_1 != DEAD)
+        material -= 5;
+    if (b.data.b_rook_2 != DEAD)
+        material -= 5;
+
     return material;
 }
 
@@ -160,43 +225,110 @@ int engine_b1::calc_check_score(const Board& b)
 
 int engine_b1::calc_positional_score(const Board &b){
     int positional_score = 0;
-    for (int i=0; i<64; i++){
-        if (b.data.board_0[i] == EMPTY)
-            continue;
-        else{
-            switch (b.data.board_0[i])
-            {
-            case WHITE | PAWN:
-                positional_score += (get_pawn_score_white(i)+3)*2;
-                break;
-            case BLACK | PAWN:
-                positional_score -= (get_pawn_score_black(i)+3)*2;
-                break;
-            case WHITE | BISHOP:
-                positional_score += get_bishop_score(i);
-                break;
-            case BLACK | BISHOP:
-                positional_score -= get_bishop_score(i);
-                break;
-            case WHITE | ROOK:
-                positional_score += get_rook_score_white(i);
-                break;
-            case BLACK | ROOK:
-                positional_score -= get_rook_score_black(i);
-                break;
-            case WHITE | KING:
-                positional_score += get_king_score_white(i);
-                break;
-            case BLACK | KING:
-                positional_score -= get_king_score_black(i);
-                break;
-            
-            default:
-                break;
-            }
+
+    if (b.data.w_pawn_1 != DEAD)
+    {
+        if (b.data.board_0[b.data.w_pawn_1] == (PAWN | WHITE))
+            positional_score += 2*(get_pawn_score_white(b.data.w_pawn_1)+3);
+        else
+        {
+            if (b.data.board_0[b.data.w_pawn_1] == (ROOK | WHITE))
+                positional_score += get_rook_score_white(b.data.w_pawn_1);
+            else if (b.data.board_0[b.data.w_pawn_1] == (BISHOP | WHITE))
+                positional_score += get_bishop_score(b.data.w_pawn_1);
         }
     }
+    if (b.data.w_pawn_2 != DEAD)
+    {
+        if (b.data.board_0[b.data.w_pawn_2] == (PAWN | WHITE))
+            positional_score += 2*(get_pawn_score_white(b.data.w_pawn_2)+3);
+        else
+        {
+            if (b.data.board_0[b.data.w_pawn_2] == (ROOK | WHITE))
+                positional_score += get_rook_score_white(b.data.w_pawn_2);
+            else if (b.data.board_0[b.data.w_pawn_2] == (BISHOP | WHITE))
+                positional_score += get_bishop_score(b.data.w_pawn_2);
+        }
+    }
+
+    if (b.data.w_bishop != DEAD)
+        positional_score += get_bishop_score(b.data.w_bishop);
+    if (b.data.w_rook_1 != DEAD)
+        positional_score += get_rook_score_white(b.data.w_rook_1);
+    if (b.data.w_rook_2 != DEAD)
+        positional_score += get_rook_score_white(b.data.w_rook_2);
+
+    if (b.data.b_pawn_1 != DEAD)
+    {
+        if (b.data.board_0[b.data.b_pawn_1] == (PAWN | BLACK))
+            positional_score -= 2*(get_pawn_score_black(b.data.b_pawn_1)+3);
+        else
+        {
+            if (b.data.board_0[b.data.b_pawn_1] == (ROOK | BLACK))
+                positional_score -= get_rook_score_black(b.data.b_pawn_1);
+            else if (b.data.board_0[b.data.b_pawn_1] == (BISHOP | BLACK))
+                positional_score -= get_bishop_score(b.data.b_pawn_1);
+        }
+    }
+    if (b.data.b_pawn_2 != DEAD)
+    {
+        if (b.data.board_0[b.data.b_pawn_2] == (PAWN | BLACK))
+            positional_score -= 2*(get_pawn_score_black(b.data.b_pawn_2)+3);
+        else
+        {
+            if (b.data.board_0[b.data.b_pawn_2] == (ROOK | BLACK))
+                positional_score -= get_rook_score_black(b.data.b_pawn_2);
+            else if (b.data.board_0[b.data.b_pawn_2] == (BISHOP | BLACK))
+                positional_score -= get_bishop_score(b.data.b_pawn_2);
+        }
+    }
+
+    if (b.data.b_bishop != DEAD)
+        positional_score -= get_bishop_score(b.data.b_bishop);
+
+    if (b.data.b_rook_1 != DEAD)
+        positional_score -= get_rook_score_black(b.data.b_rook_1);
+    if (b.data.b_rook_2 != DEAD)
+        positional_score -= get_rook_score_black(b.data.b_rook_2);
+
+    positional_score += get_king_score_white(b.data.w_king);
+    positional_score -= get_king_score_black(b.data.b_king);
+
     return positional_score;
+}
+
+
+int engine_b1::pawn_closeness_score_white(const Board& b)
+{
+    int score = 12;
+
+
+    auto pos1 = b.data.w_pawn_1;
+
+    auto pos2 = b.data.w_pawn_2;
+
+    if (pos1 != DEAD && pos2 != DEAD && b.data.board_0[pos2] == (WHITE|PAWN) && b.data.board_0[pos1] == (WHITE|PAWN))
+        score -= abs(gety(pos1) - gety(pos2)) + abs(getx(pos1) - getx(pos2));
+    else
+        score = 0;
+    return score;
+}
+
+
+int engine_b1::pawn_closeness_score_black(const Board& b)
+{
+    int score = 12;
+
+    auto pos1 = b.data.b_pawn_1;
+
+    auto pos2 = b.data.b_pawn_2;
+
+    if (pos1 != DEAD && pos2 != DEAD && b.data.board_0[pos2] == (BLACK|PAWN) && b.data.board_0[pos1] == (BLACK|PAWN))
+        score -= abs(gety(pos1) - gety(pos2)) + abs(getx(pos1) - getx(pos2));
+    else
+        score = 0;
+
+    return score;
 }
 
 
@@ -220,8 +352,8 @@ int engine_b1::evaluate_function(const Board& b)
 
     int pawn_score = 0; // count_pawn_score(b); // range -20 to +20
     int w2 = 6;
-    
-    
+
+
     int check_score = calc_check_score(b); // -10 or 10
     int w3 = 6;
 
@@ -235,7 +367,10 @@ int engine_b1::evaluate_function(const Board& b)
     // -9 to 9 for pawn, -8 to 8 for bishop
     int w5 = 3;
 
-    int final_score = (w1*material) + (w2*pawn_score) + (w3*check_score) + (w4*protected_score) + (w5*positional_score);
+    int pawn_closeness_score = pawn_closeness_score_white(b) - pawn_closeness_score_black(b);
+    int w6 = 2;
+
+    int final_score = (w1*material) + (w2*pawn_score) + (w3*check_score) + (w4*protected_score) + (w5*positional_score) + (w6*pawn_closeness_score);
     return final_score;
 }
 
@@ -353,19 +488,19 @@ pair<int, U16> engine_b1::MiniMax(const Board& b, PlayerColor colour, Engine* e)
         if (colour == BLACK)
         {
             ans = Min_value(b, 1, -100000, 100000, e);
-            cout<<"\n\n\n";
-            cout<< "final evaluation is, "<<ans.first<< " at MAX_DEPTH: "<<MAX_DEPTH<<'\n';
-            cout<<"best move at this depth is: "<<move_to_str(ans.second)<<"\n";
-            cout<<"\n\n\n";
+//            cout<<"\n\n\n";
+//            cout<< "final evaluation is, "<<ans.first<< " at MAX_DEPTH: "<<MAX_DEPTH<<'\n';
+//            cout<<"best move at this depth is: "<<move_to_str(ans.second)<<"\n";
+//            cout<<"\n\n\n";
             return ans;
         }
         else
         {
             ans = engine_b1::Max_value(b, 1, -100000, 100000, e);
-            cout<<"\n\n\n";
-            cout<< "final evaluation is, "<<ans.first<< " at MAX_DEPTH: "<<MAX_DEPTH<<'\n';
-            cout<<"best move at this depth is: "<<move_to_str(ans.second)<<"\n";
-            cout<<"\n\n\n";
+//            cout<<"\n\n\n";
+//            cout<< "final evaluation is, "<<ans.first<< " at MAX_DEPTH: "<<MAX_DEPTH<<'\n';
+//            cout<<"best move at this depth is: "<<move_to_str(ans.second)<<"\n";
+//            cout<<"\n\n\n";
             return ans;
         }
     }
@@ -388,7 +523,7 @@ U16 engine_b1::return_best_move(const Board &b, Engine *e) {
     vector<pair<int, pair<U16, Board>>> moveset_boards;
 
     MAX_DEPTH = 1;
-    while (MAX_DEPTH <= 4)
+    while (MAX_DEPTH <= 5)
     {
 
         if ((b.data.player_to_play == WHITE) && ( b.data.board_0[pos(2, 1)] == (WHITE|PAWN)) && (b.data.board_0[pos(1, 2)] == EMPTY) ) {
@@ -408,7 +543,7 @@ U16 engine_b1::return_best_move(const Board &b, Engine *e) {
         if (MAX_DEPTH == 1)
             MAX_DEPTH++;
         else
-            MAX_DEPTH += 2;
+            MAX_DEPTH += 1;
         //    MAX_DEPTH++;
         curr_time = chrono::high_resolution_clock::now();
 
@@ -416,6 +551,11 @@ U16 engine_b1::return_best_move(const Board &b, Engine *e) {
 
         // Convert the duration to seconds (as a floating-point number)
         elapsed_time = duration.count() / 1e6;
+        cout<<"\n\n";
+        cout<< "final evaluation is, "<<p.first<< " at MAX_DEPTH: "<<MAX_DEPTH<<'\n';
+        cout<<"best move at this depth is: "<<move_to_str(p.second)<<"\n";
+        cout<<"\n\n";
+
     }
 
     return e->best_move;

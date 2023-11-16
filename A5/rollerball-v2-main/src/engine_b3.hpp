@@ -46,7 +46,14 @@ public:
                         {pos(2, 1), 5}, {pos(3, 1), 5}, {pos(4, 1), 5}, {pos(5, 1), 5}, {pos(6, 1), 4},
         {pos(1, 0), 3}, {pos(2, 0), 4}, {pos(3, 0), 4}, {pos(4, 0), 4}, {pos(5, 0), 4}, {pos(6, 0), 3}, {pos(7, 0), 2}
     };
-   
+
+    map<U8, int> king_scores = {
+                                        {pos(3, 2), 4}, {pos(4, 2), 4}, {pos(5, 2), 4},
+                        {pos(2, 1), 4}, {pos(3, 1), 4}, {pos(4, 1), 4}, {pos(5, 1), 4}, {pos(6, 1), 4},
+        {pos(1, 0), 2}, {pos(2, 0), 2}, {pos(3, 0), 2}, {pos(4, 0), 2}, {pos(5, 0), 2}, {pos(6, 0), 2}, {pos(7, 0), 2}
+    };
+
+
     void check(){
         for (int i = 0; i<64; i++){
             U8 P = (U8) i;
@@ -64,6 +71,8 @@ public:
     int get_rook_score_black(U8 P);
     int get_king_score_white(U8 P);
     int get_king_score_black(U8 P);
+    int pawn_closeness_score_white(const Board& b);
+    int pawn_closeness_score_black(const Board& b);
 
 
     U16 return_best_move(const Board& b, Engine *e);
@@ -75,11 +84,11 @@ public:
 
     bool isTimeValid();
 
-    pair<int, U16> MiniMax(Board b, PlayerColor colour, Engine* e);
+    pair<int, U16> MiniMax(const Board& b, PlayerColor colour, Engine* e);
 
-    pair<int, U16> Min_value(Board b, int depth, int alpha, int beta, Engine* e);
+    pair<int, U16> Min_value(const Board& b, int depth, int alpha, int beta, Engine* e);
 
-    pair<int, U16> Max_value(Board b, int depth, int alpha, int beta, Engine* e);
+    pair<int, U16> Max_value(const Board& b, int depth, int alpha, int beta, Engine* e);
 
     int evaluate_function(const Board& b);
 

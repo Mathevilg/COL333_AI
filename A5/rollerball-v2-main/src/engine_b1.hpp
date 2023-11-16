@@ -57,7 +57,21 @@ public:
         {pos(1, 1), 15},
         {pos(0, 1), 15}
     };
-    
+
+
+    map<U8, int> king_scores = {
+            {pos(6, 0), 2},
+            {pos(5, 0), 2},
+            {pos(4, 0), 2},
+            {pos(3, 0), 2},
+            {pos(2, 0), 2},
+            {pos(1, 0), 2},
+            {pos(5, 1), 4},
+            {pos(4, 1), 4},
+            {pos(3, 1), 4},
+            {pos(2, 1), 4},
+    };
+
     int get_pawn_score_white(U8 P);
     int get_pawn_score_black(U8 P);
     int get_bishop_score(U8 P);
@@ -66,6 +80,8 @@ public:
     int get_king_score_white(U8 P);
     int get_king_score_black(U8 P);
     U16 return_best_move(const Board& b, Engine *e);
+    int pawn_closeness_score_white(const Board& b);
+    int pawn_closeness_score_black(const Board& b);
 
     int calc_check_score(const Board& b);
     int calc_positional_score(const Board& b);
