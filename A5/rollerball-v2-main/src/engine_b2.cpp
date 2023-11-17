@@ -90,7 +90,7 @@ int engine_b2::get_rook_score_black(U8 P)
 
 int engine_b2::get_king_score_white(U8 P)
 {
-    if (gety(P) <= 1 && getx(P) >= 1 && getx(P) <= 5)
+    if ((gety(P) == 1 && getx(P) >= 2 && getx(P) <= 6) && (gety(P) == 0 && getx(P) >= 1 && getx(P) <= 7))
     {
         return king_scores[P];
     }
@@ -98,15 +98,15 @@ int engine_b2::get_king_score_white(U8 P)
     U8 P1 = cw_90_pos_2(P);
     U8 P2 = cw_180_pos_2(P);
     U8 P3 = acw_90_pos_2(P);
-    if (gety(P1) <= 1 && getx(P1) >= 1 && getx(P1) <= 5)
+    if ((gety(P1) == 1 && getx(P1) >= 2 && getx(P1) <= 6) && (gety(P1) == 0 && getx(P1) >= 1 && getx(P1) <= 7))
     {
         return king_scores[P1]-1;
     }
-    if (gety(P2) <= 1 && getx(P2) >= 1 && getx(P2) <= 5)
+    if ((gety(P2) == 1 && getx(P2) >= 2 && getx(P2) <= 6) && (gety(P2) == 0 && getx(P2) >= 1 && getx(P2) <= 7))
     {
         return king_scores[P2]-1;
     }
-    if (gety(P3) <= 1 && getx(P3) >= 1 && getx(P3) <= 5)
+    if ((gety(P3) == 1 && getx(P3) >= 2 && getx(P3) <= 6) && (gety(P3) == 0 && getx(P3) >= 1 && getx(P3) <= 7))
     {
         return king_scores[P3]+1;
     }
@@ -416,54 +416,70 @@ int engine_b2::calc_positional_score(const Board &b){
 
 int engine_b2::pawn_closeness_score_white(const Board& b)
 {
-    int score = 12;
-
+    int score1 = 12;
 
     auto pos1 = b.data.w_pawn_1;
 
     auto pos2 = b.data.w_pawn_2;
 
     if (pos1 != DEAD && pos2 != DEAD && b.data.board_0[pos2] == (WHITE|PAWN) && b.data.board_0[pos1] == (WHITE|PAWN))
-        score -= abs(gety(pos1) - gety(pos2)) + abs(getx(pos1) - getx(pos2));
+    {
+        score1 -= abs(gety(pos1) - gety(pos2));
+        if (gety(pos1) == 6 || gety(pos1) == 7 || gety(pos2) == 6 || gety(pos2) == 7)
+            score1 -= abs(getx(pos1) - getx(pos2));
+
+    }
     else
-        score = 0;
+        score1 = 0;
 
     pos1 = b.data.w_pawn_3;
 
     pos2 = b.data.w_pawn_4;
-
+    int score2 = 12;
     if (pos1 != DEAD && pos2 != DEAD && b.data.board_0[pos2] == (WHITE|PAWN) && b.data.board_0[pos1] == (WHITE|PAWN))
-        score -= abs(gety(pos1) - gety(pos2)) + abs(getx(pos1) - getx(pos2));
+    {
+        score2 -= abs(gety(pos1) - gety(pos2));
+        if (gety(pos1) == 6 || gety(pos1) == 7 || gety(pos2) == 6 || gety(pos2) == 7)
+            score2 -= abs(getx(pos1) - getx(pos2));
+    }
     else
-        score = 0;
+        score2 = 0;
 
-    return score;
+    return score1 + score2;
 }
 
 
 int engine_b2::pawn_closeness_score_black(const Board& b)
 {
-    int score = 12;
+    int score1 = 12;
 
     auto pos1 = b.data.b_pawn_1;
 
     auto pos2 = b.data.b_pawn_2;
 
     if (pos1 != DEAD && pos2 != DEAD && b.data.board_0[pos2] == (BLACK|PAWN) && b.data.board_0[pos1] == (BLACK|PAWN))
-        score -= abs(gety(pos1) - gety(pos2)) + abs(getx(pos1) - getx(pos2));
+    {
+        score1 -= abs(gety(pos1) - gety(pos2));
+        if (gety(pos1) == 6 || gety(pos1) == 7 || gety(pos2) == 6 || gety(pos2) == 7)
+            score1 -= abs(getx(pos1) - getx(pos2));
+    }
     else
-        score = 0;
+        score1 = 0;
 
     pos1 = b.data.b_pawn_3;
 
     pos2 = b.data.b_pawn_4;
-
+    int score2 = 12;
     if (pos1 != DEAD && pos2 != DEAD && b.data.board_0[pos2] == (BLACK|PAWN) && b.data.board_0[pos1] == (BLACK|PAWN))
-        score -= abs(gety(pos1) - gety(pos2)) + abs(getx(pos1) - getx(pos2));
+    {
+        score2 -= abs(gety(pos1) - gety(pos2));
+        if (gety(pos1) == 6 || gety(pos1) == 7 || gety(pos2) == 6 || gety(pos2) == 7)
+            score1 -= abs(getx(pos1) - getx(pos2));
+    }
     else
-        score = 0;
+        score2 = 0;
 
-    return score;
+    return score1 + score2;
 }
 
 

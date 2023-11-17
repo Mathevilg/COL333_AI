@@ -302,15 +302,20 @@ int engine_b1::pawn_closeness_score_white(const Board& b)
 {
     int score = 12;
 
-
     auto pos1 = b.data.w_pawn_1;
 
     auto pos2 = b.data.w_pawn_2;
 
     if (pos1 != DEAD && pos2 != DEAD && b.data.board_0[pos2] == (WHITE|PAWN) && b.data.board_0[pos1] == (WHITE|PAWN))
-        score -= abs(gety(pos1) - gety(pos2)) + abs(getx(pos1) - getx(pos2));
+    {
+        score -= abs(gety(pos1) - gety(pos2));
+        if (gety(pos1) == 5 || gety(pos1) == 6 || gety(pos2) == 5 || gety(pos2) == 6)
+            score -= abs(getx(pos1) - getx(pos2));
+    }
     else
+    {
         score = 0;
+    }
     return score;
 }
 
@@ -324,9 +329,15 @@ int engine_b1::pawn_closeness_score_black(const Board& b)
     auto pos2 = b.data.b_pawn_2;
 
     if (pos1 != DEAD && pos2 != DEAD && b.data.board_0[pos2] == (BLACK|PAWN) && b.data.board_0[pos1] == (BLACK|PAWN))
-        score -= abs(gety(pos1) - gety(pos2)) + abs(getx(pos1) - getx(pos2));
+    {
+        score -= abs(gety(pos1) - gety(pos2));
+        if (gety(pos1) == 5 || gety(pos1) == 6 || gety(pos2) == 5 || gety(pos2) == 6)
+            score -= abs(getx(pos1) - getx(pos2));
+    }
     else
+    {
         score = 0;
+    }
 
     return score;
 }
@@ -540,6 +551,11 @@ U16 engine_b1::return_best_move(const Board &b, Engine *e) {
         if ((p.first == -100000) && (b.data.player_to_play == BLACK))
             break;
 
+        cout<<"\n\n";
+        cout<< "final evaluation is, "<<p.first<< " at MAX_DEPTH: "<<MAX_DEPTH<<'\n';
+        cout<<"best move at this depth is: "<<move_to_str(p.second)<<"\n";
+        cout<<"\n\n";
+
         if (MAX_DEPTH == 1)
             MAX_DEPTH++;
         else
@@ -551,10 +567,6 @@ U16 engine_b1::return_best_move(const Board &b, Engine *e) {
 
         // Convert the duration to seconds (as a floating-point number)
         elapsed_time = duration.count() / 1e6;
-        cout<<"\n\n";
-        cout<< "final evaluation is, "<<p.first<< " at MAX_DEPTH: "<<MAX_DEPTH<<'\n';
-        cout<<"best move at this depth is: "<<move_to_str(p.second)<<"\n";
-        cout<<"\n\n";
 
     }
 

@@ -20,7 +20,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="881cf10a-a624-48d8-b24f-e7bebdaf06cf" name="Changes" comment="iterative deepening in all boards (like ass2)">
+    <list default="true" id="881cf10a-a624-48d8-b24f-e7bebdaf06cf" name="Changes" comment="v good working&#10;pawn closeness etc">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b1.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b1.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b1.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b1.hpp" afterDir="false" />
@@ -54,24 +54,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/HP/Documents/GitHub/AI",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/HP/Documents/GitHub/AI&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="AI" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="AI" TARGET_NAME="AI" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="AI" RUN_TARGET_NAME="AI">
       <method v="2">
@@ -90,7 +90,9 @@
       <workItem from="1699090262257" duration="670000" />
       <workItem from="1699961493896" duration="6000" />
       <workItem from="1699961592456" duration="1456000" />
-      <workItem from="1700144628844" duration="17381000" />
+      <workItem from="1700144628844" duration="20792000" />
+      <workItem from="1700201111947" duration="878000" />
+      <workItem from="1700207797966" duration="5404000" />
     </task>
     <task id="LOCAL-00001" summary="iterative deepening in all boards (like ass2)">
       <option name="closed" value="true" />
@@ -100,7 +102,15 @@
       <option name="project" value="LOCAL" />
       <updated>1700145038353</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="v good working&#10;pawn closeness etc">
+      <option name="closed" value="true" />
+      <created>1700167102146</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1700167102146</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -108,6 +118,18 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="iterative deepening in all boards (like ass2)" />
-    <option name="LAST_COMMIT_MESSAGE" value="iterative deepening in all boards (like ass2)" />
+    <MESSAGE value="v good working&#10;pawn closeness etc" />
+    <option name="LAST_COMMIT_MESSAGE" value="v good working&#10;pawn closeness etc" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b2.cpp</url>
+          <line>84</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
