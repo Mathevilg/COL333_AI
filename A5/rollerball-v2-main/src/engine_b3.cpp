@@ -755,7 +755,27 @@ U16 engine_b3::return_best_move(const Board &b1, Engine *e) {
     time = new Time();
     Board b = Board(b1);
     start_time = chrono::high_resolution_clock::now();
-    time_left_to_match = (int) e->time_left.count();
+    time_left_to_match =  e->time_left.count()/1e3;
+    
+    if (time_left_to_match > 90){
+        timeAllotted = 5.0;
+    }
+    else if (time_left_to_match < 90 && time_left_to_match > 50){
+        timeAllotted = 4.0;
+    }
+    else if (time_left_to_match <50 && time_left_to_match > 20){
+        timeAllotted = min((float) 3.5, time_left_to_match/15);
+    }
+    else if (time_left_to_match > 2){
+        timeAllotted = time_left_to_match/15;
+    }
+    else {
+        auto moveset = b.get_legal_moves();
+        for (auto m : moveset){
+            return m;
+        }
+    }
+
     cout << "time left to match: " << time_left_to_match << endl;
     auto moveset = b.get_legal_moves();
     auto colour = b.data.player_to_play;

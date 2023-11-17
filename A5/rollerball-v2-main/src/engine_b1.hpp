@@ -27,11 +27,12 @@ class Time{
 class engine_b1
 {
 public:
+
     int MAX_DEPTH = 4;
-    int time_left_to_match;
+    float time_left_to_match;
     Time* time;
     float delta = 0.2;
-    float timeAllotted = 6.2 - delta;
+    float timeAllotted;
     chrono::high_resolution_clock::time_point start_time;
     map<U8, int> pawn_scores = {
         // Initial entries
