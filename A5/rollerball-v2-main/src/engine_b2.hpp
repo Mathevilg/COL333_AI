@@ -10,10 +10,10 @@
 using namespace std;
 
 
-class Time{
+class Time1{
     chrono::high_resolution_clock::time_point start_time;
     public:
-    Time(){
+    Time1(){
         start_time = chrono::high_resolution_clock::now();
     }
 
@@ -31,7 +31,7 @@ public:
     float time_left_to_match;
 
     // void initialise();
-    Time* time;
+    Time1* time;
     float timeAllotted = 6.2;
     chrono::high_resolution_clock::time_point start_time;
     

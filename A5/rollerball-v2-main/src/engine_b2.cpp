@@ -722,7 +722,7 @@ pair<int, U16> engine_b2::MiniMax(Board& b, PlayerColor colour, Engine* e)
 
 
 U16 engine_b2::return_best_move(const Board &b1, Engine *e) {
-    time = new Time();
+    time = new Time1();
     Board b = Board(b1);
     start_time = chrono::high_resolution_clock::now();
     time_left_to_match =  e->time_left.count()/1e3;
