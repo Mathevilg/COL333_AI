@@ -372,7 +372,7 @@ int engine_b1::evaluate_function(const Board& b)
 
 
     int check_score = calc_check_score(b); // -10 or 10
-    int w3 = 6;
+    int w3 = 3;
 
 
     // wrong code for count_pawn_score, uses b.data.w_pawn_ws and b.data.w_pawn_bs

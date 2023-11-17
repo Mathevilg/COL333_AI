@@ -50,14 +50,16 @@ int engine_b2::get_bishop_score(U8 P)
         return bishop_scores[P3];
     }
 
-    cout<<"no matching position for bishop";
+    cout<<"no matching position for bishop\n";
+    cout<<getx(P)<<" "<<gety(P)<<endl;
+    cout<<'\n';
     return -1;
 }
 
 int engine_b2::get_rook_score_white(U8 P)
 {
 
-    if ((gety(P) == 0 && getx(P) >= 0) || (gety(P) == 1 && getx(P) <= 6 && getx(P) >= 0))
+    if (rook_scores.find(P) != rook_scores.end())
     {
         return rook_scores[P];
     }
@@ -65,20 +67,20 @@ int engine_b2::get_rook_score_white(U8 P)
     U8 P1 = cw_90_pos_2(P);
     U8 P2 = cw_180_pos_2(P);
     U8 P3 = acw_90_pos_2(P);
-    if ((gety(P1) == 0 && getx(P1) >= 1) || (gety(P1) == 1 && getx(P1) <= 5 && getx(P1) >= 2))
+    if (rook_scores.find(P1) != rook_scores.end())
     {
         return rook_scores[P1];
     }
-    if ((gety(P2) == 0 && getx(P2) >= 1) || (gety(P2) == 1 && getx(P2) <= 5 && getx(P2) >= 2))
+    if (rook_scores.find(P2) != rook_scores.end())
     {
         return rook_scores[P2]+4;
     }
-    if ((gety(P3) == 0 && getx(P3) >= 1) || (gety(P3) == 1 && getx(P3) <= 5 && getx(P3) >= 2))
+    if (rook_scores.find(P3) != rook_scores.end())
     {
         return rook_scores[P3]+4;
     }
 
-    cout<<"no matching position for bishop";
+    cout<<"no matching position for rook";
     return -1;
 }
 
@@ -534,7 +536,7 @@ int engine_b2::eval2(const Board& b, U16 move){
     int w1 = 110;
 
     int check_score = calc_check_score(b_copy); // -10 or 10
-    int w3 = 6;
+    int w3 = 3;
 
     int positional_score = calc_positional_score(b_copy); // range -20/-13 to +20/+13 (for rook)
     // -9 to 9 for pawn, -8 to 8 for bishop
