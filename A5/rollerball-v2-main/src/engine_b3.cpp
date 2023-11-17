@@ -89,9 +89,9 @@ int engine_b3::get_king_score_white(U8 P)
         return king_scores[P];
     }
 
-    U8 P1 = cw_90_pos_2(P);
-    U8 P2 = cw_180_pos_2(P);
-    U8 P3 = acw_90_pos_2(P);
+    U8 P1 = cw_90_pos_3(P);
+    U8 P2 = cw_180_pos_3(P);
+    U8 P3 = acw_90_pos_3(P);
     if (gety(P1) <= 1 && getx(P1) >= 1 && getx(P1) <= 5)
     {
         return king_scores[P1]-1;
