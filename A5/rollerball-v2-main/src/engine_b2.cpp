@@ -533,6 +533,17 @@ int engine_b2::eval2(Board& b, U16 move){
     // Board b_copy = Board(b);
     // b_copy.do_move_(move);
 
+    if (b.get_legal_moves().empty())
+    {
+        if (b.in_check()) {
+            if (b.data.player_to_play == WHITE)
+                return -100000;
+            else
+                return 100000;
+        }
+        else
+            return 0;
+    }
 
     U8 deadpiece = b.data.last_killed_piece;
     int deadidx = b.data.last_killed_piece_idx;
@@ -753,6 +764,12 @@ U16 engine_b2::return_best_move(const Board &b1, Engine *e) {
     MAX_DEPTH = 1;
     while (time->get_elapsed_time() < timeAllotted)
     {
+
+        if ((b.data.player_to_play == WHITE) && ( b.data.board_0[pos(2, 1)] == (WHITE|PAWN)) && (b.data.board_0[pos(1, 2)] == EMPTY) ) {
+            e->best_move = (pos(2, 1) << 8) | (pos(1, 2));
+            cout << move_to_str(e->best_move) << endl;
+            return e->best_move;
+        }
 
         auto p = MiniMax(b, colour, e);
         e->best_move = p.second;

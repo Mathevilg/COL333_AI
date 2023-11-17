@@ -2,6 +2,7 @@
 #include <random>
 #include <iostream>
 #include <thread>
+#include <set>
 
 #include "board.hpp"
 #include "engine.hpp"

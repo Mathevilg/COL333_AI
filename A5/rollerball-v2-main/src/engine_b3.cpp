@@ -474,7 +474,6 @@ int engine_b3::pawn_closeness_score_white(const Board& b)
 
     pos1 = b.data.w_pawn_3;
 
-    pos2 = b.data.w_pawn_4;
     int score2 = 12;
     if (pos1 != DEAD && pos2 != DEAD && b.data.board_0[pos2] == (WHITE|PAWN) && b.data.board_0[pos1] == (WHITE|PAWN))
     {
@@ -508,7 +507,6 @@ int engine_b3::pawn_closeness_score_black(const Board& b)
 
     pos1 = b.data.b_pawn_3;
 
-    pos2 = b.data.b_pawn_4;
     int score2 = 12;
     if (pos1 != DEAD && pos2 != DEAD && b.data.board_0[pos2] == (BLACK|PAWN) && b.data.board_0[pos1] == (BLACK|PAWN))
     {
@@ -539,7 +537,7 @@ int engine_b3::evaluate_function(const Board& b)
     }
 
     int material = calculate_material(b);  // range -5 to +5
-    int w1 = 110;
+    int w1 = 112;
 
     int pawn_score = 0; // count_pawn_score(b); // range -20 to +20
     int w2 = 6;
@@ -570,12 +568,23 @@ int engine_b3::evaluate_function(const Board& b)
 int engine_b3::eval2(Board& b, U16 move){
     // Board b_copy = Board(b);
     // b_copy.do_move_(move);
+    if (b.get_legal_moves().empty())
+    {
+        if (b.in_check()) {
+            if (b.data.player_to_play == WHITE)
+                return -100000;
+            else
+                return 100000;
+        }
+        else
+            return 0;
+    }
 
     U8 deadpiece = b.data.last_killed_piece;
     int deadidx = b.data.last_killed_piece_idx;
     b.do_move_(move);
     int material = calculate_material(b);  // range -5 to +5
-    int w1 = 110;
+    int w1 = 112;
 
     int check_score = calc_check_score(b); // -10 or 10
     int w3 = 3;
@@ -778,12 +787,25 @@ U16 engine_b3::return_best_move(const Board &b1, Engine *e) {
 
     cout << "time left to match: " << time_left_to_match << endl;
     auto moveset = b.get_legal_moves();
+
+    if (moveset.size() == 1)
+    {
+        for (auto m : moveset)
+            return m;
+    }
+
     auto colour = b.data.player_to_play;
     vector<pair<int, pair<U16, Board>>> moveset_boards;
 
     MAX_DEPTH = 1;
     while (time->get_elapsed_time() < timeAllotted)
     {
+
+        if ((b.data.player_to_play == WHITE) && ( b.data.board_0[pos(2, 0)] == (WHITE|PAWN)) && (b.data.board_0[pos(1, 1)] == EMPTY) ) {
+            e->best_move = (pos(2, 0) << 8) | (pos(1, 1));
+            cout << move_to_str(e->best_move) << endl;
+            return e->best_move;
+        }
 
         auto p = MiniMax(b, colour, e);
         e->best_move = p.second;
