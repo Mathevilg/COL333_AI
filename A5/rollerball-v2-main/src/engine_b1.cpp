@@ -400,7 +400,7 @@ int engine_b1::eval2(const Board& b, U16 move){
     int w1 = 110;
 
     int check_score = calc_check_score(b_copy); // -10 or 10
-    int w3 = 6;
+    int w3 = 3;
 
     int positional_score = calc_positional_score(b_copy); // range -20/-13 to +20/+13 (for rook)
     // -9 to 9 for pawn, -8 to 8 for bishop
@@ -564,7 +564,7 @@ U16 engine_b1::return_best_move(const Board &b, Engine *e) {
     vector<pair<int, pair<U16, Board>>> moveset_boards;
 
     MAX_DEPTH = 1;
-    while (MAX_DEPTH <= 5)
+    while (MAX_DEPTH <= 6)
     {
 
         if ((b.data.player_to_play == WHITE) && ( b.data.board_0[pos(2, 1)] == (WHITE|PAWN)) && (b.data.board_0[pos(1, 2)] == EMPTY) ) {

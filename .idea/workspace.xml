@@ -20,14 +20,11 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="881cf10a-a624-48d8-b24f-e7bebdaf06cf" name="Changes" comment="v good working&#10;pawn closeness etc">
+    <list default="true" id="881cf10a-a624-48d8-b24f-e7bebdaf06cf" name="Changes" comment="final heuristic before merging with move ordering">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b1.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b1.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b1.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b1.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b2.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b2.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b2.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b2.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b3.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b3.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b3.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/A5/rollerball-v2-main/src/engine_b3.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,7 +92,8 @@
       <workItem from="1700207797966" duration="5404000" />
       <workItem from="1700225120636" duration="309000" />
       <workItem from="1700225785450" duration="328000" />
-      <workItem from="1700226457982" duration="5451000" />
+      <workItem from="1700226457982" duration="8057000" />
+      <workItem from="1700236260971" duration="1607000" />
     </task>
     <task id="LOCAL-00001" summary="iterative deepening in all boards (like ass2)">
       <option name="closed" value="true" />
@@ -113,7 +111,15 @@
       <option name="project" value="LOCAL" />
       <updated>1700167102146</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="final heuristic before merging with move ordering">
+      <option name="closed" value="true" />
+      <created>1700232212171</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1700232212171</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -122,7 +128,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="iterative deepening in all boards (like ass2)" />
     <MESSAGE value="v good working&#10;pawn closeness etc" />
-    <option name="LAST_COMMIT_MESSAGE" value="v good working&#10;pawn closeness etc" />
+    <MESSAGE value="final heuristic before merging with move ordering" />
+    <option name="LAST_COMMIT_MESSAGE" value="final heuristic before merging with move ordering" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

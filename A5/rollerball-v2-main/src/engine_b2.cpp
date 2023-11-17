@@ -29,7 +29,7 @@ int engine_b2::get_bishop_score(U8 P)
 {
 //    bishop_scores[pos(6, 1)] = 3;
 
-    if (gety(P) <= 1 && getx(P) >= 1 && getx(P) <= 5)
+    if (bishop_scores.find(P) != bishop_scores.end())
     {
         return bishop_scores[P];
     }
@@ -37,15 +37,15 @@ int engine_b2::get_bishop_score(U8 P)
     U8 P1 = cw_90_pos_2(P);
     U8 P2 = cw_180_pos_2(P);
     U8 P3 = acw_90_pos_2(P);
-    if (gety(P1) <= 1 && getx(P1) >= 1 && getx(P1) <= 5)
+    if (bishop_scores.find(P1) != bishop_scores.end())
     {
         return bishop_scores[P1];
     }
-    if (gety(P2) <= 1 && getx(P2) >= 1 && getx(P2) <= 5)
+    if (bishop_scores.find(P2) != bishop_scores.end())
     {
         return bishop_scores[P2];
     }
-    if (gety(P3) <= 1 && getx(P3) >= 1 && getx(P3) <= 5)
+    if (bishop_scores.find(P3) != bishop_scores.end())
     {
         return bishop_scores[P3];
     }
@@ -507,7 +507,7 @@ int engine_b2::evaluate_function(const Board& b)
     
     
     int check_score = calc_check_score(b); // -10 or 10
-    int w3 = 6;
+    int w3 = 3;
 
 
     // wrong code for count_pawn_score, uses b.data.w_pawn_ws and b.data.w_pawn_bs
@@ -687,6 +687,15 @@ U16 engine_b2::return_best_move(const Board &b, Engine *e) {
     time_left_to_match = (int) e->time_left.count();
     cout << "time left to match: " << time_left_to_match << endl;
     auto moveset = b.get_legal_moves();
+
+    if (moveset.size() == 1)
+    {
+        for (auto m : moveset)
+        {
+            return m;
+        }
+    }
+
     auto colour = b.data.player_to_play;
     auto curr_time = chrono::high_resolution_clock::now();
 
@@ -698,7 +707,7 @@ U16 engine_b2::return_best_move(const Board &b, Engine *e) {
     vector<pair<int, pair<U16, Board>>> moveset_boards;
 
     MAX_DEPTH = 1;
-    while (MAX_DEPTH <= 5)
+    while (MAX_DEPTH <= 6)
     {
 
         auto p = MiniMax(b, colour, e);
