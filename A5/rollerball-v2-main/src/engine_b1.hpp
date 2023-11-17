@@ -91,13 +91,61 @@ public:
     bool isTimeValid();
     float time_for_this_move = 4;
 
-    pair<int, U16> MiniMax(const Board& b, PlayerColor colour, Engine* e);
+    pair<int, U16> MiniMax(Board& b, PlayerColor colour, Engine* e);
 
-    pair<int, U16> Min_value(const Board& b, int depth, int alpha, int beta, Engine* e);
+    pair<int, U16> Min_value(Board& b, int depth, int alpha, int beta, Engine* e);
 
-    pair<int, U16> Max_value(const Board& b, int depth, int alpha, int beta, Engine* e);
+    pair<int, U16> Max_value(Board& b, int depth, int alpha, int beta, Engine* e);
 
     int evaluate_function(const Board& b);
-    int eval2(const Board& b, U16 move);
+    int eval2(Board& b, U16 move);
+
+
+
+    void undoMove(Board& b, U16 move, U8 dead, int deadidx) {
+        U8 p0 = getp0(move);
+        U8 p1 = getp1(move);
+        U8 promo = getpromo(move);
+
+        U8 piecetype = b.data.board_0[p1];
+        U8 deadpiece = b.data.last_killed_piece;
+        b.data.last_killed_piece = dead;
+
+        // scan and get piece from coord
+        U8 *pieces = (U8*)(&(b.data));
+        for (int i=0; i<2*b.data.n_pieces; i++) {
+            if (pieces[i] == p1) {
+                pieces[i] = p0;
+                break;
+            }
+        }
+        if (b.data.last_killed_piece_idx >= 0) {
+            pieces[b.data.last_killed_piece_idx] = p1;
+        }
+        b.data.last_killed_piece_idx = deadidx;
+
+        if (promo == PAWN_ROOK) {
+            piecetype = ((piecetype & (WHITE | BLACK)) ^ ROOK) | PAWN;
+        }
+        else if (promo == PAWN_BISHOP) {
+            piecetype = ((piecetype & (WHITE | BLACK)) ^ BISHOP) | PAWN;
+        }
+
+        b.data.board_0  [b.data.transform_array[0][p1]] = deadpiece;
+        b.data.board_90 [b.data.transform_array[1][p1]] = deadpiece;
+        b.data.board_180[b.data.transform_array[2][p1]] = deadpiece;
+        b.data.board_270[b.data.transform_array[3][p1]] = deadpiece;
+
+        b.data.board_0  [b.data.transform_array[0][p0]] = piecetype;
+        b.data.board_90 [b.data.transform_array[1][p0]] = piecetype;
+        b.data.board_180[b.data.transform_array[2][p0]] = piecetype;
+        b.data.board_270[b.data.transform_array[3][p0]] = piecetype;
+
+    }
+
+    
+    void flip_player_(Board &b) {
+        b.data.player_to_play = (PlayerColor)(b.data.player_to_play ^ (WHITE | BLACK));
+    }
 
 };

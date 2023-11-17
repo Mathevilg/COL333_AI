@@ -529,28 +529,37 @@ int engine_b2::evaluate_function(const Board& b)
 }
 
 
-int engine_b2::eval2(const Board& b, U16 move){
-    Board b_copy = Board(b);
-    b_copy.do_move_(move);
-    int material = calculate_material(b_copy);  // range -5 to +5
+int engine_b2::eval2(Board& b, U16 move){
+    // Board b_copy = Board(b);
+    // b_copy.do_move_(move);
+
+
+    U8 deadpiece = b.data.last_killed_piece;
+    int deadidx = b.data.last_killed_piece_idx;
+    b.do_move_(move);
+
+    
+    int material = calculate_material(b);  // range -5 to +5
     int w1 = 110;
 
-    int check_score = calc_check_score(b_copy); // -10 or 10
+    int check_score = calc_check_score(b); // -10 or 10
     int w3 = 3;
 
-    int positional_score = calc_positional_score(b_copy); // range -20/-13 to +20/+13 (for rook)
+    int positional_score = calc_positional_score(b); // range -20/-13 to +20/+13 (for rook)
     // -9 to 9 for pawn, -8 to 8 for bishop
     int w5 = 3;
 
-    int pawn_closeness_score = pawn_closeness_score_white(b_copy) - pawn_closeness_score_black(b_copy);
+    int pawn_closeness_score = pawn_closeness_score_white(b) - pawn_closeness_score_black(b);
     int w6 = 2;
 
     int final_score = (w1*material) + (w3*check_score) + (w5*positional_score) + (w6*pawn_closeness_score);
+    undoMove(b, move, deadpiece, deadidx);
+    flip_player_(b);
     return final_score;
 }
 //pair<int, U16> engine_b2::Min_value(Board b, int depth, int alpha, int beta, Engine* e);
 
-pair<int, U16> engine_b2::Max_value(const Board& b, int depth, int alpha, int beta, Engine* e)
+pair<int, U16> engine_b2::Max_value(Board& b, int depth, int alpha, int beta, Engine* e)
 {
 
     if (depth > MAX_DEPTH)
@@ -582,9 +591,15 @@ pair<int, U16> engine_b2::Max_value(const Board& b, int depth, int alpha, int be
             reverse(temp.begin(), temp.end());
             for (auto m1: temp) {
                 U16 m = m1.second;
-                Board b_copy = Board(b); // create a copy constructor??
-                b_copy.do_move_(m);
-                auto min_ans = Min_value(b_copy, depth + 1, alpha, beta, e);
+                // Board b_copy = Board(b); // create a copy constructor??
+                // b_copy.do_move_(m);
+
+                U8 deadpiece = b.data.last_killed_piece;
+                int deadidx = b.data.last_killed_piece_idx;
+                b.do_move_(m);
+                auto min_ans = Min_value(b, depth + 1, alpha, beta, e);
+                undoMove(b, m, deadpiece, deadidx);
+                flip_player_(b);
                 alpha = max(alpha, min_ans.first);
                 if (alpha>=beta)
                     return make_pair(min_ans.first, m);
@@ -604,7 +619,7 @@ pair<int, U16> engine_b2::Max_value(const Board& b, int depth, int alpha, int be
     }
 }
 
-pair<int, U16> engine_b2::Min_value(const Board& b, int depth, int alpha, int beta, Engine* e)
+pair<int, U16> engine_b2::Min_value(Board& b, int depth, int alpha, int beta, Engine* e)
 {
 
     if (depth > MAX_DEPTH) {
@@ -633,9 +648,16 @@ pair<int, U16> engine_b2::Min_value(const Board& b, int depth, int alpha, int be
             for (auto m1: temp) {
                 U16 m = m1.second;
 
-                Board b_copy = Board(b);
-                b_copy.do_move_(m);
-                auto max_ans = Max_value(b_copy, depth + 1, alpha, beta, e);
+                // Board b_copy = Board(b);
+                // b_copy.do_move_(m);
+
+
+                U8 deadpiece = b.data.last_killed_piece;
+                int deadidx = b.data.last_killed_piece_idx;
+                b.do_move_(m);
+                auto max_ans = Max_value(b, depth + 1, alpha, beta, e);
+                undoMove(b, m, deadpiece, deadidx);
+                flip_player_(b);
                 beta = min(beta, max_ans.first);
                 if (alpha>=beta)
                     return make_pair(max_ans.first, m);
@@ -653,7 +675,7 @@ pair<int, U16> engine_b2::Min_value(const Board& b, int depth, int alpha, int be
 }
 
 
-pair<int, U16> engine_b2::MiniMax(const Board& b, PlayerColor colour, Engine* e)
+pair<int, U16> engine_b2::MiniMax(Board& b, PlayerColor colour, Engine* e)
 {
     auto moveset = b.get_legal_moves();
 
@@ -684,7 +706,9 @@ pair<int, U16> engine_b2::MiniMax(const Board& b, PlayerColor colour, Engine* e)
 }
 
 
-U16 engine_b2::return_best_move(const Board &b, Engine *e) {
+U16 engine_b2::return_best_move(const Board &b1, Engine *e) {
+    
+    Board b = Board(b1);
     start_time = chrono::high_resolution_clock::now();
     time_left_to_match = (int) e->time_left.count();
     cout << "time left to match: " << time_left_to_match << endl;
