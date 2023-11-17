@@ -9,6 +9,21 @@
 
 using namespace std;
 
+
+class Time{
+    chrono::high_resolution_clock::time_point start_time;
+    public:
+    Time(){
+        start_time = chrono::high_resolution_clock::now();
+    }
+
+    float get_elapsed_time(){
+        auto end_time = chrono::high_resolution_clock::now();
+        auto time_taken = chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count();
+        return time_taken/1e3;
+    }
+};
+
 class engine_b2
 {
 public:
@@ -16,6 +31,9 @@ public:
     int time_left_to_match;
 
     // void initialise();
+    Time* time;
+    float delta = 0.2;
+    float timeAllotted = 6.2 - delta;
     chrono::high_resolution_clock::time_point start_time;
     
     map<U8, int> pawn_scores = {

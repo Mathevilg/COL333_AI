@@ -619,35 +619,37 @@ pair<int, U16> engine_b3::Max_value(Board& b, int depth, int alpha, int beta, En
         else {
 
             int max_value = -100050;
-            vector<pair<int,  U16> > temp;
-            for (auto move: moveset) {
-                temp.push_back(make_pair(eval2(b, move), move));
-            }
-            sort(temp.begin(), temp.end());
-            reverse(temp.begin(), temp.end());
-            for (auto m1: temp) {
-                U16 m = m1.second;
-                // Board b_copy = Board(b); // create a copy constructor??
-                // b_copy.do_move_(m);
+            if (time->get_elapsed_time() < timeAllotted){
+                vector<pair<int,  U16> > temp;
+                for (auto move: moveset) {
+                    temp.push_back(make_pair(eval2(b, move), move));
+                }
+                sort(temp.begin(), temp.end());
+                reverse(temp.begin(), temp.end());
+                for (auto m1: temp) {
+                    U16 m = m1.second;
+                    // Board b_copy = Board(b); // create a copy constructor??
+                    // b_copy.do_move_(m);
 
 
-                U8 deadpiece = b.data.last_killed_piece;
-                int deadidx = b.data.last_killed_piece_idx;
-                b.do_move_(m);
-                auto min_ans = Min_value(b, depth + 1, alpha, beta, e);
-                undoMove(b, m, deadpiece, deadidx);
-                flip_player_(b);
-                alpha = max(alpha, min_ans.first);
-                if (alpha>=beta)
-                    return make_pair(min_ans.first, m);
+                    U8 deadpiece = b.data.last_killed_piece;
+                    int deadidx = b.data.last_killed_piece_idx;
+                    b.do_move_(m);
+                    auto min_ans = Min_value(b, depth + 1, alpha, beta, e);
+                    undoMove(b, m, deadpiece, deadidx);
+                    flip_player_(b);
+                    alpha = max(alpha, min_ans.first);
+                    if (alpha>=beta)
+                        return make_pair(min_ans.first, m);
 
 
-                if (min_ans.first > max_value)
-                {
-                    max_value = min_ans.first;
-                    best_move = m;
-//                    if (depth == 0)
-//                        e->best_move = m;
+                    if (min_ans.first > max_value)
+                    {
+                        max_value = min_ans.first;
+                        best_move = m;
+    //                    if (depth == 0)
+    //                        e->best_move = m;
+                    }
                 }
             }
 
@@ -677,41 +679,41 @@ pair<int, U16> engine_b3::Min_value(Board& b, int depth, int alpha, int beta, En
         }
         else {
             int min_value = 100050;
-            U16 white_best_move = 0;
-            vector<pair<int,  U16> > temp;
-            for (auto move: moveset) {
-                temp.push_back(make_pair(eval2(b, move), move));
-            }
-            sort(temp.begin(), temp.end());
-            for (auto m1: temp) {
-                U16 m = m1.second;
-
-                // Board b_copy = Board(b);
-                // b_copy.do_move_(m);
-
-
-                U8 deadpiece = b.data.last_killed_piece;
-                int deadidx = b.data.last_killed_piece_idx;
-                b.do_move_(m);
-                auto max_ans = Max_value(b, depth + 1, alpha, beta, e);
-                undoMove(b, m, deadpiece, deadidx);
-                flip_player_(b);
-                beta = min(beta, max_ans.first);
-                if (alpha>=beta)
-                    return make_pair(max_ans.first, m);
-                if (max_ans.first < min_value) {
-                    min_value = max_ans.first;
-                    white_best_move = max_ans.second;
-                    best_move = m;
-//                    if (depth == 0)
-//                        e->best_move = m;
+            if (time->get_elapsed_time() < timeAllotted){
+                vector<pair<int,  U16> > temp;
+                for (auto move: moveset) {
+                    temp.push_back(make_pair(eval2(b, move), move));
                 }
-            }
+                sort(temp.begin(), temp.end());
+                for (auto m1: temp) {
+                    U16 m = m1.second;
 
-//            cout<<"\n";
-//            cout<<"Black final eval:"<<min_value<<move_to_str(best_move);
-//            cout<<"corresponding white best move"<<move_to_str(white_best_move);
-//            cout<<"\n";
+                    // Board b_copy = Board(b);
+                    // b_copy.do_move_(m);
+
+
+                    U8 deadpiece = b.data.last_killed_piece;
+                    int deadidx = b.data.last_killed_piece_idx;
+                    b.do_move_(m);
+                    auto max_ans = Max_value(b, depth + 1, alpha, beta, e);
+                    undoMove(b, m, deadpiece, deadidx);
+                    flip_player_(b);
+                    beta = min(beta, max_ans.first);
+                    if (alpha>=beta)
+                        return make_pair(max_ans.first, m);
+                    if (max_ans.first < min_value) {
+                        min_value = max_ans.first;
+                        best_move = m;
+    //                    if (depth == 0)
+    //                        e->best_move = m;
+                    }
+                }
+
+    //            cout<<"\n";
+    //            cout<<"Black final eval:"<<min_value<<move_to_str(best_move);
+    //            cout<<"corresponding white best move"<<move_to_str(white_best_move);
+    //            cout<<"\n";
+            }
             return make_pair(min_value, best_move);
         }
     }
@@ -750,23 +752,17 @@ pair<int, U16> engine_b3::MiniMax(Board& b, PlayerColor colour, Engine* e)
 
 
 U16 engine_b3::return_best_move(const Board &b1, Engine *e) {
+    time = new Time();
     Board b = Board(b1);
     start_time = chrono::high_resolution_clock::now();
     time_left_to_match = (int) e->time_left.count();
     cout << "time left to match: " << time_left_to_match << endl;
     auto moveset = b.get_legal_moves();
     auto colour = b.data.player_to_play;
-    auto curr_time = chrono::high_resolution_clock::now();
-
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(curr_time - start_time);
-
-    // Convert the duration to seconds (as a floating-point number)
-    double elapsed_time = duration.count() / 1e6;
-
     vector<pair<int, pair<U16, Board>>> moveset_boards;
 
     MAX_DEPTH = 1;
-    while (MAX_DEPTH <= 4)
+    while (time->get_elapsed_time() < timeAllotted)
     {
 
         auto p = MiniMax(b, colour, e);
@@ -788,13 +784,6 @@ U16 engine_b3::return_best_move(const Board &b1, Engine *e) {
             MAX_DEPTH++;
         else
             MAX_DEPTH += 1;
-        //    MAX_DEPTH++;
-        curr_time = chrono::high_resolution_clock::now();
-
-        duration = std::chrono::duration_cast<std::chrono::microseconds>(curr_time - start_time);
-
-        // Convert the duration to seconds (as a floating-point number)
-        elapsed_time = duration.count() / 1e6;
 
         cout<<"\n\n";
         cout<< "final evaluation is, "<<p.first<< " at MAX_DEPTH: "<<MAX_DEPTH<<'\n';
@@ -804,22 +793,6 @@ U16 engine_b3::return_best_move(const Board &b1, Engine *e) {
     }
 
     return e->best_move;
-//        while (isTimeValid()){
-//            std::cout << show_moves(&b.data, moveset) << std::endl;
-//            for (auto m : moveset) {
-//                std::cout << move_to_str(m) << " ";
-//            }
-//            std::cout << std::endl;
-//            std::sample(
-//                moveset.begin(),
-//                moveset.end(),
-//                std::back_inserter(moves),
-//                1,
-//                std::mt19937{std::random_device{}()}
-//            );
-//        }
-//        return moves[0];
-//
 }
 
 

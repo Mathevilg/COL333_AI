@@ -445,7 +445,7 @@ pair<int, U16> engine_b1::Max_value(Board& b, int depth, int alpha, int beta, En
             else
                 return make_pair(0, best_move);
         }
-        else {
+        else if (time->get_elapsed_time() < timeAllotted){
 
             int max_value = -100050;
             vector<pair<int,  U16> > temp;
@@ -481,6 +481,9 @@ pair<int, U16> engine_b1::Max_value(Board& b, int depth, int alpha, int beta, En
 
             return make_pair(max_value, best_move);
         }
+        else {
+            return make_pair(-100050, best_move);
+        }
     }
 }
 
@@ -503,7 +506,7 @@ pair<int, U16> engine_b1::Min_value(Board& b, int depth, int alpha, int beta, En
             else
                 return make_pair(0, U16(e->best_move));
         }
-        else {
+        else if (time->get_elapsed_time() < timeAllotted){
             int min_value = 100050;
             vector<pair<int,  U16> > temp;
             for (auto move: moveset) {
@@ -531,8 +534,10 @@ pair<int, U16> engine_b1::Min_value(Board& b, int depth, int alpha, int beta, En
 //                        e->best_move = m;
                 }
             }
-
             return make_pair(min_value, best_move);
+        }
+        else {
+            return make_pair(100050, best_move);
         }
     }
 }
@@ -570,24 +575,18 @@ pair<int, U16> engine_b1::MiniMax(Board& b, PlayerColor colour, Engine* e)
 
 
 U16 engine_b1::return_best_move(const Board &b1, Engine *e) {
-
+    time = new Time();
     Board b = Board(b1);
     start_time = chrono::high_resolution_clock::now();
     time_left_to_match = (int) e->time_left.count();
     cout << "time left to match: " << time_left_to_match << endl;
     auto moveset = b.get_legal_moves();
     auto colour = b.data.player_to_play;
-    auto curr_time = chrono::high_resolution_clock::now();
-
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(curr_time - start_time);
-
-    // Convert the duration to seconds (as a floating-point number)
-    double elapsed_time = duration.count() / 1e6;
 
     vector<pair<int, pair<U16, Board>>> moveset_boards;
 
     MAX_DEPTH = 1;
-    while (MAX_DEPTH <= 6)
+    while (time->get_elapsed_time() < timeAllotted)
     {
 
         if ((b.data.player_to_play == WHITE) && ( b.data.board_0[pos(2, 1)] == (WHITE|PAWN)) && (b.data.board_0[pos(1, 2)] == EMPTY) ) {
@@ -623,46 +622,8 @@ U16 engine_b1::return_best_move(const Board &b1, Engine *e) {
             MAX_DEPTH++;
         else
             MAX_DEPTH += 1;
-        //    MAX_DEPTH++;
-        curr_time = chrono::high_resolution_clock::now();
-
-        duration = std::chrono::duration_cast<std::chrono::microseconds>(curr_time - start_time);
-
-        // Convert the duration to seconds (as a floating-point number)
-        elapsed_time = duration.count() / 1e6;
-
     }
 
     return e->best_move;
-
-//    if (moveset.size() == 0) {
-//        std::cout << "Could not get any moves from board!\n";
-//        std::cout << board_to_str(&b.data);
-//        return 0;
-//    }
-//    else {
-//        std::vector<U16> moves;
-//
-//        auto ans = MiniMax(b, b.data.player_to_play, e);
-//
-//        return ans.second;
-//    }
-
-
-//        while (isTimeValid()){
-//            std::cout << show_moves(&b.data, moveset) << std::endl;
-//            for (auto m : moveset) {
-//                std::cout << move_to_str(m) << " ";
-//            }
-//            std::cout << std::endl;
-//            std::sample(
-//                moveset.begin(),
-//                moveset.end(),
-//                std::back_inserter(moves),
-//                1,
-//                std::mt19937{std::random_device{}()}
-//            );
-//        }
-//        return moves[0];
 }
 
