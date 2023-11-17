@@ -18,6 +18,7 @@ public:
     map<U8, int> pawn_scores = {
         // Initial entries
         {pos(2, 0), 0}, {pos(2, 1), 0},
+
         {pos(0, 0), 1}, {pos(1, 0), 1},
         {pos(0, 1), 2}, {pos(1, 1), 3},
         // Entries from your existing code

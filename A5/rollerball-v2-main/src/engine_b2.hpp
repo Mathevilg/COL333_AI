@@ -23,8 +23,8 @@ public:
             {pos(4, 0), 3}, {pos(4, 1), 1},/*                                                                                     */{pos(4, 6), 13}, {pos(4, 7), 13},
             {pos(3, 0), 1}, {pos(3, 1), 2},/*                                                                                     */{pos(3, 6), 11}, {pos(3, 7), 11},
             {pos(2, 0), 1}, {pos(2, 1), 2},/*                                                                                     */{pos(2, 6), 10}, {pos(2, 7), 10},
-            {pos(1, 0), 1}, {pos(1, 1), 2}, {pos(1, 2), 4}, {pos(1, 3), 5}, {pos(1, 4), 6}, {pos(1, 5), 7}, {pos(1, 6), 8}, {pos(1, 7), 8},
-            {pos(0, 0), 1}, {pos(0, 1), 2}, {pos(0, 2), 4}, {pos(0, 3), 5}, {pos(0, 4), 6}, {pos(0, 5), 7}, {pos(0, 6), 8}, {pos(0, 7), 8},
+            {pos(1, 0), 1}, {pos(1, 1), 3}, {pos(1, 2), 4}, {pos(1, 3), 5}, {pos(1, 4), 6}, {pos(1, 5), 7}, {pos(1, 6), 8}, {pos(1, 7), 8},
+            {pos(0, 0), 1}, {pos(0, 1), 3}, {pos(0, 2), 4}, {pos(0, 3), 5}, {pos(0, 4), 6}, {pos(0, 5), 7}, {pos(0, 6), 8}, {pos(0, 7), 8},
 
     };
 
@@ -53,7 +53,7 @@ public:
     int get_king_score_black(U8 P);
     U16 return_best_move(const Board& b, Engine *e);
 
-    int calc_check_score(Board b);
+    int calc_check_score(const Board& b);
     int calc_positional_score(const Board& b);
     int calculate_material(const Board& b);
     int pawn_closeness_score_white(const Board& b);

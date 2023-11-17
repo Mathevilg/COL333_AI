@@ -84,8 +84,8 @@ int engine_b3::get_rook_score_black(U8 P)
 
 int engine_b3::get_king_score_white(U8 P)
 {
-    if ((gety(P) == 2 && getx(P) >= 3 && getx(P) <= 5) &&
-            (gety(P) == 1 && getx(P) >= 2 && getx(P) <= 6) &&
+    if ((gety(P) == 2 && getx(P) >= 3 && getx(P) <= 5) ||
+            (gety(P) == 1 && getx(P) >= 2 && getx(P) <= 6) ||
                 (gety(P) == 0 && getx(P) >= 1 && getx(P) <= 7))
     {
         return king_scores[P];
@@ -94,20 +94,20 @@ int engine_b3::get_king_score_white(U8 P)
     U8 P1 = cw_90_pos_3(P);
     U8 P2 = cw_180_pos_3(P);
     U8 P3 = acw_90_pos_3(P);
-    if ((gety(P1) == 2 && getx(P1) >= 3 && getx(P1) <= 5) &&
-        (gety(P1) == 1 && getx(P1) >= 2 && getx(P1) <= 6) &&
+    if ((gety(P1) == 2 && getx(P1) >= 3 && getx(P1) <= 5) ||
+        (gety(P1) == 1 && getx(P1) >= 2 && getx(P1) <= 6) ||
         (gety(P1) == 0 && getx(P1) >= 1 && getx(P1) <= 7))
     {
         return king_scores[P1]-1;
     }
-    if ((gety(P2) == 2 && getx(P2) >= 3 && getx(P2) <= 5) &&
-        (gety(P2) == 1 && getx(P2) >= 2 && getx(P2) <= 6) &&
+    if ((gety(P2) == 2 && getx(P2) >= 3 && getx(P2) <= 5) ||
+        (gety(P2) == 1 && getx(P2) >= 2 && getx(P2) <= 6) ||
         (gety(P2) == 0 && getx(P2) >= 1 && getx(P2) <= 7))
     {
         return king_scores[P2]-1;
     }
-    if ((gety(P3) == 2 && getx(P3) >= 3 && getx(P3) <= 5) &&
-        (gety(P3) == 1 && getx(P3) >= 2 && getx(P3) <= 6) &&
+    if ((gety(P3) == 2 && getx(P3) >= 3 && getx(P3) <= 5) ||
+        (gety(P3) == 1 && getx(P3) >= 2 && getx(P3) <= 6) ||
         (gety(P3) == 0 && getx(P3) >= 1 && getx(P3) <= 7))
     {
         return king_scores[P3]+1;
@@ -310,7 +310,7 @@ int engine_b3::calculate_material(const Board& b) {
 }
 
 
-int engine_b3::calc_check_score(Board b)
+int engine_b3::calc_check_score(const Board& b)
 {
     if (b.in_check())
     {
@@ -330,54 +330,54 @@ int engine_b3::calc_positional_score(const Board &b){
     if (b.data.w_pawn_1 != DEAD)
     {
         if (b.data.board_0[b.data.w_pawn_1] == (PAWN | WHITE))
-            positional_score += 2*(get_pawn_score_white(b.data.w_pawn_1)+3);
+            positional_score += 5*(get_pawn_score_white(b.data.w_pawn_1)+3);
         else
         {
             if (b.data.board_0[b.data.w_pawn_1] == (ROOK | WHITE))
                 positional_score += get_rook_score_white(b.data.w_pawn_1);
             else if (b.data.board_0[b.data.w_pawn_1] == (BISHOP | WHITE))
-                positional_score += get_bishop_score(b.data.w_pawn_1);
+                positional_score += 0.5*get_bishop_score(b.data.w_pawn_1);
         }
     }
     if (b.data.w_pawn_2 != DEAD)
     {
         if (b.data.board_0[b.data.w_pawn_2] == (PAWN | WHITE))
-            positional_score += 2*(get_pawn_score_white(b.data.w_pawn_2)+3);
+            positional_score += 5*(get_pawn_score_white(b.data.w_pawn_2)+3);
         else
         {
             if (b.data.board_0[b.data.w_pawn_2] == (ROOK | WHITE))
                 positional_score += get_rook_score_white(b.data.w_pawn_2);
             else if (b.data.board_0[b.data.w_pawn_2] == (BISHOP | WHITE))
-                positional_score += get_bishop_score(b.data.w_pawn_2);
+                positional_score += 0.5*get_bishop_score(b.data.w_pawn_2);
         }
     }
     if (b.data.w_pawn_3 != DEAD)
     {
         if (b.data.board_0[b.data.w_pawn_3] == (PAWN | WHITE))
-            positional_score += 2*(get_pawn_score_white(b.data.w_pawn_3)+3);
+            positional_score += 5*(get_pawn_score_white(b.data.w_pawn_3)+3);
         else
         {
             if (b.data.board_0[b.data.w_pawn_3] == (ROOK | WHITE))
                 positional_score += get_rook_score_white(b.data.w_pawn_3);
             else if (b.data.board_0[b.data.w_pawn_3] == (BISHOP | WHITE))
-                positional_score += get_bishop_score(b.data.w_pawn_3);
+                positional_score += 0.5*get_bishop_score(b.data.w_pawn_3);
         }
     }
     if (b.data.w_pawn_4 != DEAD)
     {
         if (b.data.board_0[b.data.w_pawn_4] == (PAWN | WHITE))
-            positional_score += 2*(get_pawn_score_white(b.data.w_pawn_4)+3);
+            positional_score += 5*(get_pawn_score_white(b.data.w_pawn_4)+3);
         else
         {
             if (b.data.board_0[b.data.w_pawn_4] == (ROOK | WHITE))
                 positional_score += get_rook_score_white(b.data.w_pawn_4);
             else if (b.data.board_0[b.data.w_pawn_4] == (BISHOP | WHITE))
-                positional_score += get_bishop_score(b.data.w_pawn_4);
+                positional_score += 0.5*get_bishop_score(b.data.w_pawn_4);
         }
     }
 
     if (b.data.w_bishop != DEAD)
-        positional_score += get_bishop_score(b.data.w_bishop);
+        positional_score += 0.5*get_bishop_score(b.data.w_bishop);
     if (b.data.w_knight_1 != DEAD)
         positional_score += get_knight_score_white(b.data.w_knight_1);
     if (b.data.w_knight_2 != DEAD)
@@ -390,54 +390,54 @@ int engine_b3::calc_positional_score(const Board &b){
     if (b.data.b_pawn_1 != DEAD)
     {
         if (b.data.board_0[b.data.b_pawn_1] == (PAWN | BLACK))
-            positional_score -= 2*(get_pawn_score_black(b.data.b_pawn_1)+3);
+            positional_score -= 5*(get_pawn_score_black(b.data.b_pawn_1)+3);
         else
         {
             if (b.data.board_0[b.data.b_pawn_1] == (ROOK | BLACK))
                 positional_score -= get_rook_score_black(b.data.b_pawn_1);
             else if (b.data.board_0[b.data.b_pawn_1] == (BISHOP | BLACK))
-                positional_score -= get_bishop_score(b.data.b_pawn_1);
+                positional_score -= 0.5*get_bishop_score(b.data.b_pawn_1);
         }
     }
     if (b.data.b_pawn_2 != DEAD)
     {
         if (b.data.board_0[b.data.b_pawn_2] == (PAWN | BLACK))
-            positional_score -= 2*(get_pawn_score_black(b.data.b_pawn_2)+3);
+            positional_score -= 5*(get_pawn_score_black(b.data.b_pawn_2)+3);
         else
         {
             if (b.data.board_0[b.data.b_pawn_2] == (ROOK | BLACK))
                 positional_score -= get_rook_score_black(b.data.b_pawn_2);
             else if (b.data.board_0[b.data.b_pawn_2] == (BISHOP | BLACK))
-                positional_score -= get_bishop_score(b.data.b_pawn_2);
+                positional_score -= 0.5*get_bishop_score(b.data.b_pawn_2);
         }
     }
     if (b.data.b_pawn_3 != DEAD)
     {
         if (b.data.board_0[b.data.b_pawn_3] == (PAWN | BLACK))
-            positional_score -= 2*(get_pawn_score_black(b.data.b_pawn_3)+3);
+            positional_score -= 5*(get_pawn_score_black(b.data.b_pawn_3)+3);
         else
         {
             if (b.data.board_0[b.data.b_pawn_3] == (ROOK | BLACK))
                 positional_score -= get_rook_score_black(b.data.b_pawn_3);
             else if (b.data.board_0[b.data.b_pawn_3] == (BISHOP | BLACK))
-                positional_score -= get_bishop_score(b.data.b_pawn_3);
+                positional_score -= 0.5*get_bishop_score(b.data.b_pawn_3);
         }
     }
     if (b.data.b_pawn_4 != DEAD)
     {
         if (b.data.board_0[b.data.b_pawn_4] == (PAWN | BLACK))
-            positional_score -= 2*(get_pawn_score_black(b.data.b_pawn_4)+3);
+            positional_score -= 5*(get_pawn_score_black(b.data.b_pawn_4)+3);
         else
         {
             if (b.data.board_0[b.data.b_pawn_4] == (ROOK | BLACK))
                 positional_score -= get_rook_score_black(b.data.b_pawn_4);
             else if (b.data.board_0[b.data.b_pawn_4] == (BISHOP | BLACK))
-                positional_score -= get_bishop_score(b.data.b_pawn_4);
+                positional_score -= 0.5*get_bishop_score(b.data.b_pawn_4);
         }
     }
 
     if (b.data.b_bishop != DEAD)
-        positional_score -= get_bishop_score(b.data.b_bishop);
+        positional_score -= 0.5*get_bishop_score(b.data.b_bishop);
     if (b.data.b_knight_1 != DEAD)
         positional_score -= get_knight_score_black(b.data.b_knight_1);
     if (b.data.b_knight_2 != DEAD)
@@ -595,11 +595,6 @@ pair<int, U16> engine_b3::Max_value(const Board& b, int depth, int alpha, int be
             int max_value = -100050;
             for (auto m : moveset) {
 
-                if (m & (1 << 6))
-                {
-                    continue;
-                }
-
                 Board b_copy = Board(b); // create a copy constructor??
                 b_copy.do_move_(m);
                 auto min_ans = Min_value(b_copy, depth + 1, alpha, beta, e);
@@ -645,11 +640,6 @@ pair<int, U16> engine_b3::Min_value(const Board& b, int depth, int alpha, int be
             int min_value = 100050;
             U16 white_best_move = 0;
             for (auto m: moveset) {
-
-                if (m & (1 << 6))
-                {
-                    continue;
-                }
 
                 Board b_copy = Board(b);
                 b_copy.do_move_(m);
@@ -776,7 +766,7 @@ U16 engine_b3::return_best_move(const Board &b, Engine *e) {
 //            );
 //        }
 //        return moves[0];
-
+//
 }
 
 

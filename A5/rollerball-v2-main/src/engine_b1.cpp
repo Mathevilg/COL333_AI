@@ -20,7 +20,13 @@ int engine_b1::get_pawn_score_black(U8 P1)
 {
     // int idx = (int) P1;
     U8 P = cw_180_pos_1(P1);
-
+    if (getx(P) == 5)
+    {
+        if (gety(P) == 6)
+            return 6;
+        if (gety(P) == 5)
+            return 6;
+    }
     return get_pawn_score_white(P);
 }
 
@@ -252,7 +258,7 @@ int engine_b1::calc_positional_score(const Board &b){
     }
 
     if (b.data.w_bishop != DEAD)
-        positional_score += get_bishop_score(b.data.w_bishop);
+        positional_score += 0.5*get_bishop_score(b.data.w_bishop);
     if (b.data.w_rook_1 != DEAD)
         positional_score += get_rook_score_white(b.data.w_rook_1);
     if (b.data.w_rook_2 != DEAD)
@@ -284,7 +290,7 @@ int engine_b1::calc_positional_score(const Board &b){
     }
 
     if (b.data.b_bishop != DEAD)
-        positional_score -= get_bishop_score(b.data.b_bishop);
+        positional_score -= 0.5*get_bishop_score(b.data.b_bishop);
 
     if (b.data.b_rook_1 != DEAD)
         positional_score -= get_rook_score_black(b.data.b_rook_1);
@@ -412,11 +418,6 @@ pair<int, U16> engine_b1::Max_value(const Board& b, int depth, int alpha, int be
             int max_value = -100050;
             for (auto m : moveset) {
 
-                if (m & (1 << 6)) // what is this??
-                {
-                    continue;
-                }
-
                 Board b_copy = Board(b); // Copy constructor, make move and undo move instead??
                 b_copy.do_move_(m);
                 auto min_ans = Min_value(b_copy, depth + 1, alpha, beta, e);
@@ -461,11 +462,6 @@ pair<int, U16> engine_b1::Min_value(const Board& b, int depth, int alpha, int be
         else {
             int min_value = 100050;
             for (auto m: moveset) {
-
-                if (m & (1 << 6))
-                {
-                    continue;
-                }
 
                 Board b_copy = Board(b);
                 b_copy.do_move_(m);
@@ -543,6 +539,16 @@ U16 engine_b1::return_best_move(const Board &b, Engine *e) {
             return e->best_move;
         }
 
+        if ((b.data.player_to_play == BLACK) && ( b.data.board_0[pos(1, 2)] == (WHITE|PAWN)) && (b.data.board_0[pos(2, 1)] == EMPTY) ) {
+
+            if (( b.data.board_0[pos(4, 5)] == (BLACK|PAWN)) && (b.data.board_0[pos(5, 4)] == EMPTY) ) {
+
+                e->best_move = (pos(4, 5) << 8) | (pos(5, 4));
+                cout << move_to_str(e->best_move) << endl;
+                return e->best_move;
+            }
+        }
+
         auto p = MiniMax(b, colour, e);
         e->best_move = p.second;
         if ((p.first == 100000) && (b.data.player_to_play == WHITE))
@@ -602,6 +608,4 @@ U16 engine_b1::return_best_move(const Board &b, Engine *e) {
 //        }
 //        return moves[0];
 }
-
-
 
