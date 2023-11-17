@@ -23,14 +23,14 @@ int engine_b3::get_pawn_score_black(U8 P1)
 
 int engine_b3::get_bishop_score(U8 P)
 {
-
-    U8 P1 = cw_90_pos_3(P);
-    U8 P2 = cw_180_pos_3(P);
-    U8 P3 = acw_90_pos_3(P);
     if (bishop_scores.find(P) != bishop_scores.end())
     {
         return bishop_scores[P];
     }
+
+    U8 P1 = cw_90_pos_3(P);
+    U8 P2 = cw_180_pos_3(P);
+    U8 P3 = acw_90_pos_3(P);
     if (bishop_scores.find(P1) != bishop_scores.end())
     {
         return bishop_scores[P1];
@@ -546,7 +546,7 @@ int engine_b3::evaluate_function(const Board& b)
     
     
     int check_score = calc_check_score(b); // -10 or 10
-    int w3 = 6;
+    int w3 = 3;
 
 
     // wrong code for count_pawn_score, uses b.data.w_pawn_ws and b.data.w_pawn_bs
@@ -578,7 +578,7 @@ int engine_b3::eval2(Board& b, U16 move){
     int w1 = 110;
 
     int check_score = calc_check_score(b); // -10 or 10
-    int w3 = 6;
+    int w3 = 3;
 
     int positional_score = calc_positional_score(b); // range -20/-13 to +20/+13 (for rook)
     // -9 to 9 for pawn, -8 to 8 for bishop
