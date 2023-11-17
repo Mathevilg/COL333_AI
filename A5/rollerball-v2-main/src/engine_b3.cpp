@@ -567,6 +567,26 @@ int engine_b3::evaluate_function(const Board& b)
 }
 
 
+int engine_b3::eval2(const Board& b, U16 move){
+    Board b_copy = Board(b);
+    b_copy.do_move_(move);
+    int material = calculate_material(b_copy);  // range -5 to +5
+    int w1 = 110;
+
+    int check_score = calc_check_score(b_copy); // -10 or 10
+    int w3 = 6;
+
+    int positional_score = calc_positional_score(b_copy); // range -20/-13 to +20/+13 (for rook)
+    // -9 to 9 for pawn, -8 to 8 for bishop
+    int w5 = 3;
+
+    int pawn_closeness_score = pawn_closeness_score_white(b_copy) - pawn_closeness_score_black(b_copy);
+    int w6 = 2;
+
+    int final_score = (w1*material) + (w3*check_score) + (w5*positional_score) + (w6*pawn_closeness_score);
+    return final_score;
+}
+
 //pair<int, U16> engine_b3::Min_value(Board b, int depth, int alpha, int beta, Engine* e);
 
 pair<int, U16> engine_b3::Max_value(const Board& b, int depth, int alpha, int beta, Engine* e)
@@ -593,8 +613,14 @@ pair<int, U16> engine_b3::Max_value(const Board& b, int depth, int alpha, int be
         else {
 
             int max_value = -100050;
-            for (auto m : moveset) {
-
+            vector<pair<int,  U16> > temp;
+            for (auto move: moveset) {
+                temp.push_back(make_pair(eval2(b, move), move));
+            }
+            sort(temp.begin(), temp.end());
+            reverse(temp.begin(), temp.end());
+            for (auto m1: temp) {
+                U16 m = m1.second;
                 Board b_copy = Board(b); // create a copy constructor??
                 b_copy.do_move_(m);
                 auto min_ans = Min_value(b_copy, depth + 1, alpha, beta, e);
@@ -639,7 +665,13 @@ pair<int, U16> engine_b3::Min_value(const Board& b, int depth, int alpha, int be
         else {
             int min_value = 100050;
             U16 white_best_move = 0;
-            for (auto m: moveset) {
+            vector<pair<int,  U16> > temp;
+            for (auto move: moveset) {
+                temp.push_back(make_pair(eval2(b, move), move));
+            }
+            sort(temp.begin(), temp.end());
+            for (auto m1: temp) {
+                U16 m = m1.second;
 
                 Board b_copy = Board(b);
                 b_copy.do_move_(m);

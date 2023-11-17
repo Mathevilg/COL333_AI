@@ -98,6 +98,6 @@ public:
     pair<int, U16> Max_value(const Board& b, int depth, int alpha, int beta, Engine* e);
 
     int evaluate_function(const Board& b);
-
+    int eval2(const Board& b, U16 move);
 
 };
