@@ -2,6 +2,7 @@
 #include <random>
 #include <iostream>
 #include <thread>
+#include <set>
 
 #include "board.hpp"
 #include "engine.hpp"
@@ -12,6 +13,9 @@ using namespace std;
 class engine_b1
 {
 public:
+
+    bool operator<(const BoardData& other);
+
     int MAX_DEPTH = 4;
     int time_left_to_match;
     chrono::high_resolution_clock::time_point start_time;

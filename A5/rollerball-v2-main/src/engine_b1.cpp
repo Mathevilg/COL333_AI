@@ -392,11 +392,21 @@ int engine_b1::evaluate_function(const Board& b)
 }
 
 
-
 int engine_b1::eval2(Board& b, U16 move){
     // Board b_copy = Board(b);
     // b_copy.do_move_(move);
 
+    if (b.get_legal_moves().empty())
+    {
+        if (b.in_check()) {
+            if (b.data.player_to_play == WHITE)
+                return -100000;
+            else
+                return 100000;
+        }
+        else
+            return 0;
+    }
 
     U8 deadpiece = b.data.last_killed_piece;
     int deadidx = b.data.last_killed_piece_idx;
@@ -571,11 +581,17 @@ pair<int, U16> engine_b1::MiniMax(Board& b, PlayerColor colour, Engine* e)
 
 U16 engine_b1::return_best_move(const Board &b1, Engine *e) {
 
+
     Board b = Board(b1);
     start_time = chrono::high_resolution_clock::now();
     time_left_to_match = (int) e->time_left.count();
     cout << "time left to match: " << time_left_to_match << endl;
     auto moveset = b.get_legal_moves();
+    if (moveset.size() == 1)
+    {
+        for (auto m : moveset)
+            return m;
+    }
     auto colour = b.data.player_to_play;
     auto curr_time = chrono::high_resolution_clock::now();
 
